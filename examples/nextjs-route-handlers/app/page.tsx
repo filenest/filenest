@@ -1,3 +1,5 @@
+"use client"
+
 export default function Home() {
     function testApi() {
         fetch("/api/media/getResources")

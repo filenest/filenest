@@ -1,19 +1,26 @@
 export { Cloudinary } from "./Cloudinary"
 
+/**
+ * ### Base for all other providers
+ *
+ * When adding a new provider, implement this interface and make sure\
+ * you map the provider's API responses to the correct types\
+ * to ensure a consistent schema across all providers.
+ */
 export interface Provider {
     /**
      * Get all resources, regardless of which folder they are in
-     * 
+     *
      * This includes only files, not folders
      */
-    getResources: (input: GetResourcesInput) => Promise<Paginated<Asset>>
+    getResources: (input?: GetResourcesInput) => Promise<Paginated<Asset>>
 
     /**
      * Get all resources in a specific folder
-     * 
+     *
      * Includes both files and nested folders
      */
-    getResourcesByFolder: (input: GetResourcesByFolderInput) => Promise<FolderWithResources>
+    getResourcesByFolder: (input?: GetResourcesByFolderInput) => Promise<FolderWithResources>
 }
 
 type CommonInputOpts = {
@@ -43,8 +50,8 @@ type Asset = {
 }
 
 type Resources = {
-    folders: Folder[]
-    resources: Paginated<Asset>
+    folders: Paginated<Folder>
+    assets: Paginated<Asset>
 }
 
 type FolderWithResources = {
@@ -61,7 +68,9 @@ type Paginated<T> = {
     }
 }
 
-type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
+type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
 
 export type GetResourcesInput = Pick<CommonInputOpts, "searchQuery">
+export type GetResourcesReturn = Awaited<ReturnType<Provider["getResources"]>>
 export type GetResourcesByFolderInput = Optional<CommonInputOpts, "searchQuery">
+export type GetResourcesByFolderReturn = Awaited<ReturnType<Provider["getResourcesByFolder"]>>

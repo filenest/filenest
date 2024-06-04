@@ -8,7 +8,7 @@ export async function GET(request: Request) {
         CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME!,
     })
 
-    const response = await nest.getResources()
+    const response = await nest.getResourcesByFolder()
 
-    return NextResponse.json({ message: "Hello from the API!" })
+    return NextResponse.json(response)
 }
