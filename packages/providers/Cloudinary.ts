@@ -1,10 +1,4 @@
-import {
-    GetResourcesByFolderInput,
-    GetResourcesByFolderReturn,
-    GetResourcesInput,
-    GetResourcesReturn,
-    Provider,
-} from "."
+import { GetResourcesByFolderInput, GetResourcesByFolderReturn, GetAssetsInput, GetAssetsReturn, Provider, AssetType } from "."
 
 type CloudinaryConfig = {
     API_KEY: string
@@ -30,11 +24,24 @@ export class Cloudinary implements Provider {
         })
     }
 
+    private mapResourceType(type: string) {
+        switch (type) {
+            case "image":
+                return "image"
+            case "video":
+                return "video"
+            case "raw":
+                return "document"
+            default:
+                return "other"
+        }
+    }
+
     private mapExternalAssetsToSchema(data: CloudinarySearchResponse["resources"]) {
         return data.map((asset) => ({
             assetId: asset.asset_id,
             publicId: asset.public_id,
-            type: asset.resource_type,
+            type: this.mapResourceType(asset.resource_type) as AssetType,
             format: asset.format,
             url: asset.url,
             folder: asset.folder,
@@ -55,7 +62,7 @@ export class Cloudinary implements Provider {
         }))
     }
 
-    public async getResources(input?: GetResourcesInput) {
+    public async getAssets(input?: GetAssetsInput) {
         const url = new URL(this.URL.toString() + this.URL_SEARCH)
         url.searchParams.append("expression", input?.searchQuery ?? "")
         url.searchParams.append("with_field", "tags")
@@ -66,7 +73,7 @@ export class Cloudinary implements Provider {
         return {
             data: this.mapExternalAssetsToSchema(assets.resources),
             count: assets.total_count,
-        } as GetResourcesReturn
+        }
     }
 
     public async getResourcesByFolder(input?: GetResourcesByFolderInput) {
@@ -98,7 +105,7 @@ export class Cloudinary implements Provider {
                     count: assets.total_count,
                 },
             },
-        } as GetResourcesByFolderReturn
+        }
     }
 }
 

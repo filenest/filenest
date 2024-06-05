@@ -9,18 +9,65 @@ export { Cloudinary } from "./Cloudinary"
  */
 export interface Provider {
     /**
-     * Get all resources, regardless of which folder they are in
+     * #### Get a single asset by its ID
      *
-     * This includes only files, not folders
+     * Use this to get details on a specific image or any other file.
      */
-    getResources: (input?: GetResourcesInput) => Promise<Paginated<Asset>>
+    getAsset: (input: GetAssetInput) => Promise<Asset>
 
     /**
-     * Get all resources in a specific folder
+     * #### Get all assets, regardless of which folder they are in
      *
-     * Includes both files and nested folders
+     * Includes pagination data, if available.
+     */
+    getAssets: (input?: GetAssetsInput) => Promise<Paginated<Asset>>
+
+    /**
+     * #### Get all resources in a specific folder
+     *
+     * Includes files and folders directly under the specified folder.\
+     * If no folder is specified, resources in the root folder are returned.
      */
     getResourcesByFolder: (input?: GetResourcesByFolderInput) => Promise<FolderWithResources>
+
+    /**
+     * #### Create an empty folder
+     */
+    createFolder: (input: CreateFolderInput) => Promise<Folder>
+
+    /**
+     * #### Rename a folder
+     *
+     * Might not be supported in some cases (e.g. Cloudinary fixed folder environment).
+     */
+    renameFolder(input: RenameFolderInput): Promise<Folder>
+
+    /**
+     * #### Delete a folder
+     *
+     * Only deletes the folder if it is empty. If the folder is not empty,\
+     * you can force delete it, which will also delete all files and folders inside.
+     */
+    deleteFolder(input: DeleteFolderInput): Promise<Response>
+
+    /**
+     * #### Upload a file to the provider
+     * 
+     * Can be a single or multiple files of any type, respectively.
+     */
+    upload: (input: UploadInput) => Promise<Asset[]>
+
+    /**
+     * #### Rename an asset
+     * 
+     * This might cause the current public URL to change.
+     */
+    renameAsset(input: RenameAssetInput): Promise<Asset>
+
+    /**
+     * #### Delete an asset
+     */
+    deleteAsset(input: DeleteAssetInput): Promise<Response>
 }
 
 type CommonInputOpts = {
@@ -34,10 +81,12 @@ type Folder = {
     path: string
 }
 
+export type AssetType = "image" | "video" | "audio" | "document" | "other"
+
 type Asset = {
     assetId: string
     publicId: string
-    type: "image" | "video" | "audio" | "document" | "other"
+    type: AssetType
     format: string
     url: string
     folder: string
@@ -68,9 +117,27 @@ type Paginated<T> = {
     }
 }
 
+type Response = {
+    success: boolean
+    message?: string
+}
+
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
 
-export type GetResourcesInput = Pick<CommonInputOpts, "searchQuery">
-export type GetResourcesReturn = Awaited<ReturnType<Provider["getResources"]>>
+export type GetAssetInput = { id: string }
+export type GetAssetReturn = Awaited<ReturnType<Provider["getAsset"]>>
+export type GetAssetsInput = Pick<CommonInputOpts, "searchQuery">
+export type GetAssetsReturn = Awaited<ReturnType<Provider["getAssets"]>>
 export type GetResourcesByFolderInput = Optional<CommonInputOpts, "searchQuery">
 export type GetResourcesByFolderReturn = Awaited<ReturnType<Provider["getResourcesByFolder"]>>
+export type CreateFolderInput = { name: string; path: string }
+export type CreateFolderReturn = Awaited<ReturnType<Provider["createFolder"]>>
+export type RenameFolderInput = { id: string; name: string }
+export type RenameFolderReturn = Awaited<ReturnType<Provider["renameFolder"]>>
+export type DeleteFolderInput = { id: string }
+export type DeleteFolderReturn = Response
+export type UploadInput = { files: File[]; folder: string }
+export type RenameAssetInput = { id: string; name: string }
+export type RenameAssetReturn = Awaited<ReturnType<Provider["renameAsset"]>>
+export type DeleteAssetInput = { id: string }
+export type DeleteAssetReturn = Awaited<ReturnType<Provider["deleteAsset"]>>
