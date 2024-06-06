@@ -32,6 +32,8 @@ export interface Provider {
 
     /**
      * #### Create an empty folder
+     * 
+     * @returns The new folder.
      */
     createFolder: (input: CreateFolderInput) => Promise<Folder>
 
@@ -39,6 +41,8 @@ export interface Provider {
      * #### Rename a folder
      *
      * Might not be supported in some cases (e.g. Cloudinary fixed folder environment).
+     * 
+     * @returns The new folder.
      */
     renameFolder(input: RenameFolderInput): Promise<Folder>
 
@@ -54,6 +58,8 @@ export interface Provider {
      * #### Upload a file to the provider
      * 
      * Can be a single or multiple files of any type, respectively.
+     * 
+     * @returns The uploaded assets.
      */
     upload: (input: UploadInput) => Promise<Asset[]>
 
@@ -61,6 +67,8 @@ export interface Provider {
      * #### Rename an asset
      * 
      * This might cause the current public URL to change.
+     * 
+     * @returns The updated asset
      */
     renameAsset(input: RenameAssetInput): Promise<Asset>
 
@@ -130,11 +138,11 @@ export type GetAssetsInput = Pick<CommonInputOpts, "searchQuery">
 export type GetAssetsReturn = Awaited<ReturnType<Provider["getAssets"]>>
 export type GetResourcesByFolderInput = Optional<CommonInputOpts, "searchQuery">
 export type GetResourcesByFolderReturn = Awaited<ReturnType<Provider["getResourcesByFolder"]>>
-export type CreateFolderInput = { name: string; path: string }
+export type CreateFolderInput = { path: string }
 export type CreateFolderReturn = Awaited<ReturnType<Provider["createFolder"]>>
-export type RenameFolderInput = { id: string; name: string }
+export type RenameFolderInput = { path: string; newPath: string }
 export type RenameFolderReturn = Awaited<ReturnType<Provider["renameFolder"]>>
-export type DeleteFolderInput = { id: string }
+export type DeleteFolderInput = { path: string }
 export type DeleteFolderReturn = Response
 export type UploadInput = { files: File[]; folder: string }
 export type RenameAssetInput = { id: string; name: string }

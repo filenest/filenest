@@ -1,4 +1,12 @@
-import { GetResourcesByFolderInput, GetResourcesByFolderReturn, GetAssetsInput, GetAssetsReturn, Provider, AssetType } from "."
+import {
+    GetResourcesByFolderInput,
+    GetAssetsInput,
+    Provider,
+    AssetType,
+    GetAssetInput,
+    CreateFolderInput,
+    RenameFolderInput,
+} from "."
 
 type CloudinaryConfig = {
     API_KEY: string
@@ -8,12 +16,10 @@ type CloudinaryConfig = {
 
 export class Cloudinary implements Provider {
     private URL: string
-    private URL_SEARCH = "/resources/search"
-    private URL_FOLDERS = "/folders"
     private MAX_RESULTS = 50
     private HEADERS: Headers
-    private async doFetch(url: string | URL) {
-        return fetch(url, { headers: this.HEADERS }).then((res) => res.json())
+    private async doFetch(url: string | URL, init?: RequestInit) {
+        return fetch(url, { headers: this.HEADERS, ...init }).then((res) => res.json())
     }
 
     constructor(config: CloudinaryConfig) {
@@ -37,33 +43,47 @@ export class Cloudinary implements Provider {
         }
     }
 
-    private mapExternalAssetsToSchema(data: CloudinarySearchResponse["resources"]) {
-        return data.map((asset) => ({
-            assetId: asset.asset_id,
-            publicId: asset.public_id,
-            type: this.mapResourceType(asset.resource_type) as AssetType,
-            format: asset.format,
-            url: asset.url,
-            folder: asset.folder,
-            name: asset.filename,
-            bytes: asset.bytes,
-            width: asset.width,
-            height: asset.height,
-            tags: asset.tags,
-            modifiedAt: asset.version,
-        }))
+    private mapResourceToSchema(resource: CloudinaryResource) {
+        return {
+            assetId: resource.asset_id,
+            publicId: resource.public_id,
+            type: this.mapResourceType(resource.resource_type) as AssetType,
+            format: resource.format,
+            url: resource.url,
+            folder: resource.folder,
+            name: resource.filename,
+            bytes: resource.bytes,
+            width: resource.width,
+            height: resource.height,
+            tags: resource.tags,
+            modifiedAt: resource.version,
+        }
     }
 
-    private mapExternalFoldersToSchema(data: CloudinaryFolderResponse["folders"]) {
-        return data.map((folder) => ({
+    private mapResourcesToSchema(resource: CloudinaryResource[]) {
+        return resource.map((asset) => this.mapResourceToSchema(asset))
+    }
+
+    private mapFolderToSchema(folder: CloudinaryFolder) {
+        return {
             id: folder.path,
             name: folder.name,
             path: folder.path,
-        }))
+        }
+    }
+
+    private mapFoldersToSchema(data: CloudinaryFolder[]) {
+        return data.map((folder) => this.mapFolderToSchema(folder))
+    }
+
+    public async getAsset(input: GetAssetInput) {
+        const url = new URL(this.URL.toString() + "/resources/" + input.id)
+        const asset: CloudinaryResource = await this.doFetch(url)
+        return this.mapResourceToSchema(asset)
     }
 
     public async getAssets(input?: GetAssetsInput) {
-        const url = new URL(this.URL.toString() + this.URL_SEARCH)
+        const url = new URL(this.URL.toString() + "/resources/search")
         url.searchParams.append("expression", input?.searchQuery ?? "")
         url.searchParams.append("with_field", "tags")
         url.searchParams.append("max_results", this.MAX_RESULTS.toString())
@@ -71,13 +91,13 @@ export class Cloudinary implements Provider {
         const assets: CloudinarySearchResponse = await this.doFetch(url)
 
         return {
-            data: this.mapExternalAssetsToSchema(assets.resources),
+            data: this.mapResourcesToSchema(assets.resources),
             count: assets.total_count,
         }
     }
 
     public async getResourcesByFolder(input?: GetResourcesByFolderInput) {
-        let url = new URL(this.URL.toString() + this.URL_SEARCH)
+        let url = new URL(this.URL.toString() + "/resources/search")
 
         const folder = input?.folder ? "folder:" + input.folder : 'folder=""'
         const searchQuery = input?.searchQuery ? `AND ${input.searchQuery}` : null
@@ -89,7 +109,7 @@ export class Cloudinary implements Provider {
 
         const assets: CloudinarySearchResponse = await this.doFetch(url)
 
-        url = new URL([this.URL.toString(), this.URL_FOLDERS, "/", input?.folder].join(""))
+        url = new URL([this.URL.toString(), "/folders/", input?.folder].join(""))
 
         const folders: CloudinaryFolderResponse = await this.doFetch(url)
 
@@ -97,55 +117,93 @@ export class Cloudinary implements Provider {
             folder: assets.resources[0]?.folder || input?.folder || "",
             resources: {
                 folders: {
-                    data: this.mapExternalFoldersToSchema(folders.folders),
+                    data: this.mapFoldersToSchema(folders.folders),
                     count: folders.total_count,
                 },
                 assets: {
-                    data: this.mapExternalAssetsToSchema(assets.resources),
+                    data: this.mapResourcesToSchema(assets.resources),
                     count: assets.total_count,
                 },
             },
         }
     }
+
+    public async createFolder(input: CreateFolderInput) {
+        const url = new URL(this.URL.toString() + "/folders/" + input.path)
+        const folder: CloudinaryFolder = await this.doFetch(url, { method: "POST" })
+        return this.mapFolderToSchema(folder)
+    }
+
+    public async renameFolder(input: RenameFolderInput) {
+        // We need to check if environment uses fixed or dynamic folder mode.
+        // Only dynamic folder mode supports renaming folders.
+        let url = new URL(this.URL.toString() + "/config")
+        url.searchParams.append("settings", "true")
+
+        const config: CloudinaryEnvironment = await this.doFetch(url)
+
+        if (config.settings.folder_mode === "fixed") {
+            throw new Error("Renaming folders is not supported in fixed folder mode.")
+        }
+
+        url = new URL(this.URL.toString() + "/folders/" + input.path)
+        url.searchParams.append("to_folder", input.newPath)
+
+        const folder: { from: CloudinaryFolder; to: CloudinaryFolder } = await this.doFetch(url, { method: "PUT" })
+
+        return this.mapFolderToSchema(folder.to)
+    }
+}
+
+type CloudinaryEnvironment = {
+    cloud_name: string
+    created_at: string
+    settings: {
+        folder_mode: "fixed" | "dynamic"
+    }
+}
+
+type CloudinaryResource = {
+    asset_id: string
+    public_id: string
+    folder: string
+    filename: string
+    format: string
+    version: number
+    resource_type: "image" | "raw" | "video"
+    type: string
+    created_at: string
+    uploaded_at: string
+    bytes: number
+    backup_bytes: number
+    width: number
+    height: number
+    aspect_ratio: number
+    pixels: number
+    pages: number
+    url: string
+    secure_url: string
+    status: string
+    access_mode: string
+    access_control: any
+    etag: string
+    created_by: Record<string, unknown>
+    uploaded_by: Record<string, unknown>
+    last_updated: Record<string, unknown>
+    tags: string[]
 }
 
 type CloudinarySearchResponse = {
     total_count: number
-    resources: Array<{
-        asset_id: string
-        public_id: string
-        folder: string
-        filename: string
-        format: string
-        version: number
-        resource_type: "image" | "raw" | "video"
-        type: string
-        created_at: string
-        uploaded_at: string
-        bytes: number
-        backup_bytes: number
-        width: number
-        height: number
-        aspect_ratio: number
-        pixels: number
-        pages: number
-        url: string
-        secure_url: string
-        status: string
-        access_mode: string
-        access_control: any
-        etag: string
-        created_by: Record<string, unknown>
-        uploaded_by: Record<string, unknown>
-        last_updated: Record<string, unknown>
-        tags: string[]
-    }>
+    resources: CloudinaryResource[]
+}
+
+type CloudinaryFolder = {
+    name: string
+    path: string
 }
 
 type CloudinaryFolderResponse = {
     total_count: number
-    folders: Array<{
-        name: string
-        path: string
-    }>
+    folders: CloudinaryFolder[]
 }
