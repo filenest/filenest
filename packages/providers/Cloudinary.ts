@@ -169,9 +169,11 @@ export class Cloudinary implements Provider {
 
         // ...Finally delete folder
         url = new URL(this.URL.toString() + "/folders/" + input.path)
-        const response = await this.doFetch(url, { method: "DELETE" })
+        await this.doFetch(url, { method: "DELETE" })
 
-        return response
+        return {
+            success: true,
+        }
     }
 }
 
