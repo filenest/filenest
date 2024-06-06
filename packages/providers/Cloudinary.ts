@@ -6,6 +6,7 @@ import {
     GetAssetInput,
     CreateFolderInput,
     RenameFolderInput,
+    DeleteFolderInput,
 } from "."
 
 type CloudinaryConfig = {
@@ -152,6 +153,25 @@ export class Cloudinary implements Provider {
         const folder: { from: CloudinaryFolder; to: CloudinaryFolder } = await this.doFetch(url, { method: "PUT" })
 
         return this.mapFolderToSchema(folder.to)
+    }
+
+    public async deleteFolder(input: DeleteFolderInput) {
+        const { resources } = await this.getResourcesByFolder({ folder: input.path })
+
+        if (resources.assets.count > 0 && !input.force) {
+            throw new Error("The folder you're trying to delete is not empty. Delete all assets first.")
+        }
+
+        // Delete all assets in the folder when force deleting
+        let url = new URL(this.URL.toString() + "/resources")
+        url.searchParams.append("prefix", input.path)
+        await this.doFetch(url, { method: "DELETE" })
+
+        // ...Finally delete folder
+        url = new URL(this.URL.toString() + "/folders/" + input.path)
+        const response = await this.doFetch(url, { method: "DELETE" })
+
+        return response
     }
 }
 
