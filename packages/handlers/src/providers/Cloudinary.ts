@@ -7,7 +7,7 @@ import {
     CreateFolderInput,
     RenameFolderInput,
     DeleteFolderInput,
-} from "."
+} from ".."
 
 type CloudinaryConfig = {
     API_KEY: string

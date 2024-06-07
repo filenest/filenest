@@ -1,4 +1,5 @@
-export { Cloudinary } from "./Cloudinary"
+export { Cloudinary } from "./providers/Cloudinary"
+export * from "./adapters"
 
 /**
  * ### Base for all other providers
@@ -13,14 +14,14 @@ export interface Provider {
      *
      * Use this to get details on a specific image or any other file.
      */
-    getAsset: (input: GetAssetInput) => Promise<Asset>
+    getAsset(input: GetAssetInput): Promise<Asset>
 
     /**
      * #### Get all assets, regardless of which folder they are in
      *
      * Includes pagination data, if available.
      */
-    getAssets: (input?: GetAssetsInput) => Promise<Paginated<Asset>>
+    getAssets(input?: GetAssetsInput): Promise<Paginated<Asset>>
 
     /**
      * #### Get all resources in a specific folder
@@ -28,20 +29,20 @@ export interface Provider {
      * Includes files and folders directly under the specified folder.\
      * If no folder is specified, resources in the root folder are returned.
      */
-    getResourcesByFolder: (input?: GetResourcesByFolderInput) => Promise<FolderWithResources>
+    getResourcesByFolder(input?: GetResourcesByFolderInput): Promise<FolderWithResources>
 
     /**
      * #### Create an empty folder
-     * 
+     *
      * @returns The new folder.
      */
-    createFolder: (input: CreateFolderInput) => Promise<Folder>
+    createFolder(input: CreateFolderInput): Promise<Folder>
 
     /**
      * #### Rename a folder
      *
      * Might not be supported in some cases (e.g. Cloudinary fixed folder environment).
-     * 
+     *
      * @returns The new folder.
      */
     renameFolder(input: RenameFolderInput): Promise<Folder>
@@ -56,18 +57,18 @@ export interface Provider {
 
     /**
      * #### Upload a file to the provider
-     * 
+     *
      * Can be a single or multiple files of any type, respectively.
-     * 
+     *
      * @returns The uploaded assets.
      */
-    upload: (input: UploadInput) => Promise<Asset[]>
+    upload(input: UploadInput): Promise<Asset[]>
 
     /**
      * #### Rename an asset
-     * 
+     *
      * This might cause the current public URL to change.
-     * 
+     *
      * @returns The updated asset
      */
     renameAsset(input: RenameAssetInput): Promise<Asset>
@@ -142,7 +143,7 @@ export type CreateFolderInput = { path: string }
 export type CreateFolderReturn = Awaited<ReturnType<Provider["createFolder"]>>
 export type RenameFolderInput = { path: string; newPath: string }
 export type RenameFolderReturn = Awaited<ReturnType<Provider["renameFolder"]>>
-export type DeleteFolderInput = { path: string, force: boolean }
+export type DeleteFolderInput = { path: string; force: boolean }
 export type DeleteFolderReturn = Response
 export type UploadInput = { files: File[]; folder: string }
 export type RenameAssetInput = { id: string; name: string }
