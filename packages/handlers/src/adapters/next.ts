@@ -18,7 +18,15 @@ export function createNextRouteHandlers({ provider }: { provider: Provider }) {
             return new NextResponse("Not Found", { status: 404 })
         }
 
-        const result = await provider[action](req as any)
+        // Prevents errors when there is no body
+        let body
+        try {
+            body = await req.json()
+        } catch (error) {
+            body = {}
+        }
+
+        const result = await provider[action](body)
 
         return NextResponse.json(result)
     }
