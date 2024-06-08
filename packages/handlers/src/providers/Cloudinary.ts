@@ -1,13 +1,14 @@
+import { Provider } from ".."
+
 import {
     GetResourcesByFolderInput,
     GetAssetsInput,
-    Provider,
     AssetType,
     GetAssetInput,
     CreateFolderInput,
     RenameFolderInput,
     DeleteFolderInput,
-} from ".."
+} from "../types"
 
 type CloudinaryConfig = {
     API_KEY: string
