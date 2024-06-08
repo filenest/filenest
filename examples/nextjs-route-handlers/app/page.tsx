@@ -2,7 +2,7 @@
 
 export default function Home() {
     function testApi() {
-        fetch("/api/media/getResources")
+        fetch("/api/media/getAssets", { method: "POST" })
             .then((res) => res.json())
             .then((data) => console.log(data))
     }

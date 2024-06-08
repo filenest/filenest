@@ -175,6 +175,18 @@ export class Cloudinary implements Provider {
             success: true,
         }
     }
+
+    public async upload() {
+        return null as any
+    }
+
+    public async renameAsset() {
+        return null as any
+    }
+
+    public async deleteAsset() {
+        return null as any
+    }
 }
 
 type CloudinaryEnvironment = {
