@@ -1,13 +1,13 @@
 import { Provider } from ".."
 
 import {
-    GetResourcesByFolderInput,
-    GetAssetsInput,
-    AssetType,
-    GetAssetInput,
-    CreateFolderInput,
-    RenameFolderInput,
-    DeleteFolderInput,
+    type GetResourcesByFolderInput,
+    type GetAssetsInput,
+    type AssetType,
+    type GetAssetInput,
+    type CreateFolderInput,
+    type RenameFolderInput,
+    type DeleteFolderInput,
 } from "../types"
 
 type CloudinaryConfig = {

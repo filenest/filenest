@@ -47,6 +47,10 @@ importers:
         version: 5.4.5
 
   packages/handlers:
+    dependencies:
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
     devDependencies:
       '@types/node':
         specifier: ^20.14.1
@@ -675,6 +679,9 @@ packages:
     engines: {node: '>= 14'}
     hasBin: true
 
+  zod@3.23.8:
+    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
+
 snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
@@ -1232,3 +1239,5 @@ snapshots:
       strip-ansi: 7.1.0
 
   yaml@2.4.3: {}
+
+  zod@3.23.8: {}
