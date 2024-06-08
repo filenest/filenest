@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server"
 
 // TODO:
 // This is a poor attempt at creating a dynamic route handler for Next.js.
-// Definitely refactor this in the future.
+// Definitely re-work this in the future and make it compatiple with all HTTP methods.
+// I chose to only support POST for now because it supports sending a body.
 
 export function createNextRouteHandlers({ provider }: { provider: Provider }) {
     const handleRequest = async (req: NextRequest) => {
