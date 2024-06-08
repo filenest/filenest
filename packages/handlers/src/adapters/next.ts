@@ -10,10 +10,6 @@ export function createNextRouteHandlers({ provider }: { provider: Provider }) {
         const { pathname } = new URL(req.url)
         const action = pathname.split("/").at(-1) as keyof Provider
 
-        if (!provider[action as keyof Provider]) {
-            return new NextResponse("Not Found", { status: 404 })
-        }
-
         if (!provider[action]) {
             return new NextResponse("Not Found", { status: 404 })
         }
