@@ -1,16 +1,18 @@
 "use client"
 
+import { type Asset } from "@filenest/handlers"
+import { useState } from "react"
+
 export default function Home() {
-    function testApi() {
-        fetch("/api/media/getAssets", { method: "POST" })
-            .then((res) => res.json())
-            .then((data) => console.log(data))
-    }
+
+    const [selectedFiles, setSelectedFiles] = useState<Asset[]>([])
 
     return (
         <main>
-            <h1>Home</h1>
-            <button onClick={testApi}>Test API</button>
+            <Filenest
+                endpoint="/api/media"
+                onFileSelect={(file) => console.log(file)}
+            />
         </main>
     )
 }
