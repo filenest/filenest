@@ -13,7 +13,7 @@ const Folder = z.object({
     path: z.string(),
 })
 
-type Folder = z.infer<typeof Folder>
+export type Folder = z.infer<typeof Folder>
 
 const AssetType = z.union([
     z.literal("image"),
@@ -40,7 +40,7 @@ const Asset = z.object({
     modifiedAt: z.number(),
 })
 
-type Asset = z.infer<typeof Asset>
+export type Asset = z.infer<typeof Asset>
 
 const Paginated = <T extends z.ZodType<any>>(type: T) => {
     return z.object({
@@ -55,6 +55,15 @@ const Paginated = <T extends z.ZodType<any>>(type: T) => {
     })
 }
 
+export type Paginated<T> = {
+    data: T[]
+    count: number
+    pagination?: {
+        itemsPerPage: number
+        currentPage: number
+    }
+}
+
 const Resources = z.object({
     folders: Paginated(Folder),
     assets: Paginated(Asset),
@@ -67,14 +76,14 @@ const FolderWithResources = z.object({
     resources: Resources,
 })
 
-type FolderWithResources = z.infer<typeof FolderWithResources>
+export type FolderWithResources = z.infer<typeof FolderWithResources>
 
 const Response = z.object({
     success: z.boolean(),
     message: z.string().optional(),
 })
 
-type Response = z.infer<typeof Response>
+export type Response = z.infer<typeof Response>
 
 export const GetAssetInput = z.object({
     id: z.string(),

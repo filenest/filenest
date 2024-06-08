@@ -15,7 +15,7 @@ import {
     Response,
 } from "./types"
 
-export { Cloudinary } from "./providers/Cloudinary"
+export * from "./providers"
 export * from "./adapters"
 
 /**
