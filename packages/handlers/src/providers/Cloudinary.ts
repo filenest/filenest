@@ -1,13 +1,16 @@
+import crypto from "crypto"
 import { Provider } from ".."
 
 import {
-    type GetResourcesByFolderInput,
-    type GetAssetsInput,
+    type Asset,
     type AssetType,
-    type GetAssetInput,
     type CreateFolderInput,
-    type RenameFolderInput,
     type DeleteFolderInput,
+    type GetAssetInput,
+    type GetAssetsInput,
+    type GetResourcesByFolderInput,
+    type RenameFolderInput,
+    type UploadInput,
 } from "../types"
 
 type CloudinaryConfig = {
@@ -19,6 +22,8 @@ type CloudinaryConfig = {
 export class Cloudinary implements Provider {
     private URL: string
     private MAX_RESULTS = 50
+    private API_SECRET: string
+    private API_KEY: string
     private HEADERS: Headers
     private async doFetch(url: string | URL, init?: RequestInit) {
         return fetch(url, { headers: this.HEADERS, ...init }).then((res) => res.json())
@@ -26,10 +31,29 @@ export class Cloudinary implements Provider {
 
     constructor(config: CloudinaryConfig) {
         const { API_KEY, API_SECRET, CLOUD_NAME } = config
+        this.API_SECRET = API_SECRET
+        this.API_KEY = API_KEY
         this.URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}`
         this.HEADERS = new Headers({
             Authorization: `Basic ${btoa(`${API_KEY}:${API_SECRET}`)}`,
         })
+    }
+
+    private makeSignature(params: Record<string, any>) {
+        const { API_SECRET } = this
+        const q = Object.keys(params)
+            .sort()
+            .map((key) => `${key}=${params[key]}`)
+            .join("&")
+        const hash = crypto.createHash("sha1")
+        hash.update(q + API_SECRET)
+        return hash.digest("hex")
+    }
+
+    private async getConfig() {
+        const url = new URL(this.URL.toString() + "/config")
+        url.searchParams.append("settings", "true")
+        return (await this.doFetch(url)) as CloudinaryEnvironment
     }
 
     private mapResourceType(type: string) {
@@ -139,16 +163,13 @@ export class Cloudinary implements Provider {
     public async renameFolder(input: RenameFolderInput) {
         // We need to check if environment uses fixed or dynamic folder mode.
         // Only dynamic folder mode supports renaming folders.
-        let url = new URL(this.URL.toString() + "/config")
-        url.searchParams.append("settings", "true")
-
-        const config: CloudinaryEnvironment = await this.doFetch(url)
+        const config = await this.getConfig()
 
         if (config.settings.folder_mode === "fixed") {
             throw new Error("Renaming folders is not supported in fixed folder mode.")
         }
 
-        url = new URL(this.URL.toString() + "/folders/" + input.path)
+        const url = new URL(this.URL.toString() + "/folders/" + input.path)
         url.searchParams.append("to_folder", input.newPath)
 
         const folder: { from: CloudinaryFolder; to: CloudinaryFolder } = await this.doFetch(url, { method: "PUT" })
@@ -177,8 +198,48 @@ export class Cloudinary implements Provider {
         }
     }
 
-    public async upload() {
-        return null as any
+    public async upload(input: UploadInput) {
+        const config = await this.getConfig()
+
+        const uploadedFiles: Asset[] = await Promise.all(
+            input.files.map((file) => {
+                const url = new URL(this.URL.toString() + "/auto/upload")
+
+                const filename = file.name
+                const publicId = input.folder ? `${input.folder}/${filename}` : filename
+                const timestamp = Math.floor(Date.now() / 1000)
+                const folder: Record<string, any> = {}
+
+                url.searchParams.append("api_key", this.API_KEY)
+                url.searchParams.append("file", file.arrayBuffer.toString())
+                url.searchParams.append("timestamp", timestamp.toString())
+                url.searchParams.append("use_filename", "true")
+
+                if (config.settings.folder_mode === "dynamic") {
+                    url.searchParams.append("asset_folder", input.folder || "")
+                    folder.asset_folder = input.folder || ""
+                }
+
+                if (config.settings.folder_mode === "fixed") {
+                    url.searchParams.append("folder", input.folder || "")
+                    folder.folder = input.folder || ""
+                }
+
+                const signature = this.makeSignature({
+                    timestamp,
+                    use_filename: "true",
+                    ...folder,
+                })
+
+                url.searchParams.append("signature", signature)
+
+                url.searchParams.sort()
+
+                return this.doFetch(url, { method: "POST" })
+            })
+        )
+
+        return uploadedFiles
     }
 
     public async renameAsset() {

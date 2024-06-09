@@ -133,7 +133,7 @@ export type DeleteFolderReturn = z.infer<typeof DeleteFolderReturn>
 
 export const UploadInput = z.object({
     files: z.array(z.instanceof(File)),
-    folder: z.string(),
+    folder: z.string().optional(),
 })
 export type UploadInput = z.infer<typeof UploadInput>
 
