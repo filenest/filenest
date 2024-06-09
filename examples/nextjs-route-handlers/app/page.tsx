@@ -1,5 +1,6 @@
 "use client"
 
+import { MediaLibrary } from "@/components/MediaLibrary__Custom-Components"
 import { type Asset } from "@filenest/handlers"
 import { useState } from "react"
 
@@ -9,10 +10,7 @@ export default function Home() {
 
     return (
         <main>
-            <Filenest
-                endpoint="/api/media"
-                onFileSelect={(file) => console.log(file)}
-            />
+            <MediaLibrary/>
         </main>
     )
 }
