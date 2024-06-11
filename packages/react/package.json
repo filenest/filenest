@@ -12,6 +12,7 @@
         "@radix-ui/react-dropdown-menu": "^2"
     },
     "peerDependencies": {
+        "@filenest/handlers": "0.1.0",
         "react": ">=18",
         "react-dom": ">=18"
     },
