@@ -1,28 +1,9 @@
 "use client"
 
-import { Filenest } from "@filenest/react"
+import { Filenest, FilenestRootProps } from "@filenest/react"
 import { Fragment } from "react"
 
-export const MediaLibrary = ({
-    uploadMultiple = false,
-    dialogTrigger,
-    renderMode
-}: {
-    uploadMultiple?: boolean
-    dialogTrigger: React.ReactNode
-    renderMode: string
-}) => {
-    return (
-        <Filenest.Root
-            bundle={MediaLibraryBundle}
-            dialog={MediaLibraryDialog}
-            dialogTrigger={dialogTrigger}
-            uploader={MediaLibraryUploader}
-            uploadMultiple={uploadMultiple}
-            renderMode={renderMode}
-        />
-    )
-}
+export const MediaLibrary = Filenest.Root
 
 const MediaLibraryUploader = () => {
     return <Filenest.Uploader onUpload={} />
@@ -75,3 +56,10 @@ const MediaLibraryBundle = () => {
         </Filenest.Bundle>
     )
 }
+
+export const config = {
+    endpoint: "/api/media",
+    bundle: <MediaLibraryBundle/>,
+    dialog: <MediaLibraryDialog/>,
+    uploader: <MediaLibraryUploader/>
+} satisfies Partial<FilenestRootProps<any>>

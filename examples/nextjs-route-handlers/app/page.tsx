@@ -1,6 +1,6 @@
 "use client"
 
-import { MediaLibrary } from "@/components/MediaLibrary__Custom-Components"
+import { MediaLibrary, config } from "@/components/MediaLibrary__Custom-Components"
 import { type Asset } from "@filenest/handlers"
 import { useState } from "react"
 
@@ -10,7 +10,10 @@ export default function Home() {
 
     return (
         <main>
-            <MediaLibrary/>
+            <MediaLibrary
+                renderMode="bundle"
+                {...config}
+            />
         </main>
     )
 }
