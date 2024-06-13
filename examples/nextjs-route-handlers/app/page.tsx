@@ -5,15 +5,11 @@ import { type Asset } from "@filenest/handlers"
 import { useState } from "react"
 
 export default function Home() {
-
     const [selectedFiles, setSelectedFiles] = useState<Asset[]>([])
 
     return (
         <main>
-            <MediaLibrary
-                renderMode="bundle"
-                {...config}
-            />
+            <MediaLibrary renderMode="bundle" {...config} />
         </main>
     )
 }

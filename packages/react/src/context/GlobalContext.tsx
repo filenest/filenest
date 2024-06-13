@@ -2,14 +2,14 @@
 
 import { useQuery, type UseQueryResult } from "@tanstack/react-query"
 import { createContext, useContext, useState } from "react"
+import type { Folder, GetResourcesByFolderReturn } from "@filenest/handlers"
 import type { RenderMode } from "../utils/types"
 import { getResourcesByFolder } from "../utils/fetchers"
-import type { GetResourcesByFolderReturn } from "@filenest/handlers"
 
 export interface GlobalContext {
-    currentFolder: string
+    currentFolder: Folder
     endpoint: string
-    navigateTo: (folder: string) => void
+    navigateTo: (folder: Folder) => void
     renderMode: RenderMode
     resources?: GetResourcesByFolderReturn | undefined
     resourcesQuery: UseQueryResult<GetResourcesByFolderReturn, Error>
@@ -37,21 +37,18 @@ interface GlobalProviderProps {
     }
 }
 
-export const GlobalProvider = ({
-    children,
-    config
-}: GlobalProviderProps) => {
+export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
     const { endpoint, renderMode, uploadMultiple, dialogTrigger } = config
 
-    const [currentFolder, setCurrentFolder] = useState<string>("")
+    const [currentFolder, setCurrentFolder] = useState<Folder>({ id: "home", path: "", name: "Home" })
 
-    function navigateTo(folder: string) {
+    function navigateTo(folder: Folder) {
         setCurrentFolder(folder)
     }
 
     const resourcesQuery = useQuery({
         queryKey: ["folderWithResources", currentFolder],
-        queryFn: () => getResourcesByFolder({ endpoint, folder: currentFolder })
+        queryFn: () => getResourcesByFolder({ endpoint, folder: currentFolder.path }),
     })
 
     const contextValue = {
@@ -62,12 +59,8 @@ export const GlobalProvider = ({
         resources: resourcesQuery.data,
         resourcesQuery,
         uploadMultiple: uploadMultiple || false,
-        dialogTrigger
+        dialogTrigger,
     }
 
-    return (
-        <GlobalContext.Provider value={contextValue}>
-            {children}
-        </GlobalContext.Provider>
-    )
+    return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>
 }

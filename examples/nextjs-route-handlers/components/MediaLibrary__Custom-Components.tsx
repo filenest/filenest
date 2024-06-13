@@ -6,11 +6,11 @@ import { Fragment } from "react"
 export const MediaLibrary = Filenest.Root
 
 const MediaLibraryUploader = () => {
-    return <Filenest.Uploader onUpload={} />
+    return <Filenest.Uploader/>
 }
 
 const MediaLibraryDialog = () => {
-    return <Filenest.Dialog onSelect={} />
+    return <Filenest.Dialog/>
 }
 
 const MediaLibraryBundle = () => {
@@ -19,15 +19,15 @@ const MediaLibraryBundle = () => {
             <h2>My Media</h2>
 
             <Filenest.Navigation>
-                {({ navigation, navigateTo }) => (
-                    {navigation.map((folder, index) => (
+                {({ navigateTo, navigation }) => (
+                    navigation.map((folder, index) => (
                         <Fragment>
                             <div key={folder.path} className="" onClick={() => navigateTo(folder)}>
                                 {folder.name}
                             </div>
                             {index < navigation.length - 1 && <span>/</span>}
                         </Fragment>
-                    ))}
+                    ))
                 )}
             </Filenest.Navigation>
 
