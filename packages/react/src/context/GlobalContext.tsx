@@ -9,6 +9,7 @@ import { getResourcesByFolder } from "../utils/fetchers"
 export interface GlobalContext {
     currentFolder: Folder
     endpoint: string
+    navigation: Folder[]
     navigateTo: (folder: Folder) => void
     renderMode: RenderMode
     resources?: GetResourcesByFolderReturn | undefined
@@ -42,8 +43,14 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
 
     const [currentFolder, setCurrentFolder] = useState<Folder>({ id: "home", path: "", name: "Home" })
 
+    const [navigation, setNavigation] = useState<Folder[]>([{ id: "home", path: "", name: "Home" }])
+
     function navigateTo(folder: Folder) {
         setCurrentFolder(folder)
+        setNavigation((curr) => {
+            const index = curr.findIndex((f) => f.path === folder.path)
+            return index === -1 ? [...curr, folder] : curr.slice(0, index + 1)
+        })
     }
 
     const resourcesQuery = useQuery({
@@ -54,6 +61,7 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
     const contextValue = {
         currentFolder,
         endpoint,
+        navigation,
         navigateTo,
         renderMode,
         resources: resourcesQuery.data,

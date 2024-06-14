@@ -25,21 +25,11 @@ interface NavigationProviderProps {
 
 export const NavigationProvider = ({ children }: NavigationProviderProps) => {
 
-    const { navigateTo } = useGlobalContext()
-
-    const [navigation, setNavigation] = useState<Folder[]>([{ id: "home", path: "", name: "Home" }])
-
-    function navigateFolder(folder: Folder) {
-        navigateTo(folder)
-        setNavigation((curr) => {
-            const index = curr.findIndex((f) => f.path === folder.path)
-            return index === -1 ? [...curr, folder] : curr.slice(0, index + 1)
-        })
-    }
+    const { navigateTo, navigation } = useGlobalContext()
 
     const contextValue = {
         navigation,
-        navigateTo: navigateFolder,
+        navigateTo,
     }
 
     return <NavigationContext.Provider value={contextValue}>{children}</NavigationContext.Provider>

@@ -21,8 +21,8 @@ const MediaLibraryBundle = () => {
             <Filenest.Navigation>
                 {({ navigateTo, navigation }) => (
                     navigation.map((folder, index) => (
-                        <Fragment>
-                            <div key={folder.path} className="" onClick={() => navigateTo(folder)}>
+                        <Fragment key={folder.path}>
+                            <div onClick={() => navigateTo(folder)}>
                                 {folder.name}
                             </div>
                             {index < navigation.length - 1 && <span>/</span>}
@@ -32,17 +32,17 @@ const MediaLibraryBundle = () => {
             </Filenest.Navigation>
 
             <Filenest.FolderList>
-                {({ folders, navigateTo }) => (
-                    {folders.map((folder) => (
-                        <Filenest.Folder key={folder.path} className="" onClick={() => navigateTo(folder)}>
+                {({ folders }) => (
+                    folders?.map((folder) => (
+                        <Filenest.Folder key={folder.path} folder={folder}>
                             {folder.name}
                             // Add folder actions here
                         </Filenest.Folder>
-                    ))}
+                    ))
                 )}
             </Filenest.FolderList>
 
-            <Filenest.AssetList>
+            {/* <Filenest.AssetList>
                 <Filenest.DragDropIndicator>
                     Drop files to upload
                 </Filenest.DragDropIndicator>
@@ -52,7 +52,7 @@ const MediaLibraryBundle = () => {
                     ))}
                 )}
             </Filenest.AssetList>
-            <Filenest.AssetDetails />
+            <Filenest.AssetDetails /> */}
         </Filenest.Bundle>
     )
 }

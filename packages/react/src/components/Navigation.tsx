@@ -3,10 +3,10 @@
 import { Fragment } from "react"
 import { NavigationProvider, useNavigationContext } from "../context/NavigationContext"
 
-const NavigationWrapper = ({ children }: NavigationProps) => {
+const NavigationWrapper = (props: NavigationProps) => {
     return (
         <NavigationProvider>
-            <Navigation children={children} />
+            <Navigation {...props} />
         </NavigationProvider>
     )
 }
@@ -36,8 +36,8 @@ const Navigation = ({ children, classNames }: NavigationProps) => {
     return (
         <div className={classNames?.container}>
             {navigation.map((folder, index) => (
-                <Fragment>
-                    <div key={folder.path} className={classNames?.item} onClick={() => navigateTo(folder)}>
+                <Fragment key={folder.path}>
+                    <div className={classNames?.item} onClick={() => navigateTo(folder)}>
                         {folder.name}
                     </div>
                     {index < navigation.length - 1 && <div className={classNames?.seperator}>/</div>}
