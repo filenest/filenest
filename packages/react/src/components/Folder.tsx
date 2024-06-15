@@ -7,6 +7,7 @@ interface RenderProps {
     actions: {
         delete: () => void
         rename: () => void
+        navigateTo: () => void
     }
     state: {
         isRenaming: boolean
@@ -15,22 +16,17 @@ interface RenderProps {
 }
 
 interface FolderProps {
-    children?: ((props: RenderProps) => React.ReactNode) | React.ReactNode
+    children: ((props: RenderProps) => React.ReactNode) | React.ReactNode
     folder: FolderType
-    classNames?: {
-        item?: string
-        actionListTrigger?: string
-        actionList?: string
-        actionListItem?: string
-    }
 }
 
-export const Folder = ({ children, folder, classNames }: FolderProps) => {
+export const Folder = ({ children, folder }: FolderProps) => {
     const { navigateTo } = useGlobalContext()
 
     const actions = {
         async delete() {},
         async rename() {},
+        navigateTo: () => navigateTo(folder),
     }
 
     const state = {
@@ -38,14 +34,10 @@ export const Folder = ({ children, folder, classNames }: FolderProps) => {
         isLoading: false,
     }
 
-    if (children && typeof children === "function") {
-        return <div onClick={() => navigateTo(folder)}>{children({ actions, state })}</div>
+
+    if (typeof children === "function") {
+        return children({ actions, state })
     }
 
-    return (
-        <div onClick={() => navigateTo(folder)} className={classNames?.item}>
-            {folder.name}
-            <div className={classNames?.actionListTrigger}></div>
-        </div>
-    )
+    return children
 }

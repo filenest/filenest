@@ -1,6 +1,5 @@
 "use client"
 
-import { Fragment } from "react"
 import { NavigationProvider, useNavigationContext } from "../context/NavigationContext"
 
 const NavigationWrapper = (props: NavigationProps) => {
@@ -11,40 +10,23 @@ const NavigationWrapper = (props: NavigationProps) => {
     )
 }
 
-interface NavigationProps {
-    children?: ({
-        navigateTo,
-        navigation,
-    }: {
-        navigateTo: ReturnType<typeof useNavigationContext>["navigateTo"]
-        navigation: ReturnType<typeof useNavigationContext>["navigation"]
-    }) => React.ReactNode | React.ReactNode
-    classNames?: {
-        container?: string
-        item?: string
-        seperator?: string
-    }
+interface RenderProps {
+    navigateTo: ReturnType<typeof useNavigationContext>["navigateTo"]
+    navigation: ReturnType<typeof useNavigationContext>["navigation"]
 }
 
-const Navigation = ({ children, classNames }: NavigationProps) => {
+interface NavigationProps {
+    children: ((props: RenderProps) => React.ReactNode) | React.ReactNode
+}
+
+const Navigation = ({ children }: NavigationProps) => {
     const { navigateTo, navigation } = useNavigationContext()
 
-    if (children) {
+    if (typeof children === "function") {
         return children({ navigateTo, navigation })
     }
 
-    return (
-        <div className={classNames?.container}>
-            {navigation.map((folder, index) => (
-                <Fragment key={folder.path}>
-                    <div className={classNames?.item} onClick={() => navigateTo(folder)}>
-                        {folder.name}
-                    </div>
-                    {index < navigation.length - 1 && <div className={classNames?.seperator}>/</div>}
-                </Fragment>
-            ))}
-        </div>
-    )
+    return children
 }
 
 export { NavigationWrapper as Navigation }

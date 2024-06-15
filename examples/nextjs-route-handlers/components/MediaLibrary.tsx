@@ -1,6 +1,7 @@
 "use client"
 
 import { Filenest, FilenestRootProps } from "@filenest/react"
+import { count } from "console"
 import { Fragment } from "react"
 
 export const MediaLibrary = Filenest.Root
@@ -30,17 +31,30 @@ const MediaLibraryBundle = () => {
             </Filenest.Navigation>
 
             <Filenest.FolderList>
-                {({ folders, isLoading }) => {
-                    if (isLoading) {
-                        return Array.from({ length: 5 }).map((_, i) => <div key={i}>Loading...</div>)
-                    }
-                    return folders?.map((folder) => (
-                        <Filenest.Folder key={folder.path} folder={folder}>
-                            {folder.name}
-                            // Add folder actions here
-                        </Filenest.Folder>
-                    ))
-                }}
+                {({ folders, isLoading }) => (
+                    <div className="flex gap-2">
+                        {isLoading
+                            ? Array.from({ length: 5 }).map((_, i) => (
+                                  <div
+                                      key={i}
+                                      className="w-24 h-[34px] border border-gray-300 bg-gray-100 animate-pulse rounded"
+                                  />
+                              ))
+                            : folders?.map((folder) => (
+                                  <Filenest.Folder key={folder.path} folder={folder}>
+                                      {({ actions, state }) => (
+                                          <div
+                                              onClick={actions.navigateTo}
+                                              className="px-2 py-1 border border-gray-300 rounded cursor-pointer hover:bg-gray-100"
+                                          >
+                                              {state.isLoading ? "🔄" : "📁"}
+                                              {folder.name}
+                                          </div>
+                                      )}
+                                  </Filenest.Folder>
+                              ))}
+                    </div>
+                )}
             </Filenest.FolderList>
 
             {/* <Filenest.AssetList>

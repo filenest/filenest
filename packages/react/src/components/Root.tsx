@@ -18,7 +18,13 @@ export type FilenestRootProps<R extends RenderMode> = R extends "dialog"
     ? FilenestBaseProps<R> & { uploadMultiple: boolean; dialogTrigger?: never }
     : FilenestBaseProps<R> & { dialogTrigger?: never; uploadMultiple?: never }
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            refetchOnWindowFocus: false,
+        },
+    },
+})
 
 export const Root = <R extends RenderMode>({
     bundle,
