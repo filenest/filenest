@@ -17,10 +17,15 @@ interface RenderProps {
 interface FolderProps {
     children?: ((props: RenderProps) => React.ReactNode) | React.ReactNode
     folder: FolderType
-    className?: string
+    classNames?: {
+        item?: string
+        actionListTrigger?: string
+        actionList?: string
+        actionListItem?: string
+    }
 }
 
-export const Folder = ({ children, folder, className }: FolderProps) => {
+export const Folder = ({ children, folder, classNames }: FolderProps) => {
     const { navigateTo } = useGlobalContext()
 
     const actions = {
@@ -35,13 +40,12 @@ export const Folder = ({ children, folder, className }: FolderProps) => {
 
     if (children && typeof children === "function") {
         return <div onClick={() => navigateTo(folder)}>{children({ actions, state })}</div>
-    } else if (children) {
-        return <div onClick={() => navigateTo(folder)}>{children}</div>
     }
 
     return (
-        <div onClick={() => navigateTo(folder)} className={className}>
+        <div onClick={() => navigateTo(folder)} className={classNames?.item}>
             {folder.name}
+            <div className={classNames?.actionListTrigger}></div>
         </div>
     )
 }

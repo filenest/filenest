@@ -46,6 +46,7 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
     const [navigation, setNavigation] = useState<Folder[]>([{ id: "home", path: "", name: "Home" }])
 
     function navigateTo(folder: Folder) {
+        if (folder.path === currentFolder.path) return
         setCurrentFolder(folder)
         setNavigation((curr) => {
             const index = curr.findIndex((f) => f.path === folder.path)

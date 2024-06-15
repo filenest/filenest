@@ -1,3 +1,6 @@
+import { inter } from "@/fonts"
+import "../styles/styles.scss"
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -5,7 +8,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body>{children}</body>
+            <body className={inter.className}>
+                <main className="mx-auto max-w-[1200px] py-16 px-6">{children}</main>
+            </body>
         </html>
     )
 }

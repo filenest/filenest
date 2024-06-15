@@ -6,11 +6,11 @@ import { Fragment } from "react"
 export const MediaLibrary = Filenest.Root
 
 const MediaLibraryUploader = () => {
-    return <Filenest.Uploader/>
+    return <Filenest.Uploader />
 }
 
 const MediaLibraryDialog = () => {
-    return <Filenest.Dialog/>
+    return <Filenest.Dialog />
 }
 
 const MediaLibraryBundle = () => {
@@ -19,27 +19,28 @@ const MediaLibraryBundle = () => {
             <h2>My Media</h2>
 
             <Filenest.Navigation>
-                {({ navigateTo, navigation }) => (
+                {({ navigateTo, navigation }) =>
                     navigation.map((folder, index) => (
                         <Fragment key={folder.path}>
-                            <div onClick={() => navigateTo(folder)}>
-                                {folder.name}
-                            </div>
+                            <div onClick={() => navigateTo(folder)}>{folder.name}</div>
                             {index < navigation.length - 1 && <span>/</span>}
                         </Fragment>
                     ))
-                )}
+                }
             </Filenest.Navigation>
 
             <Filenest.FolderList>
-                {({ folders }) => (
-                    folders?.map((folder) => (
+                {({ folders, isLoading }) => {
+                    if (isLoading) {
+                        return Array.from({ length: 5 }).map((_, i) => <div key={i}>Loading...</div>)
+                    }
+                    return folders?.map((folder) => (
                         <Filenest.Folder key={folder.path} folder={folder}>
                             {folder.name}
                             // Add folder actions here
                         </Filenest.Folder>
                     ))
-                )}
+                }}
             </Filenest.FolderList>
 
             {/* <Filenest.AssetList>
@@ -59,7 +60,7 @@ const MediaLibraryBundle = () => {
 
 export const config = {
     endpoint: "/api/media",
-    bundle: <MediaLibraryBundle/>,
-    dialog: <MediaLibraryDialog/>,
-    uploader: <MediaLibraryUploader/>
+    bundle: <MediaLibraryBundle />,
+    dialog: <MediaLibraryDialog />,
+    uploader: <MediaLibraryUploader />,
 } satisfies Partial<FilenestRootProps<any>>
