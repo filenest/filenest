@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext } from "react"
 import type {  Folder } from "@filenest/handlers"
 import { useGlobalContext } from "./GlobalContext"
 
