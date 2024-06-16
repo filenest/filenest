@@ -1,4 +1,4 @@
-import { Provider } from ".."
+import { type Provider } from ".."
 import { NextRequest, NextResponse } from "next/server"
 
 // TODO:
