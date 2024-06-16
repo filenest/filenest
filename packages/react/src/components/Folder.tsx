@@ -54,8 +54,7 @@ const FolderName = ({ className }: FolderNameProps) => {
         if (state.isRenaming && _internal._newName.length >= 1) {
             actions.rename()
         } else {
-            _internal._setNewName("")
-            _internal._setIsRenaming(false)
+            _internal._resetRename()
         }
     })
 
@@ -67,6 +66,14 @@ const FolderName = ({ className }: FolderNameProps) => {
         }
     }, [state.isRenaming])
 
+    function handleKeyDown(e: React.KeyboardEvent) {
+        if (e.key === "Enter") {
+            actions.rename()
+        } else if (e.key === "Escape") {
+            _internal._resetRename()
+        }
+    }
+
     if (state.isRenaming) {
         return (
             <input
@@ -77,6 +84,7 @@ const FolderName = ({ className }: FolderNameProps) => {
                     e.stopPropagation()
                     e.preventDefault()
                 }}
+                onKeyDown={handleKeyDown}
                 value={_internal._newName}
                 onChange={(e) => _internal._setNewName(e.target.value)}
             />

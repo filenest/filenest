@@ -19,6 +19,7 @@ export interface FolderInternals {
         _newName: string
         _setIsRenaming: (isRenaming: boolean) => void
         _setFolderName: (name: string) => void
+        _resetRename: () => void
     }
 }
 
@@ -49,6 +50,11 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
     const [isRenaming, setIsRenaming] = useState(false)
     const [newName, setNewName] = useState("")
 
+    function resetRename() {
+        setNewName("")
+        setIsRenaming(false)
+    }
+
     const actions = {
         async delete() {},
         async rename() {
@@ -58,8 +64,7 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
                 return
             }
             setFolderName(newName)
-            setNewName("")
-            setIsRenaming(false)
+            resetRename()
         },
         navigateTo: () => navigateTo(folder),
     }
@@ -74,6 +79,7 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
         _setNewName: setNewName,
         _setIsRenaming: setIsRenaming,
         _setFolderName: setFolderName,
+        _resetRename: resetRename,
     }
 
     const contextValue = {
