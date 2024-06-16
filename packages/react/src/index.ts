@@ -1,6 +1,6 @@
 import { Bundle } from "./components/Bundle"
 import { Dialog } from "./components/Dialog"
-import { Folder } from "./components/Folder"
+import { Folder, FolderEventTrigger, FolderName } from "./components/Folder"
 import { FolderList } from "./components/FolderList"
 import { Navigation } from "./components/Navigation"
 import { Root } from "./components/Root"
@@ -16,5 +16,7 @@ export const Filenest = {
     Bundle,
     Navigation,
     FolderList,
-    Folder
+    Folder,
+    FolderName,
+    FolderEventTrigger
 }

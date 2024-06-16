@@ -20,39 +20,63 @@ const MediaLibraryBundle = () => {
             <h2>My Media</h2>
 
             <Filenest.Navigation>
-                {({ navigateTo, navigation }) =>
-                    navigation.map((folder, index) => (
-                        <Fragment key={folder.path}>
-                            <div onClick={() => navigateTo(folder)}>{folder.name}</div>
-                            {index < navigation.length - 1 && <span>/</span>}
-                        </Fragment>
-                    ))
-                }
+                {({ navigateTo, navigation }) => (
+                    <div className="flex gap-1 my-4 items-center">
+                        {navigation.map((folder, index) => (
+                            <Fragment key={folder.path}>
+                                <div
+                                    onClick={() => navigateTo(folder)}
+                                    className="py-1 px-2 hover:bg-gray-100 rounded cursor-pointer"
+                                >
+                                    {folder.name}
+                                </div>
+                                {index < navigation.length - 1 && <span>/</span>}
+                            </Fragment>
+                        ))}
+                    </div>
+                )}
             </Filenest.Navigation>
 
             <Filenest.FolderList>
                 {({ folders, isLoading }) => (
                     <div className="flex gap-2">
-                        {isLoading
-                            ? Array.from({ length: 5 }).map((_, i) => (
-                                  <div
-                                      key={i}
-                                      className="w-24 h-[34px] border border-gray-300 bg-gray-100 animate-pulse rounded"
-                                  />
-                              ))
-                            : folders?.map((folder) => (
-                                  <Filenest.Folder key={folder.path} folder={folder}>
-                                      {({ actions, state }) => (
-                                          <div
-                                              onClick={actions.navigateTo}
-                                              className="px-2 py-1 border border-gray-300 rounded cursor-pointer hover:bg-gray-100"
-                                          >
-                                              {state.isLoading ? "🔄" : "📁"}
-                                              {folder.name}
-                                          </div>
-                                      )}
-                                  </Filenest.Folder>
-                              ))}
+                        {isLoading &&
+                            Array.from({ length: 5 }).map((_, i) => (
+                                <div
+                                    key={i}
+                                    className="w-24 h-[34px] border border-gray-300 bg-gray-100 animate-pulse rounded"
+                                />
+                            ))}
+                        {!isLoading &&
+                            folders?.map((folder) => (
+                                <Filenest.Folder key={folder.path} folder={folder}>
+                                    {({ actions, state }) => (
+                                        <div
+                                            onClick={actions.navigateTo}
+                                            className="px-2 py-1 border border-gray-300 rounded cursor-pointer hover:bg-gray-100"
+                                        >
+                                            <div className="flex gap-1">
+                                                {state.isLoading ? "🔄" : "📁"}
+                                                <Filenest.FolderName />
+                                            </div>
+                                            <div className="flex gap-2 text-xs">
+                                                <Filenest.FolderEventTrigger
+                                                    action="rename"
+                                                    className="hover:underline"
+                                                >
+                                                    Rename
+                                                </Filenest.FolderEventTrigger>
+                                                <Filenest.FolderEventTrigger
+                                                    action="delete"
+                                                    className="hover:underline"
+                                                >
+                                                    Delete
+                                                </Filenest.FolderEventTrigger>
+                                            </div>
+                                        </div>
+                                    )}
+                                </Filenest.Folder>
+                            ))}
                     </div>
                 )}
             </Filenest.FolderList>
