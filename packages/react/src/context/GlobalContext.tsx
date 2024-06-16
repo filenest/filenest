@@ -1,9 +1,9 @@
 "use client"
 
 import { useQuery, type UseQueryResult } from "@tanstack/react-query"
-import { createContext, useContext, useState } from "react"
-import type { Folder, GetResourcesByFolderReturn } from "@filenest/handlers"
-import type { RenderMode } from "../utils/types"
+import { createContext, useContext, useEffect, useState } from "react"
+import type { Folder, FolderWithResources, GetResourcesByFolderReturn } from "@filenest/handlers"
+import type { RenderMode, SetState } from "../utils/types"
 import { getResourcesByFolder } from "../utils/fetchers"
 
 export interface GlobalContext {
@@ -12,7 +12,8 @@ export interface GlobalContext {
     navigation: Folder[]
     navigateTo: (folder: Folder) => void
     renderMode: RenderMode
-    resources?: GetResourcesByFolderReturn | undefined
+    resources?: FolderWithResources | undefined
+    setResources: SetState<FolderWithResources | undefined>
     resourcesQuery: UseQueryResult<GetResourcesByFolderReturn, Error>
     uploadMultiple: boolean
     dialogTrigger: React.ReactNode
@@ -59,13 +60,22 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         queryFn: () => getResourcesByFolder({ endpoint, folder: currentFolder.path }),
     })
 
+    const [data, setData] = useState<FolderWithResources>()
+
+    useEffect(() => {
+        if (resourcesQuery.data) {
+            setData(resourcesQuery.data)
+        }
+    }, [resourcesQuery.data])
+
     const contextValue = {
         currentFolder,
         endpoint,
         navigation,
         navigateTo,
         renderMode,
-        resources: resourcesQuery.data,
+        resources: data,
+        setResources: setData,
         resourcesQuery,
         uploadMultiple: uploadMultiple || false,
         dialogTrigger,

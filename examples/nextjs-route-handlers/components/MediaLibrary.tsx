@@ -1,7 +1,6 @@
 "use client"
 
 import { Filenest, FilenestRootProps } from "@filenest/react"
-import { count } from "console"
 import { Fragment } from "react"
 
 export const MediaLibrary = Filenest.Root
@@ -44,8 +43,10 @@ const MediaLibraryBundle = () => {
                             Array.from({ length: 5 }).map((_, i) => (
                                 <div
                                     key={i}
-                                    className="w-28 h-[50px] border border-gray-300 bg-gray-100 animate-pulse rounded"
-                                />
+                                    className="w-28 p-2 h-[50px] border border-gray-300 bg-gray-100 animate-pulse rounded"
+                                >
+                                    <div className="rounded-sm animate-pulse bg-gray-400 h-4"/>
+                                </div>
                             ))}
                         {!isLoading &&
                             folders?.map((folder) => (

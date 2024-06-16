@@ -1,5 +1,5 @@
 import crypto from "crypto"
-import { Provider } from ".."
+import { type Provider } from ".."
 
 import {
     type Asset,

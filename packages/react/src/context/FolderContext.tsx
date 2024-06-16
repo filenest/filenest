@@ -3,6 +3,7 @@
 import type { Folder } from "@filenest/handlers"
 import { createContext, useContext, useState } from "react"
 import { useGlobalContext } from "./GlobalContext"
+import { renameFolder } from "../utils/fetchers"
 
 export interface FolderInternals {
     actions: {
@@ -43,9 +44,11 @@ interface FolderProviderProps {
 }
 
 export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
-    const { navigateTo } = useGlobalContext()
+    const { navigateTo, endpoint, setResources } = useGlobalContext()
 
     const [folderName, setFolderName] = useState(folder.name)
+
+    const [isLoading, setIsLoading] = useState(false)
 
     const [isRenaming, setIsRenaming] = useState(false)
     const [newName, setNewName] = useState("")
@@ -57,21 +60,55 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
 
     const actions = {
         async delete() {},
+
         async rename() {
             if (newName.length < 1) {
                 setIsRenaming(true)
                 setNewName(folderName)
                 return
             }
+
             setFolderName(newName)
             resetRename()
+
+            try {
+                setIsLoading(true)
+                const result = await renameFolder({
+                    endpoint,
+                    path: folder.path,
+                    newPath: folder.path.replace(folder.name, newName),
+                })
+
+                setResources((prev) => {
+                    if (!prev) return prev
+                    const currentFolders = prev?.resources.folders.data
+                    const newFolders = [...currentFolders, result]
+                        .filter((f) => f.id !== folder.id)
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                    
+                    return {
+                        ...prev,
+                        resources: {
+                            ...prev.resources,
+                            folders: {
+                                ...prev.resources.folders,
+                                data: newFolders,
+                            },
+                        },
+                    }
+                })
+            } catch (error) {
+                console.error("[Filenest] Error renaming folder:", error)
+            }
+            setIsLoading(false)
         },
+
         navigateTo: () => navigateTo(folder),
     }
 
     const state = {
         isRenaming,
-        isLoading: false,
+        isLoading,
     }
 
     const _internal = {
