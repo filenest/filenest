@@ -64,7 +64,24 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
 
     useEffect(() => {
         if (resourcesQuery.data) {
-            setData(resourcesQuery.data)
+            setData({
+                ...resourcesQuery.data,
+                resources: {
+                    ...resourcesQuery.data.resources,
+                    folders: {
+                        ...resourcesQuery.data.resources.folders,
+                        data: resourcesQuery.data.resources.folders.data.map((f) => ({
+                            ...f,
+                            // This is a bit fucked up. We need a way to define some initial state for folders.
+                            // When creating a new folder it should initially have the isRenaming state,
+                            // so that an input is shown to let you enter a folder name.
+                            // See `FolderListContext.tsx`
+                            isLoading: false,
+                            isRenaming: false,
+                        })),
+                    },
+                },
+            })
         }
     }, [resourcesQuery.data])
 

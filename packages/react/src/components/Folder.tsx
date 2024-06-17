@@ -5,6 +5,9 @@ import { FolderProvider, useFolderContext, type FolderInternals } from "../conte
 import { useEffect, useRef } from "react"
 import { useClickOutside } from "../utils/useClickOutside"
 import { useMergedRef } from "../utils/useMergedRef"
+import { useFolderListContext } from "../context/FolderListContext"
+import { createFolder } from "../utils/fetchers"
+import { useGlobalContext } from "../context/GlobalContext"
 
 interface RenderProps extends Omit<FolderInternals, "_internal"> {
     stopPropagate: {
@@ -48,15 +51,29 @@ interface FolderNameProps {
 
 const FolderName = ({ className }: FolderNameProps) => {
     const { folder, state, actions, _internal } = useFolderContext()
+    const { endpoint, currentFolder, setResources } = useGlobalContext()
 
     const inputRef = useRef<HTMLInputElement>(null)
     const clickOutsideRef = useClickOutside(() => {
         if (state.isRenaming && _internal._newName.length >= 1) {
-            actions.rename()
+            if (isTemporary) {
+                createNewFolder()
+            } else {
+                actions.rename()
+            }
         } else {
             _internal._resetRename()
+            removeIfTemporary()
         }
     })
+
+    const isTemporary = folder.id.includes("__filenest-temporary")
+
+    function removeIfTemporary() {
+        if (isTemporary) {
+            _internal._removeFolderFromState(folder.id)
+        }
+    }
 
     const ref = useMergedRef(inputRef, clickOutsideRef)
 
@@ -68,10 +85,44 @@ const FolderName = ({ className }: FolderNameProps) => {
 
     function handleKeyDown(e: React.KeyboardEvent) {
         if (e.key === "Enter") {
-            actions.rename()
+            if (isTemporary) {
+                createNewFolder()
+            } else {
+                actions.rename()
+            }
         } else if (e.key === "Escape") {
             _internal._resetRename()
+            removeIfTemporary()
         }
+    }
+
+    async function createNewFolder() {
+        if (_internal._newName.length < 1) return
+        _internal._setIsLoading(true)
+        try {
+            const newFolder = await createFolder({
+                endpoint,
+                path: currentFolder.path + "/" + _internal._newName,
+            })
+            removeIfTemporary()
+            setResources((prev) => {
+                if (!prev) return prev
+                const currentFolders = prev?.resources.folders.data
+                return {
+                    ...prev,
+                    resources: {
+                        ...prev.resources,
+                        folders: {
+                            ...prev.resources.folders,
+                            data: [...currentFolders, newFolder].sort((a, b) => a.name.localeCompare(b.name)),
+                        },
+                    },
+                }
+            })
+        } catch (error) {
+            console.error("[Filenest] Error creating folder:", error)
+        }
+        _internal._setIsLoading(false)
     }
 
     if (state.isRenaming) {
@@ -116,4 +167,19 @@ const FolderEventTrigger = ({ action, children, className }: FolderEventTriggerP
     )
 }
 
-export { FolderWrapper as Folder, FolderName, FolderEventTrigger }
+interface FolderCreateTriggerProps {
+    children: React.ReactNode
+    className?: string
+}
+
+const FolderCreateTrigger = ({ children, className }: FolderCreateTriggerProps) => {
+    const { createFolder } = useFolderListContext()
+
+    return (
+        <div className={className} onClick={createFolder}>
+            {children}
+        </div>
+    )
+}
+
+export { FolderWrapper as Folder, FolderName, FolderEventTrigger, FolderCreateTrigger }

@@ -4,6 +4,7 @@ import type { Folder } from "@filenest/handlers"
 import { createContext, useContext, useState } from "react"
 import { useGlobalContext } from "./GlobalContext"
 import { renameFolder } from "../utils/fetchers"
+import type { SetState } from "../utils/types"
 
 export interface FolderInternals {
     actions: {
@@ -16,11 +17,13 @@ export interface FolderInternals {
         isLoading: boolean
     }
     _internal: {
-        _setNewName: (name: string) => void
+        _setNewName: SetState<string>
         _newName: string
-        _setIsRenaming: (isRenaming: boolean) => void
-        _setFolderName: (name: string) => void
+        _setIsRenaming: SetState<boolean>
+        _setFolderName: SetState<string>
         _resetRename: () => void
+        _removeFolderFromState: (id: string) => void
+        _setIsLoading: SetState<boolean>
     }
 }
 
@@ -45,17 +48,36 @@ interface FolderProviderProps {
 
 export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
     const { navigateTo, endpoint, setResources } = useGlobalContext()
+    const _folder = folder as Folder & FolderInternals["state"]
 
     const [folderName, setFolderName] = useState(folder.name)
 
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(_folder.isLoading || false)
 
-    const [isRenaming, setIsRenaming] = useState(false)
+    const [isRenaming, setIsRenaming] = useState(_folder.isRenaming || false)
     const [newName, setNewName] = useState("")
 
     function resetRename() {
         setNewName("")
         setIsRenaming(false)
+    }
+
+    function removeFolderFromState(id: string) {
+        setResources((prev) => {
+            if (!prev) return prev
+            const currentFolders = prev?.resources.folders.data
+            const newFolders = currentFolders.filter((f) => f.id !== id)
+            return {
+                ...prev,
+                resources: {
+                    ...prev.resources,
+                    folders: {
+                        ...prev.resources.folders,
+                        data: newFolders,
+                    },
+                },
+            }
+        })
     }
 
     const actions = {
@@ -117,6 +139,8 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
         _setIsRenaming: setIsRenaming,
         _setFolderName: setFolderName,
         _resetRename: resetRename,
+        _removeFolderFromState: removeFolderFromState,
+        _setIsLoading: setIsLoading,
     }
 
     const contextValue = {

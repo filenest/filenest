@@ -45,39 +45,45 @@ const MediaLibraryBundle = () => {
                                     key={i}
                                     className="w-28 p-2 h-[50px] border border-gray-300 bg-gray-100 animate-pulse rounded"
                                 >
-                                    <div className="rounded-sm animate-pulse bg-gray-400 h-4"/>
+                                    <div className="rounded-sm animate-pulse bg-gray-400 h-4" />
                                 </div>
                             ))}
-                        {!isLoading &&
-                            folders?.map((folder) => (
-                                <Filenest.Folder key={folder.path} folder={folder}>
-                                    {({ actions, state }) => (
-                                        <div
-                                            onClick={actions.navigateTo}
-                                            className="px-2 py-1 border border-gray-300 rounded cursor-pointer hover:bg-gray-100"
-                                        >
-                                            <div className="flex gap-1">
-                                                {state.isLoading ? "🔄" : "📁"}
-                                                <Filenest.FolderName />
+                        {!isLoading && (
+                            <Fragment>
+                                {folders?.map((folder) => (
+                                    <Filenest.Folder key={folder.id} folder={folder}>
+                                        {({ actions, state }) => (
+                                            <div
+                                                onClick={actions.navigateTo}
+                                                className="px-2 py-1 border border-gray-300 rounded cursor-pointer hover:bg-gray-100"
+                                            >
+                                                <div className="flex gap-1">
+                                                    {state.isLoading ? "🔄" : "📁"}
+                                                    <Filenest.FolderName />
+                                                </div>
+                                                <div className="flex gap-2 text-xs">
+                                                    <Filenest.FolderEventTrigger
+                                                        action="rename"
+                                                        className="hover:underline"
+                                                    >
+                                                        Rename
+                                                    </Filenest.FolderEventTrigger>
+                                                    <Filenest.FolderEventTrigger
+                                                        action="delete"
+                                                        className="hover:underline"
+                                                    >
+                                                        Delete
+                                                    </Filenest.FolderEventTrigger>
+                                                </div>
                                             </div>
-                                            <div className="flex gap-2 text-xs">
-                                                <Filenest.FolderEventTrigger
-                                                    action="rename"
-                                                    className="hover:underline"
-                                                >
-                                                    Rename
-                                                </Filenest.FolderEventTrigger>
-                                                <Filenest.FolderEventTrigger
-                                                    action="delete"
-                                                    className="hover:underline"
-                                                >
-                                                    Delete
-                                                </Filenest.FolderEventTrigger>
-                                            </div>
-                                        </div>
-                                    )}
-                                </Filenest.Folder>
-                            ))}
+                                        )}
+                                    </Filenest.Folder>
+                                ))}
+                                <Filenest.FolderCreateTrigger className="flex items-center px-2 py-1 border border-gray-300 rounded cursor-pointer hover:bg-gray-100">
+                                    Create Folder
+                                </Filenest.FolderCreateTrigger>
+                            </Fragment>
+                        )}
                     </div>
                 )}
             </Filenest.FolderList>

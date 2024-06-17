@@ -1,4 +1,6 @@
 import {
+    CreateFolderInput,
+    CreateFolderReturn,
     DeleteFolderInput,
     DeleteFolderReturn,
     GetResourcesByFolderInput,
@@ -25,4 +27,8 @@ export async function renameFolder({ endpoint, ...input }: RenameFolderInput & W
 
 export async function deleteFolder({ endpoint, ...input }: DeleteFolderInput & WithEndpoint) {
     return (await handleFetch(endpoint, "/deleteFolder", input)) as DeleteFolderReturn
+}
+
+export async function createFolder({ endpoint, ...input }: CreateFolderInput & WithEndpoint) {
+    return (await handleFetch(endpoint, "/createFolder", input)) as CreateFolderReturn
 }
