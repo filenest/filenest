@@ -3,7 +3,7 @@
 import type { Folder } from "@filenest/handlers"
 import { createContext, useContext, useState } from "react"
 import { useGlobalContext } from "./GlobalContext"
-import { createFolder, renameFolder } from "../utils/fetchers"
+import { createFolder, deleteFolder, renameFolder } from "../utils/fetchers"
 import type { SetState } from "../utils/types"
 
 export interface FolderInternals {
@@ -56,7 +56,16 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
     }
 
     async function public_removeFolder() {
-        return null
+        try {
+            setIsLoading(true)
+            const result = await deleteFolder({ endpoint, path: folder.path })
+            if (result.success) {
+                removeFolderFromCurrDir(folder.id)
+            }
+        } catch (error) {
+            console.error("[Filenest] Error deleting folder:", error)
+        }
+        setIsLoading(false)
     }
 
     async function public_renameFolder() {

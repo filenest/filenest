@@ -124,7 +124,7 @@ export type RenameFolderReturn = z.infer<typeof RenameFolderReturn>
 
 export const DeleteFolderInput = z.object({
     path: z.string(),
-    force: z.boolean(),
+    force: z.boolean().optional(),
 })
 export type DeleteFolderInput = z.infer<typeof DeleteFolderInput>
 

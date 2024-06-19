@@ -1,18 +1,18 @@
 import {
     GetAssetInput,
-    Asset,
+    type Asset,
     GetAssetsInput,
-    Paginated,
+    type Paginated,
     GetResourcesByFolderInput,
-    FolderWithResources,
+    type FolderWithResources,
     CreateFolderInput,
-    Folder,
+    type Folder,
     RenameFolderInput,
     DeleteFolderInput,
     UploadInput,
     RenameAssetInput,
     DeleteAssetInput,
-    Response,
+    type Response,
 } from "./types"
 
 export * from "./types"

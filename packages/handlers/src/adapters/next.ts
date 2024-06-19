@@ -23,9 +23,14 @@ export function experimental_createNextRouteHandlers({ provider }: { provider: P
             body = {}
         }
 
-        const result = await provider[action](body)
+        try {
+            const result = await provider[action](body)
+            return NextResponse.json(result)
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "An unknown error occurred"
+            return NextResponse.json({ success: false, message }, { status: 500 })
+        }
 
-        return NextResponse.json(result)
     }
 
     return {

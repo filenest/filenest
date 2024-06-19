@@ -184,10 +184,13 @@ export class Cloudinary implements Provider {
             throw new Error("The folder you're trying to delete is not empty. Delete all assets first.")
         }
 
-        // Delete all assets in the folder when force deleting
         let url = new URL(this.URL.toString() + "/resources")
-        url.searchParams.append("prefix", input.path)
-        await this.doFetch(url, { method: "DELETE" })
+
+        if (resources.assets.count > 0) {
+            // Delete all assets in the folder when force deleting
+            url.searchParams.append("prefix", input.path)
+            await this.doFetch(url, { method: "DELETE" })
+        }
 
         // ...Finally delete folder
         url = new URL(this.URL.toString() + "/folders/" + input.path)
