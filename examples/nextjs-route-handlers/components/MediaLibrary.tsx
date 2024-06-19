@@ -38,7 +38,7 @@ const MediaLibraryBundle = () => {
 
             <Filenest.FolderList>
                 {({ folders, isLoading }) => (
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                         {isLoading &&
                             Array.from({ length: 5 }).map((_, i) => (
                                 <div
@@ -52,28 +52,28 @@ const MediaLibraryBundle = () => {
                             <Fragment>
                                 {folders?.map((folder) => (
                                     <Filenest.Folder key={folder.id} folder={folder}>
-                                        {({ actions, state }) => (
+                                        {({ navigateTo, isLoading, remove, rename }) => (
                                             <div
-                                                onClick={actions.navigateTo}
+                                                onClick={navigateTo}
                                                 className="px-2 py-1 border border-gray-300 rounded cursor-pointer hover:bg-gray-100"
                                             >
                                                 <div className="flex gap-1">
-                                                    {state.isLoading ? "🔄" : "📁"}
+                                                    {isLoading ? "🔄" : "📁"}
                                                     <Filenest.FolderName />
                                                 </div>
                                                 <div className="flex gap-2 text-xs">
-                                                    <Filenest.FolderEventTrigger
+                                                    <Filenest.FolderActionTrigger
                                                         action="rename"
                                                         className="hover:underline"
                                                     >
                                                         Rename
-                                                    </Filenest.FolderEventTrigger>
-                                                    <Filenest.FolderEventTrigger
-                                                        action="delete"
+                                                    </Filenest.FolderActionTrigger>
+                                                    <Filenest.FolderActionTrigger
+                                                        action="remove"
                                                         className="hover:underline"
                                                     >
                                                         Delete
-                                                    </Filenest.FolderEventTrigger>
+                                                    </Filenest.FolderActionTrigger>
                                                 </div>
                                             </div>
                                         )}

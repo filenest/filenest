@@ -3,8 +3,9 @@
 import { useQuery, type UseQueryResult } from "@tanstack/react-query"
 import { createContext, useContext, useEffect, useState } from "react"
 import type { Folder, FolderWithResources, GetResourcesByFolderReturn } from "@filenest/handlers"
-import type { RenderMode, SetState } from "../utils/types"
+import type { RenderMode } from "../utils/types"
 import { getResourcesByFolder } from "../utils/fetchers"
+import { labels } from "../utils/labels"
 
 export interface GlobalContext {
     currentFolder: Folder
@@ -13,10 +14,16 @@ export interface GlobalContext {
     navigateTo: (folder: Folder) => void
     renderMode: RenderMode
     resources?: FolderWithResources | undefined
-    setResources: SetState<FolderWithResources | undefined>
+    addFolderToCurrDir: (
+        folder: Folder,
+        initialState?: { isLoading?: boolean; isRenaming?: boolean },
+        shouldSort?: boolean
+    ) => void
+    removeFolderFromCurrDir: (id: string, shouldSort?: boolean) => void
     resourcesQuery: UseQueryResult<GetResourcesByFolderReturn, Error>
     uploadMultiple: boolean
     dialogTrigger: React.ReactNode
+    _l: (label: keyof typeof labels) => string
 }
 
 const GlobalContext = createContext<GlobalContext | null>(null)
@@ -36,15 +43,21 @@ interface GlobalProviderProps {
         renderMode: RenderMode
         uploadMultiple?: boolean
         dialogTrigger?: React.ReactNode
+        labels?: Partial<typeof labels>
     }
 }
 
 export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
     const { endpoint, renderMode, uploadMultiple, dialogTrigger } = config
 
-    const [currentFolder, setCurrentFolder] = useState<Folder>({ id: "home", path: "", name: "Home" })
+    const _labels = { ...labels, ...config.labels }
+    function _l(label: keyof typeof labels): string {
+        return _labels[label]
+    }
 
-    const [navigation, setNavigation] = useState<Folder[]>([{ id: "home", path: "", name: "Home" }])
+    const DEFAULT_FOLDER = { id: "home", path: "", name: "Home" }
+    const [currentFolder, setCurrentFolder] = useState<Folder>(DEFAULT_FOLDER)
+    const [navigation, setNavigation] = useState<Folder[]>([DEFAULT_FOLDER])
 
     function navigateTo(folder: Folder) {
         if (folder.path === currentFolder.path) return
@@ -85,6 +98,51 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         }
     }, [resourcesQuery.data])
 
+    function addFolderToCurrDir(
+        folder: Folder,
+        initialState?: { isLoading?: boolean; isRenaming?: boolean },
+        shouldSort?: boolean
+    ) {
+        setData((curr) => {
+            if (!curr) return curr
+            let folders = [...curr.resources.folders.data, { ...folder, ...initialState }]
+            if (shouldSort) {
+                folders = folders.sort((a, b) => a.name.localeCompare(b.name))
+            }
+            return {
+                ...curr,
+                resources: {
+                    ...curr.resources,
+                    folders: {
+                        ...curr.resources.folders,
+                        data: folders,
+                    },
+                },
+            }
+        })
+    }
+
+    function removeFolderFromCurrDir(id: string, shouldSort?: boolean) {
+        setData((prev) => {
+            if (!prev) return prev
+            const currentFolders = prev.resources.folders.data
+            let newFolders = currentFolders.filter((f) => f.id !== id)
+            if (shouldSort) {
+                newFolders = newFolders.sort((a, b) => a.name.localeCompare(b.name))
+            }
+            return {
+                ...prev,
+                resources: {
+                    ...prev.resources,
+                    folders: {
+                        ...prev.resources.folders,
+                        data: newFolders,
+                    },
+                },
+            }
+        })
+    }
+
     const contextValue = {
         currentFolder,
         endpoint,
@@ -92,10 +150,12 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         navigateTo,
         renderMode,
         resources: data,
-        setResources: setData,
+        addFolderToCurrDir,
+        removeFolderFromCurrDir,
         resourcesQuery,
         uploadMultiple: uploadMultiple || false,
         dialogTrigger,
+        _l,
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>

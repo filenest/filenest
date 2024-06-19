@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { GlobalProvider } from "../context/GlobalContext"
 import type { RenderMode } from "../utils/types"
+import type { labels } from "../utils/labels"
 
 type FilenestBaseProps<R extends RenderMode> = {
     bundle: React.ReactNode
@@ -10,6 +11,7 @@ type FilenestBaseProps<R extends RenderMode> = {
     endpoint: string
     renderMode: R
     uploader: React.ReactNode
+    labels?: Partial<typeof labels>
 }
 
 export type FilenestRootProps<R extends RenderMode> = R extends "dialog"

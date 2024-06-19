@@ -3,32 +3,25 @@
 import type { Folder } from "@filenest/handlers"
 import { createContext, useContext, useState } from "react"
 import { useGlobalContext } from "./GlobalContext"
-import { renameFolder } from "../utils/fetchers"
+import { createFolder, renameFolder } from "../utils/fetchers"
 import type { SetState } from "../utils/types"
 
 export interface FolderInternals {
-    actions: {
-        delete: () => void
-        rename: () => void
-        navigateTo: () => void
-    }
-    state: {
-        isRenaming: boolean
-        isLoading: boolean
-    }
+    remove: () => void
+    rename: () => void
+    navigateTo: () => void
+    isRenaming: boolean
+    isLoading: boolean
     _internal: {
         _setNewName: SetState<string>
         _newName: string
-        _setIsRenaming: SetState<boolean>
-        _setFolderName: SetState<string>
         _resetRename: () => void
-        _removeFolderFromState: (id: string) => void
-        _setIsLoading: SetState<boolean>
     }
 }
 
 export interface FolderContext extends FolderInternals {
     folder: Folder
+    create: () => void
 }
 
 const FolderContext = createContext<FolderContext | null>(null)
@@ -47,8 +40,8 @@ interface FolderProviderProps {
 }
 
 export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
-    const { navigateTo, endpoint, setResources } = useGlobalContext()
-    const _folder = folder as Folder & FolderInternals["state"]
+    const { navigateTo, endpoint, removeFolderFromCurrDir, addFolderToCurrDir, currentFolder } = useGlobalContext()
+    const _folder = folder as Folder & { isRenaming?: boolean; isLoading?: boolean }
 
     const [folderName, setFolderName] = useState(folder.name)
 
@@ -62,94 +55,72 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
         setIsRenaming(false)
     }
 
-    function removeFolderFromState(id: string) {
-        setResources((prev) => {
-            if (!prev) return prev
-            const currentFolders = prev?.resources.folders.data
-            const newFolders = currentFolders.filter((f) => f.id !== id)
-            return {
-                ...prev,
-                resources: {
-                    ...prev.resources,
-                    folders: {
-                        ...prev.resources.folders,
-                        data: newFolders,
-                    },
-                },
-            }
-        })
+    async function public_removeFolder() {
+        return null
     }
 
-    const actions = {
-        async delete() {},
+    async function public_renameFolder() {
+        if (newName.length < 1) {
+            setIsRenaming(true)
+            setNewName(folderName)
+            return
+        }
 
-        async rename() {
-            if (newName.length < 1) {
-                setIsRenaming(true)
-                setNewName(folderName)
-                return
-            }
+        setFolderName(newName)
+        resetRename()
 
-            setFolderName(newName)
-            resetRename()
+        try {
+            setIsLoading(true)
+            const result = await renameFolder({
+                endpoint,
+                path: folder.path,
+                newPath: folder.path.replace(folder.name, newName),
+            })
 
-            try {
-                setIsLoading(true)
-                const result = await renameFolder({
-                    endpoint,
-                    path: folder.path,
-                    newPath: folder.path.replace(folder.name, newName),
-                })
+            removeFolderFromCurrDir(folder.id)
+            addFolderToCurrDir(result, {}, true)
+        } catch (error) {
+            console.error("[Filenest] Error renaming folder:", error)
+        }
 
-                setResources((prev) => {
-                    if (!prev) return prev
-                    const currentFolders = prev?.resources.folders.data
-                    const newFolders = [...currentFolders, result]
-                        .filter((f) => f.id !== folder.id)
-                        .sort((a, b) => a.name.localeCompare(b.name))
-                    
-                    return {
-                        ...prev,
-                        resources: {
-                            ...prev.resources,
-                            folders: {
-                                ...prev.resources.folders,
-                                data: newFolders,
-                            },
-                        },
-                    }
-                })
-            } catch (error) {
-                console.error("[Filenest] Error renaming folder:", error)
-            }
-            setIsLoading(false)
-        },
-
-        navigateTo: () => navigateTo(folder),
+        setIsLoading(false)
     }
 
-    const state = {
-        isRenaming,
-        isLoading,
+    const public_navigateToFolder = () => navigateTo(folder)
+
+    async function create() {
+        if (newName.length < 1) return
+        setIsLoading(true)
+        try {
+            const newFolder = await createFolder({
+                endpoint,
+                path: currentFolder.path + "/" + newName,
+            })
+            removeFolderFromCurrDir(folder.id)
+            addFolderToCurrDir(newFolder, {}, true)
+        } catch (error) {
+            console.error("[Filenest] Error creating folder:", error)
+        }
+        setIsLoading(false)
     }
 
     const _internal = {
         _newName: newName,
         _setNewName: setNewName,
-        _setIsRenaming: setIsRenaming,
-        _setFolderName: setFolderName,
         _resetRename: resetRename,
-        _removeFolderFromState: removeFolderFromState,
-        _setIsLoading: setIsLoading,
     }
 
     const contextValue = {
-        actions,
+        navigateTo: public_navigateToFolder,
+        remove: public_removeFolder,
+        rename: public_renameFolder,
+        create,
         folder: {
             ...folder,
             name: folderName,
         },
-        state,
+        isRenaming,
+        isLoading,
         _internal,
     }
 
