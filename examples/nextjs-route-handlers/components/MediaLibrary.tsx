@@ -18,6 +18,18 @@ const MediaLibraryBundle = () => {
         <Filenest.Bundle>
             <h2>My Media</h2>
 
+            <Filenest.AlertDialog>
+                <Filenest.AlertDialogOverlay className="fixed z-10 bg-black bg-opacity-30 w-full h-full top-0 left-0"/>
+                <Filenest.AlertDialogContent className="fixed z-20 bg-white p-8 rounded-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <Filenest.AlertDialogTitle  className="text-xl text-gray-800 font-semibold"/>
+                    <Filenest.AlertDialogText className="mt-2 mb-4"/>
+                    <div className="flex gap-2">
+                        <Filenest.AlertDialogCancel className="py-2 px-3 rounded bg-gray-300 hover:bg-gray-200 cursor-pointer"/>
+                        <Filenest.AlertDialogAction className="py-2 px-3 rounded bg-red-400 hover:bg-red-300 cursor-pointer"/>
+                    </div>
+                </Filenest.AlertDialogContent>
+            </Filenest.AlertDialog>
+
             <Filenest.Navigation>
                 {({ navigateTo, navigation }) => (
                     <div className="flex gap-1 my-4 items-center">
@@ -52,7 +64,7 @@ const MediaLibraryBundle = () => {
                             <Fragment>
                                 {folders?.map((folder) => (
                                     <Filenest.Folder key={folder.id} folder={folder}>
-                                        {({ navigateTo, isLoading, remove, rename }) => (
+                                        {({ navigateTo, isLoading }) => (
                                             <div
                                                 onClick={navigateTo}
                                                 className="px-2 py-1 border border-gray-300 rounded cursor-pointer hover:bg-gray-100"

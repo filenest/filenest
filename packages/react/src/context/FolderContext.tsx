@@ -40,7 +40,17 @@ interface FolderProviderProps {
 }
 
 export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
-    const { navigateTo, endpoint, removeFolderFromCurrDir, addFolderToCurrDir, currentFolder } = useGlobalContext()
+    const {
+        navigateTo,
+        endpoint,
+        removeFolderFromCurrDir,
+        addFolderToCurrDir,
+        currentFolder,
+        setAlertDialogContent,
+        setAlertDialogOpen,
+        setAlertDialogAction,
+        _l
+    } = useGlobalContext()
     const _folder = folder as Folder & { isRenaming?: boolean; isLoading?: boolean }
 
     const [folderName, setFolderName] = useState(folder.name)
@@ -55,12 +65,21 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
         setIsRenaming(false)
     }
 
-    async function public_removeFolder() {
+    async function public_removeFolder(force?: boolean) {
         try {
             setIsLoading(true)
-            const result = await deleteFolder({ endpoint, path: folder.path })
+            const result = await deleteFolder({ endpoint, path: folder.path, force })
             if (result.success) {
                 removeFolderFromCurrDir(folder.id)
+            } else {
+                if (result.message === "ERR_FOLDER_NOT_EMPTY") {
+                    setAlertDialogContent({
+                        title: _l("alert.folderNestedContent.title"),
+                        text: _l("alert.folderNestedContent.text"),
+                    })
+                    setAlertDialogAction(() => () => public_removeFolder(true))
+                    setAlertDialogOpen(true)
+                }
             }
         } catch (error) {
             console.error("[Filenest] Error deleting folder:", error)

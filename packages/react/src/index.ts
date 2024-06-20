@@ -3,6 +3,15 @@ import { Dialog } from "./components/Dialog"
 import { Folder, FolderCreateTrigger, FolderActionTrigger, FolderName } from "./components/Folder"
 import { FolderList } from "./components/FolderList"
 import { Navigation } from "./components/Navigation"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogTitle,
+    AlertDialogOverlay,
+    AlertDialogText,
+} from "./components/radix/AlertDialog"
 import { Root } from "./components/Root"
 import { Uploader } from "./components/Uploader"
 
@@ -20,4 +29,11 @@ export const Filenest = {
     FolderName,
     FolderActionTrigger,
     FolderCreateTrigger,
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogOverlay,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogText,
+    AlertDialogTitle,
 }

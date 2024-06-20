@@ -179,21 +179,39 @@ export class Cloudinary implements Provider {
 
     public async deleteFolder(input: DeleteFolderInput) {
         const { resources } = await this.getResourcesByFolder({ folder: input.path })
+        const config = await this.getConfig()
 
         if (resources.assets.count > 0 && !input.force) {
-            throw new Error("The folder you're trying to delete is not empty. Delete all assets first.")
+            throw new Error("ERR_FOLDER_NOT_EMPTY")
         }
 
-        let url = new URL(this.URL.toString() + "/resources")
+        const resource_types = ["image", "raw", "video"]
 
+        // Delete all assets in the folder when force deleting
         if (resources.assets.count > 0) {
-            // Delete all assets in the folder when force deleting
-            url.searchParams.append("prefix", input.path)
-            await this.doFetch(url, { method: "DELETE" })
+            if (config.settings.folder_mode === "fixed") {
+                await Promise.all(resource_types.map(async type => {
+                    const url = new URL(this.URL.toString() + `/resources/${type}/upload`)
+                    url.searchParams.set("prefix", input.path + "/")
+                    return this.doFetch(url, { method: "DELETE" })
+                }))
+            }
+
+            if (config.settings.folder_mode === "dynamic") {
+                let url = new URL(this.URL.toString() + "/resources/by_asset_folder")
+                url.searchParams.set("asset_folder", input.path)
+                const assets: CloudinarySearchResponse = await this.doFetch(url)
+                const public_ids = assets.resources.map((asset) => asset.public_id)
+                await Promise.all(resource_types.map(async type => {
+                    const url = new URL(this.URL.toString() + `/resources/${type}/upload`)
+                    url.searchParams.set("public_ids", public_ids.join(","))
+                    return this.doFetch(url, { method: "DELETE" })
+                }))
+            }
         }
 
         // ...Finally delete folder
-        url = new URL(this.URL.toString() + "/folders/" + input.path)
+        const url = new URL(this.URL.toString() + "/folders/" + input.path)
         await this.doFetch(url, { method: "DELETE" })
 
         return {

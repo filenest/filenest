@@ -3,7 +3,7 @@
 import { useQuery, type UseQueryResult } from "@tanstack/react-query"
 import { createContext, useContext, useEffect, useState } from "react"
 import type { Folder, FolderWithResources, GetResourcesByFolderReturn } from "@filenest/handlers"
-import type { RenderMode } from "../utils/types"
+import type { RenderMode, SetState } from "../utils/types"
 import { getResourcesByFolder } from "../utils/fetchers"
 import { labels } from "../utils/labels"
 
@@ -24,6 +24,12 @@ export interface GlobalContext {
     uploadMultiple: boolean
     dialogTrigger: React.ReactNode
     _l: (label: keyof typeof labels) => string
+    alertDialogOpen: boolean
+    setAlertDialogOpen: SetState<boolean>
+    alertDialogContent: Partial<AlertDialogContent>
+    setAlertDialogContent: (content: Partial<AlertDialogContent>) => void
+    alertDialogAction: () => void
+    setAlertDialogAction: SetState<() => void>
 }
 
 const GlobalContext = createContext<GlobalContext | null>(null)
@@ -143,6 +149,18 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         })
     }
 
+    const [alertDialogOpen, setAlertDialogOpen] = useState(false)
+    const [alertDialogAction, setAlertDialogAction] = useState<() => void>(() => () => {})
+    const [alertDialogContent, _setAlertDialogContent] = useState<Partial<AlertDialogContent>>({
+        title: "",
+        text: "",
+        cancel: _l("alert.folderNestedContent.cancel"),
+        commit: _l("alert.folderNestedContent.commit"),
+    })
+    function setAlertDialogContent(content: Partial<AlertDialogContent>) {
+        _setAlertDialogContent((prev) => ({ ...prev, ...content }))
+    }
+
     const contextValue = {
         currentFolder,
         endpoint,
@@ -156,7 +174,15 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         uploadMultiple: uploadMultiple || false,
         dialogTrigger,
         _l,
+        alertDialogOpen,
+        setAlertDialogOpen,
+        alertDialogContent,
+        setAlertDialogContent,
+        alertDialogAction,
+        setAlertDialogAction,
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>
 }
+
+type AlertDialogContent = { title: string; text: string, cancel: string, commit: string}
