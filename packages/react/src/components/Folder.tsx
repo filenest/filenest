@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react"
 import { useClickOutside } from "../utils/useClickOutside"
 import { useMergedRef } from "../utils/useMergedRef"
 import { useGlobalContext } from "../context/GlobalContext"
+import { Slot } from "@radix-ui/react-slot"
 
 interface RenderProps extends Omit<FolderInternals, "_internal"> {
     stopPropagate: {
@@ -110,17 +111,16 @@ const FolderName = ({ className }: FolderNameProps) => {
             />
         )
     }
-
+    
     return <div className={className}>{folder.name}</div>
 }
 
-interface FolderActionTriggerProps {
+interface FolderActionTriggerProps extends React.ComponentPropsWithoutRef<"button"> {
     action: "remove" | "rename" | "navigateTo"
-    children: React.ReactNode
-    className?: string
+    asChild?: boolean
 }
 
-const FolderActionTrigger = ({ action, children, className }: FolderActionTriggerProps) => {
+const FolderActionTrigger = ({ action, asChild, ...props }: FolderActionTriggerProps) => {
     const { remove, rename, navigateTo } = useFolderContext()
 
     const actions = {
@@ -135,19 +135,18 @@ const FolderActionTrigger = ({ action, children, className }: FolderActionTrigge
         actions[action]()
     }
 
+    const Comp = asChild ? Slot : "button"
+
     return (
-        <div onClick={onClick} className={className}>
-            {children}
-        </div>
+        <Comp {...props} onClick={onClick}/>
     )
 }
 
-interface FolderCreateTriggerProps {
-    children: React.ReactNode
-    className?: string
+interface FolderCreateTriggerProps extends React.ComponentPropsWithoutRef<"button"> {
+    asChild?: boolean
 }
 
-const FolderCreateTrigger = ({ children, className }: FolderCreateTriggerProps) => {
+const FolderCreateTrigger = ({ asChild, ...props }: FolderCreateTriggerProps) => {
     const { addFolderToCurrDir, currentFolder } = useGlobalContext()
 
     function createFolder() {
@@ -161,10 +160,10 @@ const FolderCreateTrigger = ({ children, className }: FolderCreateTriggerProps) 
         })
     }
 
+    const Comp = asChild ? Slot : "button"
+
     return (
-        <div className={className} onClick={createFolder}>
-            {children}
-        </div>
+        <Comp {...props} onClick={createFolder}/>
     )
 }
 

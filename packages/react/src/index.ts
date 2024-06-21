@@ -1,3 +1,4 @@
+import { AssetList } from "./components/AssetList"
 import { Bundle } from "./components/Bundle"
 import { Dialog } from "./components/Dialog"
 import { Folder, FolderCreateTrigger, FolderActionTrigger, FolderName } from "./components/Folder"
@@ -36,4 +37,5 @@ export const Filenest = {
     AlertDialogCancel,
     AlertDialogText,
     AlertDialogTitle,
+    AssetList
 }

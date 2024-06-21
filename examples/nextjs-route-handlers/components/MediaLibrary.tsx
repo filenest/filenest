@@ -1,5 +1,6 @@
 "use client"
 
+import { prettyFilesize } from "@/lib/prettyFilesize"
 import { Filenest, FilenestRootProps } from "@filenest/react"
 import { Fragment } from "react"
 
@@ -19,13 +20,13 @@ const MediaLibraryBundle = () => {
             <h2>My Media</h2>
 
             <Filenest.AlertDialog>
-                <Filenest.AlertDialogOverlay className="fixed z-10 bg-black bg-opacity-30 w-full h-full top-0 left-0"/>
+                <Filenest.AlertDialogOverlay className="fixed z-10 bg-black bg-opacity-30 w-full h-full top-0 left-0" />
                 <Filenest.AlertDialogContent className="fixed z-20 bg-white p-8 rounded-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <Filenest.AlertDialogTitle  className="text-xl text-gray-800 font-semibold"/>
-                    <Filenest.AlertDialogText className="mt-2 mb-4"/>
+                    <Filenest.AlertDialogTitle className="text-xl text-gray-800 font-semibold" />
+                    <Filenest.AlertDialogText className="mt-2 mb-4" />
                     <div className="flex gap-2">
-                        <Filenest.AlertDialogCancel className="py-2 px-3 rounded bg-gray-300 hover:bg-gray-200 cursor-pointer"/>
-                        <Filenest.AlertDialogAction className="py-2 px-3 rounded bg-red-400 hover:bg-red-300 cursor-pointer"/>
+                        <Filenest.AlertDialogCancel className="py-2 px-3 rounded bg-gray-300 hover:bg-gray-200 cursor-pointer" />
+                        <Filenest.AlertDialogAction className="py-2 px-3 rounded bg-red-400 hover:bg-red-300 cursor-pointer" />
                     </div>
                 </Filenest.AlertDialogContent>
             </Filenest.AlertDialog>
@@ -52,13 +53,11 @@ const MediaLibraryBundle = () => {
                 {({ folders, isLoading }) => (
                     <div className="flex gap-2 flex-wrap">
                         {isLoading &&
-                            Array.from({ length: 5 }).map((_, i) => (
+                            Array.from({ length: 3 }).map((_, i) => (
                                 <div
                                     key={i}
-                                    className="w-28 p-2 h-[50px] border border-gray-300 bg-gray-100 animate-pulse rounded"
-                                >
-                                    <div className="rounded-sm animate-pulse bg-gray-400 h-4" />
-                                </div>
+                                    className="w-40 h-[50px] border border-gray-300 bg-gray-100 animate-pulse rounded"
+                                />
                             ))}
                         {!isLoading && (
                             <Fragment>
@@ -100,17 +99,49 @@ const MediaLibraryBundle = () => {
                 )}
             </Filenest.FolderList>
 
-            {/* <Filenest.AssetList>
-                <Filenest.DragDropIndicator>
+            <Filenest.AssetList>
+                {/* <Filenest.DragDropIndicator>
                     Drop files to upload
-                </Filenest.DragDropIndicator>
-                {({ assets }) => (
-                    {assets.map((asset) => (
-                        <Filenest.Asset key={asset.id} asset={asset} />
-                    ))}
+                </Filenest.DragDropIndicator> */}
+                {({ assets, isLoading }) => (
+                    <Fragment>
+                        {isLoading && (
+                            <div className="grid grid-cols-5 gap-6 mt-8">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className="h-[250px] border border-gray-300 bg-gray-100 animate-pulse rounded-lg"
+                                    />
+                                ))}
+                            </div>
+                        )}
+                        {!isLoading && (
+                            <>
+                                <div className="my-4">Showing {assets?.length} assets</div>
+                                <div className="grid grid-cols-5 gap-6">
+                                    {assets?.map((asset) => (
+                                        <div key={asset.assetId} className="p-2 rounded-lg border border-gray-300">
+                                            <img
+                                                src={asset.url}
+                                                alt={asset.name}
+                                                className="aspect-square w-full object-cover rounded-md"
+                                            />
+                                            <div className="font-semibold text-gray-800 truncate mt-1">
+                                                {asset.name}
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <div className="uppercase">{asset.format}</div>
+                                                <div>{prettyFilesize(asset.bytes)}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </>
+                        )}
+                    </Fragment>
                 )}
             </Filenest.AssetList>
-            <Filenest.AssetDetails /> */}
+            {/* <Filenest.AssetDetails /> */}
         </Filenest.Bundle>
     )
 }
