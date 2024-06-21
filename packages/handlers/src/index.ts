@@ -36,8 +36,6 @@ export interface Provider {
 
     /**
      * #### Get all assets, regardless of which folder they are in
-     *
-     * Includes pagination data, if available.
      */
     getAssets(input?: GetAssetsInput): Promise<Paginated<Asset>>
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { useQuery, type UseQueryResult } from "@tanstack/react-query"
+import { useInfiniteQuery, type UseInfiniteQueryResult, type InfiniteData } from "@tanstack/react-query"
 import { createContext, useContext, useEffect, useState } from "react"
 import type { Folder, FolderWithResources, GetResourcesByFolderReturn } from "@filenest/handlers"
 import type { RenderMode, SetState } from "../utils/types"
@@ -20,7 +20,7 @@ export interface GlobalContext {
         shouldSort?: boolean
     ) => void
     removeFolderFromCurrDir: (id: string, shouldSort?: boolean) => void
-    resourcesQuery: UseQueryResult<GetResourcesByFolderReturn, Error>
+    resourcesQuery: UseInfiniteQueryResult<InfiniteData<GetResourcesByFolderReturn, unknown>>
     uploadMultiple: boolean
     dialogTrigger: React.ReactNode
     _l: (label: keyof typeof labels) => string
@@ -74,30 +74,25 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         })
     }
 
-    const resourcesQuery = useQuery({
+    const resourcesQuery = useInfiniteQuery({
         queryKey: ["folderWithResources", currentFolder],
-        queryFn: () => getResourcesByFolder({ endpoint, folder: currentFolder.path }),
+        queryFn: ({ pageParam }) => getResourcesByFolder({ endpoint, folder: currentFolder.path, nextCursor: pageParam }),
+        initialPageParam: "",
+        getNextPageParam: (lastPage) => lastPage.resources.assets.nextCursor,
     })
 
     const [data, setData] = useState<FolderWithResources>()
 
     useEffect(() => {
-        if (resourcesQuery.data) {
+        if (resourcesQuery.data?.pages) {
+            const newestResult = resourcesQuery.data.pages.at(-1)!
             setData({
-                ...resourcesQuery.data,
+                ...newestResult,
                 resources: {
-                    ...resourcesQuery.data.resources,
-                    folders: {
-                        ...resourcesQuery.data.resources.folders,
-                        data: resourcesQuery.data.resources.folders.data.map((f) => ({
-                            ...f,
-                            // This is a bit fucked up. We need a way to define some initial state for folders.
-                            // When creating a new folder it should initially have the isRenaming state,
-                            // so that an input is shown to let you enter a folder name.
-                            // See `FolderListContext.tsx`
-                            isLoading: false,
-                            isRenaming: false,
-                        })),
+                    ...newestResult.resources,
+                    assets: {
+                        ...newestResult.resources.assets,
+                        data: resourcesQuery.data.pages.flatMap((p) => p.resources.assets.data),
                     },
                 },
             })
@@ -185,4 +180,4 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>
 }
 
-type AlertDialogContent = { title: string; text: string, cancel: string, commit: string}
+type AlertDialogContent = { title: string; text: string; cancel: string; commit: string }

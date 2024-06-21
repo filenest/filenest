@@ -103,41 +103,38 @@ const MediaLibraryBundle = () => {
                 {/* <Filenest.DragDropIndicator>
                     Drop files to upload
                 </Filenest.DragDropIndicator> */}
-                {({ assets, isLoading }) => (
+                {({ assets, isLoading, isLoadingNextPage }) => (
                     <Fragment>
-                        {isLoading && (
-                            <div className="grid grid-cols-5 gap-6 mt-8">
-                                {Array.from({ length: 5 }).map((_, i) => (
+                        <div className="my-4">{isLoading ? null : `Showing ${assets?.length} assets`}</div>
+                        <div className="grid grid-cols-5 gap-6">
+                            {!isLoading &&
+                                assets?.map((asset) => (
+                                    <div key={asset.assetId} className="p-2 rounded-lg border border-gray-300">
+                                        <img
+                                            src={asset.url}
+                                            alt={asset.name}
+                                            className="aspect-square w-full object-cover rounded-md"
+                                        />
+                                        <div className="font-semibold text-gray-800 truncate mt-1">{asset.name}</div>
+                                        <div className="flex gap-2 text-sm">
+                                            <div className="uppercase">{asset.format}</div>
+                                            <div>{prettyFilesize(asset.bytes)}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                            {(isLoading || isLoadingNextPage) &&
+                                Array.from({ length: 5 }).map((_, i) => (
                                     <div
                                         key={i}
                                         className="h-[250px] border border-gray-300 bg-gray-100 animate-pulse rounded-lg"
                                     />
                                 ))}
-                            </div>
-                        )}
-                        {!isLoading && (
-                            <>
-                                <div className="my-4">Showing {assets?.length} assets</div>
-                                <div className="grid grid-cols-5 gap-6">
-                                    {assets?.map((asset) => (
-                                        <div key={asset.assetId} className="p-2 rounded-lg border border-gray-300">
-                                            <img
-                                                src={asset.url}
-                                                alt={asset.name}
-                                                className="aspect-square w-full object-cover rounded-md"
-                                            />
-                                            <div className="font-semibold text-gray-800 truncate mt-1">
-                                                {asset.name}
-                                            </div>
-                                            <div className="flex gap-2">
-                                                <div className="uppercase">{asset.format}</div>
-                                                <div>{prettyFilesize(asset.bytes)}</div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </>
-                        )}
+                        </div>
+                        <div className="flex justify-center mt-8">
+                            <Filenest.LoadMore className="py-2 px-3 rounded bg-gray-300 hover:bg-gray-200 cursor-pointer">
+                                Load more
+                            </Filenest.LoadMore>
+                        </div>
                     </Fragment>
                 )}
             </Filenest.AssetList>

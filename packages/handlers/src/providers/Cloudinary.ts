@@ -133,6 +133,10 @@ export class Cloudinary implements Provider {
         url.searchParams.append("with_field", "tags")
         url.searchParams.append("max_results", this.MAX_RESULTS.toString())
 
+        if (input?.nextCursor) {
+            url.searchParams.append("next_cursor", input.nextCursor)
+        }
+
         const assets: CloudinarySearchResponse = await this.doFetch(url)
 
         url = new URL([this.URL.toString(), "/folders/", input?.folder].join(""))
@@ -149,6 +153,7 @@ export class Cloudinary implements Provider {
                 assets: {
                     data: this.mapResourcesToSchema(assets.resources),
                     count: assets.total_count,
+                    nextCursor: assets.next_cursor,
                 },
             },
         }
@@ -311,8 +316,9 @@ type CloudinaryResource = {
 }
 
 type CloudinarySearchResponse = {
-    total_count: number
     resources: CloudinaryResource[]
+    total_count: number
+    next_cursor: string
 }
 
 type CloudinaryFolder = {

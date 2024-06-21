@@ -3,6 +3,7 @@ import { Bundle } from "./components/Bundle"
 import { Dialog } from "./components/Dialog"
 import { Folder, FolderCreateTrigger, FolderActionTrigger, FolderName } from "./components/Folder"
 import { FolderList } from "./components/FolderList"
+import { LoadMore } from "./components/LoadMore"
 import { Navigation } from "./components/Navigation"
 import {
     AlertDialog,
@@ -37,5 +38,6 @@ export const Filenest = {
     AlertDialogCancel,
     AlertDialogText,
     AlertDialogTitle,
-    AssetList
+    AssetList,
+    LoadMore
 }

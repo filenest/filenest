@@ -3,6 +3,7 @@ import { z } from "zod"
 const CommonInputOpts = z.object({
     folder: z.string(),
     searchQuery: z.string().optional(),
+    nextCursor: z.string().optional(),
 })
 
 type CommonInputOpts = z.infer<typeof CommonInputOpts>
@@ -46,22 +47,14 @@ const Paginated = <T extends z.ZodType<any>>(type: T) => {
     return z.object({
         data: z.array(type),
         count: z.number(),
-        pagination: z
-            .object({
-                itemsPerPage: z.number(),
-                currentPage: z.number(),
-            })
-            .optional(),
+        nextCursor: z.string().optional(),
     })
 }
 
 export type Paginated<T> = {
     data: T[]
     count: number
-    pagination?: {
-        itemsPerPage: number
-        currentPage: number
-    }
+    nextCursor?: string
 }
 
 const Resources = z.object({
