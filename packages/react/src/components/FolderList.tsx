@@ -16,7 +16,7 @@ export const FolderList = ({ children }: FolderListProps) => {
     const { resources, resourcesQuery } = useGlobalContext()
 
     const folders = resources?.resources.folders.data
-    const isLoading = resourcesQuery.isFetching
+    const isLoading = resourcesQuery.isLoading
 
     if (children && typeof children === "function") {
         return children({ folders, isLoading })
