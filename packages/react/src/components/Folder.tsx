@@ -54,7 +54,7 @@ const FolderName = ({ className }: FolderNameProps) => {
 
     const inputRef = useRef<HTMLInputElement>(null)
     const clickOutsideRef = useClickOutside(() => {
-        if (isRenaming && _internal._newName.length >= 1) {
+        if (isRenaming && _internal._newName.trim().length >= 1) {
             if (isTemporary) {
                 create()
             } else {

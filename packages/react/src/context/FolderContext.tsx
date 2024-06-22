@@ -117,7 +117,7 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
     const public_navigateToFolder = () => navigateTo(folder)
 
     async function create() {
-        if (newName.length < 1) return
+        if (newName.trim().length < 1) return
         setIsLoading(true)
         try {
             const newFolder = await createFolder({
