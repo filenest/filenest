@@ -2,7 +2,7 @@
 
 import { useInfiniteQuery, type UseInfiniteQueryResult, type InfiniteData } from "@tanstack/react-query"
 import { createContext, useContext, useEffect, useState } from "react"
-import type { Folder, FolderWithResources, GetResourcesByFolderReturn } from "@filenest/handlers"
+import type { Asset, Folder, FolderWithResources, GetResourcesByFolderReturn } from "@filenest/handlers"
 import type { RenderMode, SetState } from "../utils/types"
 import { getResourcesByFolder } from "../utils/fetchers"
 import { labels } from "../utils/labels"
@@ -30,6 +30,8 @@ export interface GlobalContext {
     setAlertDialogContent: (content: Partial<AlertDialogContent>) => void
     alertDialogAction: () => void
     setAlertDialogAction: SetState<() => void>
+    detailledAsset: Asset | null
+    setDetailledAsset: SetState<Asset | null>
 }
 
 const GlobalContext = createContext<GlobalContext | null>(null)
@@ -144,6 +146,8 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         })
     }
 
+    const [detailledAsset, setDetailledAsset] = useState<Asset | null>(null)
+
     const [alertDialogOpen, setAlertDialogOpen] = useState(false)
     const [alertDialogAction, setAlertDialogAction] = useState<() => void>(() => () => {})
     const [alertDialogContent, _setAlertDialogContent] = useState<Partial<AlertDialogContent>>({
@@ -175,6 +179,8 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         setAlertDialogContent,
         alertDialogAction,
         setAlertDialogAction,
+        detailledAsset,
+        setDetailledAsset,
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>

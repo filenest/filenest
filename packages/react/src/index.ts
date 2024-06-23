@@ -1,3 +1,5 @@
+import { Asset, AssetActionTrigger } from "./components/Asset"
+import { AssetDetails } from "./components/AssetDetails"
 import { AssetList } from "./components/AssetList"
 import { Bundle } from "./components/Bundle"
 import { Dialog } from "./components/Dialog"
@@ -39,5 +41,8 @@ export const Filenest = {
     AlertDialogText,
     AlertDialogTitle,
     AssetList,
-    LoadMore
+    LoadMore,
+    AssetDetails,
+    Asset,
+    AssetActionTrigger
 }

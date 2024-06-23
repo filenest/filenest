@@ -13,7 +13,7 @@ const AssetListWrapper = (props: AssetListProps) => {
 interface RenderProps {
     assets?: ReturnType<typeof useAssetListContext>["assets"]
     isLoading: boolean
-    isLoadingNextPage: boolean
+    isLoadingMore: boolean
 }
 
 interface AssetListProps {
@@ -21,10 +21,10 @@ interface AssetListProps {
 }
 
 const AssetList = ({ children }: AssetListProps) => {
-    const { assets, isLoading, isLoadingNextPage } = useAssetListContext()
+    const { assets, isLoading, isLoadingMore } = useAssetListContext()
 
     if (typeof children === "function") {
-        return children({ assets, isLoading, isLoadingNextPage })
+        return children({ assets, isLoading, isLoadingMore })
     }
 
     return children

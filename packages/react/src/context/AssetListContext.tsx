@@ -7,7 +7,7 @@ import type { Asset } from "@filenest/handlers"
 export interface AssetListContext {
     assets?: Asset[]
     isLoading: boolean
-    isLoadingNextPage: boolean
+    isLoadingMore: boolean
 }
 
 const AssetListContext = createContext<AssetListContext | null>(null)
@@ -29,12 +29,12 @@ export const AssetListProvider = ({ children }: AssetListProviderProps) => {
 
     const assets = resources?.resources.assets.data
     const isLoading = resourcesQuery.isLoading
-    const isLoadingNextPage = resourcesQuery.isFetchingNextPage
+    const isLoadingMore = resourcesQuery.isFetchingNextPage
 
     const contextValue = {
         assets,
         isLoading,
-        isLoadingNextPage,
+        isLoadingMore,
     }
 
     return <AssetListContext.Provider value={contextValue}>{children}</AssetListContext.Provider>

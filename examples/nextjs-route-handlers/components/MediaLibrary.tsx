@@ -99,46 +99,85 @@ const MediaLibraryBundle = () => {
                 )}
             </Filenest.FolderList>
 
-            <Filenest.AssetList>
-                {/* <Filenest.DragDropIndicator>
-                    Drop files to upload
-                </Filenest.DragDropIndicator> */}
-                {({ assets, isLoading, isLoadingNextPage }) => (
-                    <Fragment>
-                        <div className="my-4">{isLoading ? null : `Showing ${assets?.length} assets`}</div>
-                        <div className="grid grid-cols-5 gap-6">
-                            {!isLoading &&
-                                assets?.map((asset) => (
-                                    <div key={asset.assetId} className="p-2 rounded-lg border border-gray-300">
-                                        <img
-                                            src={asset.url}
-                                            alt={asset.name}
-                                            className="aspect-square w-full object-cover rounded-md"
+            <div className="grid grid-cols-[3fr_1fr] items-start gap-8 relative">
+                <Filenest.AssetList>
+                    {/* <Filenest.DragDropIndicator>
+                        Drop files to upload
+                    </Filenest.DragDropIndicator> */}
+                    {({ assets, isLoading, isLoadingMore }) => (
+                        <div>
+                            <div className="my-4">{isLoading ? null : `Showing ${assets?.length} assets`}</div>
+                            <div className="grid grid-cols-4 gap-6">
+                                {!isLoading &&
+                                    assets?.map((asset) => (
+                                        <Filenest.Asset
+                                            key={asset.assetId}
+                                            asset={asset}
+                                            className="p-2 rounded-lg border border-gray-300 cursor-pointer hover:bg-gray-100"
+                                        >
+                                            <img
+                                                src={asset.url}
+                                                alt={asset.name}
+                                                className="aspect-square w-full object-cover rounded-md"
+                                            />
+                                            <div className="font-semibold text-gray-800 truncate mt-1">
+                                                {asset.name}
+                                            </div>
+                                            <div className="flex gap-2 text-sm">
+                                                <div className="uppercase">{asset.format}</div>
+                                                <div>{prettyFilesize(asset.bytes)}</div>
+                                            </div>
+                                        </Filenest.Asset>
+                                    ))}
+                                {(isLoading || isLoadingMore) &&
+                                    Array.from({ length: 5 }).map((_, i) => (
+                                        <div
+                                            key={i}
+                                            className="h-[250px] border border-gray-300 bg-gray-100 animate-pulse rounded-lg"
                                         />
-                                        <div className="font-semibold text-gray-800 truncate mt-1">{asset.name}</div>
-                                        <div className="flex gap-2 text-sm">
-                                            <div className="uppercase">{asset.format}</div>
-                                            <div>{prettyFilesize(asset.bytes)}</div>
-                                        </div>
+                                    ))}
+                            </div>
+                            <div className="flex justify-center mt-8">
+                                <Filenest.LoadMore className="py-2 px-3 rounded bg-gray-300 hover:bg-gray-200 cursor-pointer">
+                                    Load more
+                                </Filenest.LoadMore>
+                            </div>
+                        </div>
+                    )}
+                </Filenest.AssetList>
+                <Filenest.AssetDetails>
+                    {({ asset }) => (
+                        <div className="mt-14 sticky top-8 p-4 border border-gray-300 rounded-lg">
+                            {asset && (
+                                <div>
+                                    <img src={asset.url} alt={asset.name} className="rounded-md" />
+                                    <div className="font-semibold text-gray-800 mt-2">{asset.name}</div>
+                                    <div className="flex gap-2 text-sm mt-2">
+                                        <div className="uppercase">{asset.format}</div>
+                                        <div>{prettyFilesize(asset.bytes)}</div>
                                     </div>
-                                ))}
-                            {(isLoading || isLoadingNextPage) &&
-                                Array.from({ length: 5 }).map((_, i) => (
-                                    <div
-                                        key={i}
-                                        className="h-[250px] border border-gray-300 bg-gray-100 animate-pulse rounded-lg"
-                                    />
-                                ))}
+                                    <div className="text-sm">
+                                        {asset.width}x{asset.height}
+                                    </div>
+                                    <Filenest.AssetActionTrigger
+                                        action="remove"
+                                        className="py-2 px-3 rounded bg-red-400 hover:bg-red-300 cursor-pointer w-full mt-4"
+                                    >
+                                        Delete
+                                    </Filenest.AssetActionTrigger>
+                                    <Filenest.AssetActionTrigger
+                                        action="select"
+                                        className="py-2 px-3 rounded bg-green-400 hover:bg-green-300 cursor-pointer w-full mt-2"
+                                    >
+                                        Select
+                                    </Filenest.AssetActionTrigger>
+                                </div>
+                            )}
+                            {!asset && <div>No asset selected</div>}
                         </div>
-                        <div className="flex justify-center mt-8">
-                            <Filenest.LoadMore className="py-2 px-3 rounded bg-gray-300 hover:bg-gray-200 cursor-pointer">
-                                Load more
-                            </Filenest.LoadMore>
-                        </div>
-                    </Fragment>
-                )}
-            </Filenest.AssetList>
-            {/* <Filenest.AssetDetails /> */}
+                    )}
+                </Filenest.AssetDetails>
+            </div>
         </Filenest.Bundle>
     )
 }
