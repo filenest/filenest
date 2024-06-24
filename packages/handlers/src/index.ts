@@ -13,6 +13,7 @@ import {
     RenameAssetInput,
     DeleteAssetInput,
     type Response,
+    GetUploadSignatureInput,
 } from "./types"
 
 export * from "./types"
@@ -79,6 +80,11 @@ export interface Provider {
      * @returns The uploaded assets.
      */
     upload(input: UploadInput): Promise<Asset[]>
+
+    /**
+     * #### Get a signature for uploading files
+     */
+    getUploadSignature(input: GetUploadSignatureInput): { timestamp: number; signature: string }
 
     /**
      * #### Rename an asset

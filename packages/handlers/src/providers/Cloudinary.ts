@@ -2,6 +2,7 @@ import crypto from "crypto"
 import { type Provider } from ".."
 
 import {
+    GetUploadSignatureInput,
     type Asset,
     type AssetType,
     type CreateFolderInput,
@@ -39,15 +40,37 @@ export class Cloudinary implements Provider {
         })
     }
 
+    // Stolen from https://github.com/cloudinary/cloudinary_npm/blob/master/lib/utils/index.js
     private makeSignature(params: Record<string, any>) {
         const { API_SECRET } = this
-        const q = Object.keys(params)
+
+        function toArray(arg: any) {
+            switch (true) {
+                case arg == null:
+                    return []
+                case Array.isArray(arg):
+                    return arg
+                default:
+                    return [arg]
+            }
+        }
+
+        function present(value: any) {
+            return value != null && ("" + value).length > 0
+        }
+
+        const to_sign = Object.entries(params)
+            .filter(([k, v]) => present(v))
+            .map(([k, v]) => `${k}=${toArray(v).join(",")}`)
             .sort()
-            .map((key) => `${key}=${params[key]}`)
             .join("&")
-        const hash = crypto.createHash("sha1")
-        hash.update(q + API_SECRET)
-        return hash.digest("hex")
+
+        const hash = crypto
+            .createHash("sha1")
+            .update(to_sign + API_SECRET)
+            .digest()
+
+        return Buffer.from(hash).toString("hex")
     }
 
     private async getConfig() {
@@ -195,11 +218,13 @@ export class Cloudinary implements Provider {
         // Delete all assets in the folder when force deleting
         if (resources.assets.count > 0) {
             if (config.settings.folder_mode === "fixed") {
-                await Promise.all(resource_types.map(async type => {
-                    const url = new URL(this.URL.toString() + `/resources/${type}/upload`)
-                    url.searchParams.set("prefix", input.path + "/")
-                    return this.doFetch(url, { method: "DELETE" })
-                }))
+                await Promise.all(
+                    resource_types.map(async (type) => {
+                        const url = new URL(this.URL.toString() + `/resources/${type}/upload`)
+                        url.searchParams.set("prefix", input.path + "/")
+                        return this.doFetch(url, { method: "DELETE" })
+                    })
+                )
             }
 
             if (config.settings.folder_mode === "dynamic") {
@@ -207,11 +232,13 @@ export class Cloudinary implements Provider {
                 url.searchParams.set("asset_folder", input.path)
                 const assets: CloudinarySearchResponse = await this.doFetch(url)
                 const public_ids = assets.resources.map((asset) => asset.public_id)
-                await Promise.all(resource_types.map(async type => {
-                    const url = new URL(this.URL.toString() + `/resources/${type}/upload`)
-                    url.searchParams.set("public_ids", public_ids.join(","))
-                    return this.doFetch(url, { method: "DELETE" })
-                }))
+                await Promise.all(
+                    resource_types.map(async (type) => {
+                        const url = new URL(this.URL.toString() + `/resources/${type}/upload`)
+                        url.searchParams.set("public_ids", public_ids.join(","))
+                        return this.doFetch(url, { method: "DELETE" })
+                    })
+                )
             }
         }
 
@@ -266,6 +293,22 @@ export class Cloudinary implements Provider {
         )
 
         return uploadedFiles
+    }
+
+    public getUploadSignature(input: GetUploadSignatureInput) {
+        if (!input.folder) {
+            input.folder = ""
+        }
+
+        const timestamp = Math.floor(Date.now() / 1000)
+        input.timestamp = timestamp.toString()
+
+        const signature = this.makeSignature(input)
+
+        return {
+            timestamp,
+            signature,
+        }
     }
 
     public async renameAsset() {
