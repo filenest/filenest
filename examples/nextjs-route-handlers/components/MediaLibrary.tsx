@@ -147,7 +147,7 @@ const MediaLibraryBundle = () => {
                 </Filenest.AssetList>
                 <Filenest.AssetDetails>
                     {({ asset }) => (
-                        <div className="mt-14 sticky top-8 p-4 border border-gray-300 rounded-lg">
+                        <div className="mt-14 sticky top-8 pl-8 border-l border-gray-300">
                             {asset && (
                                 <div>
                                     <img src={asset.url} alt={asset.name} className="rounded-md" />
@@ -159,18 +159,20 @@ const MediaLibraryBundle = () => {
                                     <div className="text-sm">
                                         {asset.width}x{asset.height}
                                     </div>
-                                    <Filenest.AssetActionTrigger
-                                        action="remove"
-                                        className="py-2 px-3 rounded bg-red-400 hover:bg-red-300 cursor-pointer w-full mt-4"
-                                    >
-                                        Delete
-                                    </Filenest.AssetActionTrigger>
-                                    <Filenest.AssetActionTrigger
-                                        action="select"
-                                        className="py-2 px-3 rounded bg-green-400 hover:bg-green-300 cursor-pointer w-full mt-2"
-                                    >
-                                        Select
-                                    </Filenest.AssetActionTrigger>
+                                    <div className="flex gap-2 mt-4">
+                                        <Filenest.AssetActionTrigger
+                                            action="select"
+                                            className="py-2 px-3 rounded bg-green-400 hover:bg-green-300 cursor-pointer flex-grow"
+                                        >
+                                            Select
+                                        </Filenest.AssetActionTrigger>
+                                        <Filenest.AssetActionTrigger
+                                            action="remove"
+                                            className="py-2 px-3 rounded bg-red-400 hover:bg-red-300 cursor-pointer"
+                                        >
+                                            Delete
+                                        </Filenest.AssetActionTrigger>
+                                    </div>
                                 </div>
                             )}
                             {!asset && <div>No asset selected</div>}
