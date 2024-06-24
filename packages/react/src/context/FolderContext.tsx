@@ -3,7 +3,7 @@
 import type { Folder } from "@filenest/handlers"
 import { createContext, useContext, useState } from "react"
 import { useGlobalContext } from "./GlobalContext"
-import { createFolder, deleteFolder, renameFolder } from "../utils/fetchers"
+import { createFetchers } from "../utils/fetchers"
 import type { SetState } from "../utils/types"
 
 export interface FolderInternals {
@@ -49,7 +49,8 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
         setAlertDialogContent,
         setAlertDialogOpen,
         setAlertDialogAction,
-        _l
+        _l,
+        trpcMode,
     } = useGlobalContext()
     const _folder = folder as Folder & { isRenaming?: boolean; isLoading?: boolean }
 
@@ -65,10 +66,15 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
         setIsRenaming(false)
     }
 
+    const { renameFolder, deleteFolder, createFolder } = createFetchers({
+        endpoint,
+        trpcMode,
+    })
+
     async function public_removeFolder(force?: boolean) {
         try {
             setIsLoading(true)
-            const result = await deleteFolder({ endpoint, path: folder.path, force })
+            const result = await deleteFolder({ path: folder.path, force })
             if (result.success) {
                 removeFolderFromCurrDir(folder.id)
             } else {
@@ -100,7 +106,6 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
         try {
             setIsLoading(true)
             const result = await renameFolder({
-                endpoint,
                 path: folder.path,
                 newPath: folder.path.replace(folder.name, newName),
             })
@@ -121,7 +126,6 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
         setIsLoading(true)
         try {
             const newFolder = await createFolder({
-                endpoint,
                 path: currentFolder.path + "/" + newName,
             })
             removeFolderFromCurrDir(folder.id)

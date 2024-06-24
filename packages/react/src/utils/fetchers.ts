@@ -9,26 +9,45 @@ import {
     RenameFolderReturn,
 } from "@filenest/handlers"
 
-type WithEndpoint = {
+type CreateFetchersOpts = {
     endpoint: string
+    trpcMode: boolean
 }
 
-async function handleFetch(endpoint: string, path: string, body?: any) {
-    return fetch(endpoint + path, { method: "POST", body: JSON.stringify(body) }).then((res) => res.json())
-}
+export function createFetchers({ endpoint, trpcMode }: CreateFetchersOpts) {
 
-export async function getResourcesByFolder({ endpoint, ...input }: GetResourcesByFolderInput & WithEndpoint) {
-    return (await handleFetch(endpoint, "/getResourcesByFolder", input)) as GetResourcesByFolderReturn
-}
+    function makeUrl(endpoint: string, path: string, trpcMode: boolean) {
+        if (trpcMode) {
+            return endpoint + "." + path
+        }
+        return endpoint + "/" + path
+    }
 
-export async function renameFolder({ endpoint, ...input }: RenameFolderInput & WithEndpoint) {
-    return (await handleFetch(endpoint, "/renameFolder", input)) as RenameFolderReturn
-}
+    async function handleFetch(path: string, body?: any) {
+        const url = makeUrl(endpoint, path, trpcMode)
+        return fetch(url, { method: "POST", body: JSON.stringify(body) }).then((res) => res.json())
+    }
+    
+    async function getResourcesByFolder(input: GetResourcesByFolderInput) {
+        return (await handleFetch("getResourcesByFolder", input)) as GetResourcesByFolderReturn
+    }
+    
+    async function renameFolder(input: RenameFolderInput) {
+        return (await handleFetch("renameFolder", input)) as RenameFolderReturn
+    }
+    
+    async function deleteFolder(input: DeleteFolderInput) {
+        return (await handleFetch("deleteFolder", input)) as DeleteFolderReturn
+    }
+    
+    async function createFolder(input: CreateFolderInput) {
+        return (await handleFetch("createFolder", input)) as CreateFolderReturn
+    }
 
-export async function deleteFolder({ endpoint, ...input }: DeleteFolderInput & WithEndpoint) {
-    return (await handleFetch(endpoint, "/deleteFolder", input)) as DeleteFolderReturn
-}
-
-export async function createFolder({ endpoint, ...input }: CreateFolderInput & WithEndpoint) {
-    return (await handleFetch(endpoint, "/createFolder", input)) as CreateFolderReturn
+    return {
+        getResourcesByFolder,
+        renameFolder,
+        deleteFolder,
+        createFolder,
+    }
 }

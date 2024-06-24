@@ -4,7 +4,7 @@ import { useInfiniteQuery, type UseInfiniteQueryResult, type InfiniteData } from
 import { createContext, useContext, useEffect, useState } from "react"
 import type { Asset, Folder, FolderWithResources, GetResourcesByFolderReturn } from "@filenest/handlers"
 import type { RenderMode, SetState } from "../utils/types"
-import { getResourcesByFolder } from "../utils/fetchers"
+import { createFetchers } from "../utils/fetchers"
 import { labels } from "../utils/labels"
 
 export interface GlobalContext {
@@ -32,6 +32,7 @@ export interface GlobalContext {
     setAlertDialogAction: SetState<() => void>
     detailledAsset: Asset | null
     setDetailledAsset: SetState<Asset | null>
+    trpcMode: boolean
 }
 
 const GlobalContext = createContext<GlobalContext | null>(null)
@@ -48,6 +49,7 @@ interface GlobalProviderProps {
     children: React.ReactNode
     config: {
         endpoint: string
+        trpcMode: boolean
         renderMode: RenderMode
         uploadMultiple?: boolean
         dialogTrigger?: React.ReactNode
@@ -56,7 +58,7 @@ interface GlobalProviderProps {
 }
 
 export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
-    const { endpoint, renderMode, uploadMultiple, dialogTrigger } = config
+    const { endpoint, renderMode, uploadMultiple, dialogTrigger, trpcMode = false } = config
 
     const _labels = { ...labels, ...config.labels }
     function _l(label: keyof typeof labels): string {
@@ -76,9 +78,11 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         })
     }
 
+    const { getResourcesByFolder } = createFetchers({ endpoint, trpcMode })
+
     const resourcesQuery = useInfiniteQuery({
         queryKey: ["folderWithResources", currentFolder],
-        queryFn: ({ pageParam }) => getResourcesByFolder({ endpoint, folder: currentFolder.path, nextCursor: pageParam }),
+        queryFn: ({ pageParam }) => getResourcesByFolder({ folder: currentFolder.path, nextCursor: pageParam }),
         initialPageParam: "",
         getNextPageParam: (lastPage) => lastPage.resources.assets.nextCursor,
     })
@@ -181,6 +185,7 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         setAlertDialogAction,
         detailledAsset,
         setDetailledAsset,
+        trpcMode
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>
