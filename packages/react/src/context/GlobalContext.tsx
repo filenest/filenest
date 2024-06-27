@@ -24,12 +24,14 @@ export interface GlobalContext {
     uploadMultiple: boolean
     dialogTrigger: React.ReactNode
     _l: (label: keyof typeof labels) => string
-    alertDialogOpen: boolean
-    setAlertDialogOpen: SetState<boolean>
-    alertDialogContent: Partial<AlertDialogContent>
-    setAlertDialogContent: (content: Partial<AlertDialogContent>) => void
-    alertDialogAction: () => void
-    setAlertDialogAction: SetState<() => void>
+    alertDialog: {
+        open: boolean
+        setOpen: SetState<boolean>
+        content: Partial<AlertDialogContent>
+        setContent: (content: Partial<AlertDialogContent>) => void
+        action: () => void
+        setAction: SetState<() => void>
+    }
     detailledAsset: Asset | null
     setDetailledAsset: SetState<Asset | null>
     trpcMode: boolean
@@ -177,12 +179,14 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         uploadMultiple: uploadMultiple || false,
         dialogTrigger,
         _l,
-        alertDialogOpen,
-        setAlertDialogOpen,
-        alertDialogContent,
-        setAlertDialogContent,
-        alertDialogAction,
-        setAlertDialogAction,
+        alertDialog: {
+            open: alertDialogOpen,
+            setOpen: setAlertDialogOpen,
+            content: alertDialogContent,
+            setContent: setAlertDialogContent,
+            action: alertDialogAction,
+            setAction: setAlertDialogAction,
+        },
         detailledAsset,
         setDetailledAsset,
         trpcMode

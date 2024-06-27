@@ -46,9 +46,7 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
         removeFolderFromCurrDir,
         addFolderToCurrDir,
         currentFolder,
-        setAlertDialogContent,
-        setAlertDialogOpen,
-        setAlertDialogAction,
+        alertDialog,
         _l,
         trpcMode,
     } = useGlobalContext()
@@ -79,12 +77,12 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
                 removeFolderFromCurrDir(folder.id)
             } else {
                 if (result.message === "ERR_FOLDER_NOT_EMPTY") {
-                    setAlertDialogContent({
+                    alertDialog.setContent({
                         title: _l("alert.folderNestedContent.title"),
                         text: _l("alert.folderNestedContent.text"),
                     })
-                    setAlertDialogAction(() => () => public_removeFolder(true))
-                    setAlertDialogOpen(true)
+                    alertDialog.setAction(() => () => public_removeFolder(true))
+                    alertDialog.setOpen(true)
                 }
             }
         } catch (error) {

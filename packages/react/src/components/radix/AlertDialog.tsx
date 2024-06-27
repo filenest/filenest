@@ -4,10 +4,10 @@ import * as Primitive from "@radix-ui/react-alert-dialog"
 import { useGlobalContext } from "../../context/GlobalContext"
 
 export const AlertDialog = ({ children, ...props }: Primitive.AlertDialogProps) => {
-    const { alertDialogOpen, setAlertDialogOpen } = useGlobalContext()
+    const { alertDialog } = useGlobalContext()
 
     return (
-        <Primitive.Root {...props} open={alertDialogOpen} onOpenChange={setAlertDialogOpen}>
+        <Primitive.Root {...props} open={alertDialog.open} onOpenChange={alertDialog.setOpen}>
             <Primitive.Portal>
                 {children}
             </Primitive.Portal>
@@ -16,18 +16,18 @@ export const AlertDialog = ({ children, ...props }: Primitive.AlertDialogProps) 
 }
 
 export const AlertDialogTitle = ({ className }: Primitive.AlertDialogTitleProps) => {
-    const { alertDialogContent } = useGlobalContext()
+    const { alertDialog } = useGlobalContext()
     return (
         <Primitive.AlertDialogTitle className={className} asChild>
-            <h3>{alertDialogContent.title}</h3>
+            <h3>{alertDialog.content.title}</h3>
         </Primitive.AlertDialogTitle>
     )
 }
 
 export const AlertDialogText = ({ className }: { className?: string }) => {
-    const { alertDialogContent } = useGlobalContext()
+    const { alertDialog } = useGlobalContext()
     return (
-        <p className={className}>{alertDialogContent.text}</p>
+        <p className={className}>{alertDialog.content.text}</p>
     )
 }
 
@@ -46,21 +46,21 @@ export const AlertDialogContent = ({ children, ...props }: Primitive.AlertDialog
 }
 
 export const AlertDialogCancel = ({ children, ...props }: Primitive.AlertDialogCancelProps) => {
-    const { alertDialogContent } = useGlobalContext()
+    const { alertDialog } = useGlobalContext()
 
     return (
         <Primitive.Cancel asChild {...props}>
-            <div>{alertDialogContent.cancel}</div>
+            <div>{alertDialog.content.cancel}</div>
         </Primitive.Cancel>
     )
 }
 
 export const AlertDialogAction = ({ children, ...props }: Primitive.AlertDialogActionProps) => {
-    const { alertDialogContent, alertDialogAction } = useGlobalContext()
+    const { alertDialog } = useGlobalContext()
 
     return (
-        <Primitive.Action asChild {...props} onClick={alertDialogAction}>
-            <div>{alertDialogContent.commit}</div>
+        <Primitive.Action asChild {...props} onClick={alertDialog.action}>
+            <div>{alertDialog.content.commit}</div>
         </Primitive.Action>
     )
 }
