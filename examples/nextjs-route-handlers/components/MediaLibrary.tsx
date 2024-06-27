@@ -1,5 +1,6 @@
 "use client"
 
+import { cn } from "@/lib/cn"
 import { prettyFilesize } from "@/lib/prettyFilesize"
 import { Filenest, FilenestRootProps } from "@filenest/react"
 import { Fragment } from "react"
@@ -113,7 +114,10 @@ const MediaLibraryBundle = () => {
                                         <Filenest.Asset
                                             key={asset.assetId}
                                             asset={asset}
-                                            className="p-2 rounded-lg border border-gray-300 cursor-pointer hover:bg-gray-100"
+                                            className={cn(
+                                                "p-2 rounded-lg border border-gray-300 cursor-pointer hover:bg-gray-100",
+                                                asset.isLoading && "animate-pulse"
+                                            )}
                                         >
                                             <img
                                                 src={asset.url}
@@ -149,7 +153,7 @@ const MediaLibraryBundle = () => {
                     {({ asset }) => (
                         <div className="mt-14 sticky top-8 pl-8 border-l border-gray-300">
                             {asset && (
-                                <div>
+                                <Filenest.Asset asset={asset}>
                                     <img src={asset.url} alt={asset.name} className="rounded-md" />
                                     <div className="font-semibold text-gray-800 mt-2">{asset.name}</div>
                                     <div className="flex gap-2 text-sm mt-2">
@@ -173,7 +177,7 @@ const MediaLibraryBundle = () => {
                                             Delete
                                         </Filenest.AssetActionTrigger>
                                     </div>
-                                </div>
+                                </Filenest.Asset>
                             )}
                             {!asset && <div>No asset selected</div>}
                         </div>

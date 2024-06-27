@@ -3,7 +3,7 @@
 import { useInfiniteQuery, type UseInfiniteQueryResult, type InfiniteData } from "@tanstack/react-query"
 import { createContext, useContext, useEffect, useState } from "react"
 import type { Asset, Folder, FolderWithResources, GetResourcesByFolderReturn } from "@filenest/handlers"
-import type { RenderMode, SetState } from "../utils/types"
+import type { AssetExtraProps, RenderMode, SetState } from "../utils/types"
 import { createFetchers } from "../utils/fetchers"
 import { labels } from "../utils/labels"
 
@@ -21,6 +21,8 @@ export interface GlobalContext {
     ) => void
     removeFolderFromCurrDir: (id: string, shouldSort?: boolean) => void
     resourcesQuery: UseInfiniteQueryResult<InfiniteData<GetResourcesByFolderReturn, unknown>>
+    updateAsset: (assetId: string, data: Partial<Asset & AssetExtraProps>) => void
+    removeAssetFromCurrDir: (id: string) => void
     uploadMultiple: boolean
     dialogTrigger: React.ReactNode
     _l: (label: keyof typeof labels) => string
@@ -32,7 +34,7 @@ export interface GlobalContext {
         action: () => void
         setAction: SetState<() => void>
     }
-    detailledAsset: Asset | null
+    detailledAsset: Asset & AssetExtraProps | null
     setDetailledAsset: SetState<Asset | null>
     trpcMode: boolean
 }
@@ -107,6 +109,24 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         }
     }, [resourcesQuery.data])
 
+    function updateAsset(assetId: string, data: Partial<Asset & AssetExtraProps>) {
+        setData((prev) => {
+            if (!prev) return prev
+            const currentAssets = prev.resources.assets.data
+            const newAssets = currentAssets.map((a) => (a.assetId === assetId ? { ...a, ...data } : a))
+            return {
+                ...prev,
+                resources: {
+                    ...prev.resources,
+                    assets: {
+                        ...prev.resources.assets,
+                        data: newAssets,
+                    },
+                },
+            }
+        })
+    }
+
     function addFolderToCurrDir(
         folder: Folder,
         initialState?: { isLoading?: boolean; isRenaming?: boolean },
@@ -152,6 +172,24 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         })
     }
 
+    function removeAssetFromCurrDir(id: string) {
+        setData((prev) => {
+            if (!prev) return prev
+            const currentAssets = prev.resources.assets.data
+            const newAssets = currentAssets.filter((a) => a.assetId !== id)
+            return {
+                ...prev,
+                resources: {
+                    ...prev.resources,
+                    assets: {
+                        ...prev.resources.assets,
+                        data: newAssets,
+                    },
+                },
+            }
+        })
+    }
+
     const [detailledAsset, setDetailledAsset] = useState<Asset | null>(null)
 
     const [alertDialogOpen, setAlertDialogOpen] = useState(false)
@@ -175,6 +213,8 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         resources: data,
         addFolderToCurrDir,
         removeFolderFromCurrDir,
+        updateAsset,
+        removeAssetFromCurrDir,
         resourcesQuery,
         uploadMultiple: uploadMultiple || false,
         dialogTrigger,
@@ -187,7 +227,7 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
             action: alertDialogAction,
             setAction: setAlertDialogAction,
         },
-        detailledAsset,
+        detailledAsset: detailledAsset as any,
         setDetailledAsset,
         trpcMode
     }

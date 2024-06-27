@@ -3,14 +3,29 @@
 import type { Asset as AssetType } from "@filenest/handlers"
 import { Slot } from "@radix-ui/react-slot"
 import { useGlobalContext } from "../context/GlobalContext"
+import { AssetProvider, useAssetContext } from "../context/AssetContext"
 
-export interface AssetProps extends React.ComponentPropsWithoutRef<"div"> {
-    asset: AssetType
-    asChild?: boolean
+const AssetWrapper = ({ asset, ...props }: AssetProps) => {
+    return (
+        <AssetProvider asset={asset}>
+            <Asset asset={asset} {...props}/>
+        </AssetProvider>
+    )
 }
 
-export const Asset = ({ asset, asChild, ...props }: AssetProps) => {
+interface RenderProps {
+    isLoading: boolean  
+}
+
+interface AssetProps extends Omit<React.ComponentPropsWithoutRef<"div">, "children"> {
+    asset: AssetType
+    asChild?: boolean
+    children: ((props: RenderProps) => React.ReactNode) | React.ReactNode
+}
+
+const Asset = ({ asset, asChild, children, ...props }: AssetProps) => {
     const { setDetailledAsset } = useGlobalContext()
+    const { isLoading } = useAssetContext()
 
     const Comp = asChild ? Slot : "div"
 
@@ -18,8 +33,18 @@ export const Asset = ({ asset, asChild, ...props }: AssetProps) => {
         setDetailledAsset(asset)
     }
 
-    return <Comp {...props} onClick={onClick}/>
+    const getChildren = () => {
+        if (typeof children === "function") {
+            return children({ isLoading })
+        }
+    
+        return children
+    }
+
+    return <Comp {...props} onClick={onClick}>{getChildren()}</Comp>
 }
+
+export { AssetWrapper as Asset }
 
 interface AssetActionTriggerProps extends React.ComponentPropsWithoutRef<"button"> {
     action: "remove" | "rename" | "select"
@@ -28,33 +53,18 @@ interface AssetActionTriggerProps extends React.ComponentPropsWithoutRef<"button
 
 export const AssetActionTrigger = ({ action, asChild, ...props }: AssetActionTriggerProps) => {
 
-    const { renderMode, resources, alertDialog } = useGlobalContext()
+    const { renderMode } = useGlobalContext()
+
+    const { remove, rename, select } = useAssetContext()
 
     if (renderMode === "bundle" && action === "select") {
         return null
     }
 
-    function deleteActually() {
-        alert("delete")
-    }
-
     const actions = {
-        remove: () => {
-            alertDialog.setContent({
-                title: "Are you sure?",
-                text: "Your file will be gone forever.",
-                commit: "Delete file",
-                cancel: "Keep file"
-            })
-            alertDialog.setAction(() => deleteActually)
-            alertDialog.setOpen(true)
-        },
-        rename: () => {
-            resources.renameAsset()
-        },
-        select: () => {
-            resources.selectAsset()
-        },
+        remove,
+        rename,
+        select,
     }
 
     function onClick(e: React.MouseEvent) {

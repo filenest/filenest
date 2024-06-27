@@ -2,9 +2,10 @@
 
 import type { Asset } from "@filenest/handlers"
 import { useGlobalContext } from "../context/GlobalContext"
+import type { AssetExtraProps } from "../utils/types"
 
 interface RenderProps {
-    asset: Asset | null
+    asset: (Asset & AssetExtraProps) | null
 }
 
 interface AssetDetailsProps {
@@ -15,7 +16,7 @@ export const AssetDetails = ({ children }: AssetDetailsProps) => {
     const { detailledAsset } = useGlobalContext()
 
     if (typeof children === "function") {
-        return children({ asset: detailledAsset })
+        return children({ asset: detailledAsset as any })
     }
 
     return children

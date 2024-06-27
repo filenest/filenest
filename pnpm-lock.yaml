@@ -17,6 +17,9 @@ importers:
       '@filenest/handlers':
         specifier: file:../../packages/handlers
         version: link:../../packages/handlers
+      clsx:
+        specifier: 2.1.1
+        version: 2.1.1
       next:
         specifier: 14.2.3
         version: 14.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.5)
@@ -29,6 +32,9 @@ importers:
       sass:
         specifier: ^1.77.5
         version: 1.77.5
+      tailwind-merge:
+        specifier: 2.3.0
+        version: 2.3.0
     devDependencies:
       '@types/node':
         specifier: ^20

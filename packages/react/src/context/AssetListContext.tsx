@@ -3,9 +3,10 @@
 import { createContext, useContext } from "react"
 import { useGlobalContext } from "./GlobalContext"
 import type { Asset } from "@filenest/handlers"
+import type { AssetExtraProps } from "../utils/types"
 
 export interface AssetListContext {
-    assets?: Asset[]
+    assets?: Array<Asset & AssetExtraProps>
     isLoading: boolean
     isLoadingMore: boolean
 }
@@ -27,7 +28,7 @@ interface AssetListProviderProps {
 export const AssetListProvider = ({ children }: AssetListProviderProps) => {
     const { resources, resourcesQuery } = useGlobalContext()
 
-    const assets = resources?.resources.assets.data
+    const assets: any = resources?.resources.assets.data
     const isLoading = resourcesQuery.isLoading
     const isLoadingMore = resourcesQuery.isFetchingNextPage
 

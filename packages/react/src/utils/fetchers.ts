@@ -1,10 +1,14 @@
 import {
     CreateFolderInput,
     CreateFolderReturn,
+    DeleteAssetInput,
+    DeleteAssetReturn,
     DeleteFolderInput,
     DeleteFolderReturn,
     GetResourcesByFolderInput,
     GetResourcesByFolderReturn,
+    RenameAssetInput,
+    RenameAssetReturn,
     RenameFolderInput,
     RenameFolderReturn,
 } from "@filenest/handlers"
@@ -44,10 +48,20 @@ export function createFetchers({ endpoint, trpcMode }: CreateFetchersOpts) {
         return (await handleFetch("createFolder", input)) as CreateFolderReturn
     }
 
+    async function renameAsset(input: RenameAssetInput) {
+        return (await handleFetch("renameFolder", input)) as RenameAssetReturn
+    }
+    
+    async function deleteAsset(input: DeleteAssetInput) {
+        return (await handleFetch("deleteFolder", input)) as DeleteAssetReturn
+    }
+
     return {
         getResourcesByFolder,
         renameFolder,
         deleteFolder,
         createFolder,
+        renameAsset,
+        deleteAsset,
     }
 }
