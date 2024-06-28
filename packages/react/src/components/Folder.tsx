@@ -1,6 +1,6 @@
 "use client"
 
-import type { Folder as FolderType } from "@filenest/handlers"
+import type { Folder as FolderType } from "@filenest/core"
 import { FolderProvider, useFolderContext, type FolderInternals } from "../context/FolderContext"
 import { useEffect, useRef } from "react"
 import { useClickOutside } from "../utils/useClickOutside"
@@ -111,7 +111,7 @@ const FolderName = ({ className }: FolderNameProps) => {
             />
         )
     }
-    
+
     return <div className={className}>{folder.name}</div>
 }
 
@@ -137,9 +137,7 @@ const FolderActionTrigger = ({ action, asChild, ...props }: FolderActionTriggerP
 
     const Comp = asChild ? Slot : "button"
 
-    return (
-        <Comp {...props} onClick={onClick}/>
-    )
+    return <Comp {...props} onClick={onClick} />
 }
 
 interface FolderCreateTriggerProps extends React.ComponentPropsWithoutRef<"button"> {
@@ -151,20 +149,21 @@ const FolderCreateTrigger = ({ asChild, ...props }: FolderCreateTriggerProps) =>
 
     function createFolder() {
         const name = "__filenest-temporary-" + Date.now().toString()
-        addFolderToCurrDir({
-            id: name,
-            name: "",
-            path: currentFolder.path + "/" + name,
-        }, {
-            isRenaming: true,
-        })
+        addFolderToCurrDir(
+            {
+                id: name,
+                name: "",
+                path: currentFolder.path + "/" + name,
+            },
+            {
+                isRenaming: true,
+            }
+        )
     }
 
     const Comp = asChild ? Slot : "button"
 
-    return (
-        <Comp {...props} onClick={createFolder}/>
-    )
+    return <Comp {...props} onClick={createFolder} />
 }
 
 export { FolderWrapper as Folder, FolderName, FolderActionTrigger, FolderCreateTrigger }

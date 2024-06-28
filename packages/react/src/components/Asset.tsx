@@ -1,6 +1,6 @@
 "use client"
 
-import type { Asset as AssetType } from "@filenest/handlers"
+import type { Asset as AssetType } from "@filenest/core"
 import { Slot } from "@radix-ui/react-slot"
 import { useGlobalContext } from "../context/GlobalContext"
 import { AssetProvider, useAssetContext } from "../context/AssetContext"
@@ -8,13 +8,13 @@ import { AssetProvider, useAssetContext } from "../context/AssetContext"
 const AssetWrapper = ({ asset, ...props }: AssetProps) => {
     return (
         <AssetProvider asset={asset}>
-            <Asset asset={asset} {...props}/>
+            <Asset asset={asset} {...props} />
         </AssetProvider>
     )
 }
 
 interface RenderProps {
-    isLoading: boolean  
+    isLoading: boolean
 }
 
 interface AssetProps extends Omit<React.ComponentPropsWithoutRef<"div">, "children"> {
@@ -37,11 +37,15 @@ const Asset = ({ asset, asChild, children, ...props }: AssetProps) => {
         if (typeof children === "function") {
             return children({ isLoading })
         }
-    
+
         return children
     }
 
-    return <Comp {...props} onClick={onClick}>{getChildren()}</Comp>
+    return (
+        <Comp {...props} onClick={onClick}>
+            {getChildren()}
+        </Comp>
+    )
 }
 
 export { AssetWrapper as Asset }
@@ -52,7 +56,6 @@ interface AssetActionTriggerProps extends React.ComponentPropsWithoutRef<"button
 }
 
 export const AssetActionTrigger = ({ action, asChild, ...props }: AssetActionTriggerProps) => {
-
     const { renderMode } = useGlobalContext()
 
     const { remove, rename, select } = useAssetContext()
@@ -75,7 +78,5 @@ export const AssetActionTrigger = ({ action, asChild, ...props }: AssetActionTri
 
     const Comp = asChild ? Slot : "button"
 
-    return (
-        <Comp {...props} onClick={onClick}/>
-    )
+    return <Comp {...props} onClick={onClick} />
 }

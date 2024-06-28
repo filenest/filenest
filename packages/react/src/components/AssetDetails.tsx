@@ -1,6 +1,6 @@
 "use client"
 
-import type { Asset } from "@filenest/handlers"
+import type { Asset } from "@filenest/core"
 import { useGlobalContext } from "../context/GlobalContext"
 import type { AssetExtraProps } from "../utils/types"
 

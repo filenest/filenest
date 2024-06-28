@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext } from "react"
-import type {  Folder } from "@filenest/handlers"
+import type { Folder } from "@filenest/core"
 import { useGlobalContext } from "./GlobalContext"
 
 export interface NavigationContext {
@@ -24,7 +24,6 @@ interface NavigationProviderProps {
 }
 
 export const NavigationProvider = ({ children }: NavigationProviderProps) => {
-
     const { navigateTo, navigation } = useGlobalContext()
 
     const contextValue = {

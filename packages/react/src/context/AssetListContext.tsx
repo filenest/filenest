@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react"
 import { useGlobalContext } from "./GlobalContext"
-import type { Asset } from "@filenest/handlers"
+import type { Asset } from "@filenest/core"
 import type { AssetExtraProps } from "../utils/types"
 
 export interface AssetListContext {

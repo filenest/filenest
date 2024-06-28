@@ -2,7 +2,7 @@
 
 import { useInfiniteQuery, type UseInfiniteQueryResult, type InfiniteData } from "@tanstack/react-query"
 import { createContext, useContext, useEffect, useState } from "react"
-import type { Asset, Folder, FolderWithResources, GetResourcesByFolderReturn } from "@filenest/handlers"
+import type { Asset, Folder, FolderWithResources, GetResourcesByFolderReturn } from "@filenest/core"
 import type { AssetExtraProps, RenderMode, SetState } from "../utils/types"
 import { createFetchers } from "../utils/fetchers"
 import { labels } from "../utils/labels"
@@ -34,7 +34,7 @@ export interface GlobalContext {
         action: () => void
         setAction: SetState<() => void>
     }
-    detailledAsset: Asset & AssetExtraProps | null
+    detailledAsset: (Asset & AssetExtraProps) | null
     setDetailledAsset: SetState<Asset | null>
     trpcMode: boolean
 }
@@ -229,7 +229,7 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         },
         detailledAsset: detailledAsset as any,
         setDetailledAsset,
-        trpcMode
+        trpcMode,
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>

@@ -1,6 +1,6 @@
 "use client"
 
-import type { Asset } from "@filenest/handlers"
+import type { Asset } from "@filenest/core"
 import { createContext, useContext, useState } from "react"
 import { useGlobalContext } from "./GlobalContext"
 import { createFetchers } from "../utils/fetchers"
@@ -68,7 +68,7 @@ export const AssetProvider = ({ asset, children }: AssetProviderProps) => {
             title: "Are you sure?",
             text: "Your file will be gone forever.",
             commit: "Delete file",
-            cancel: "Keep file"
+            cancel: "Keep file",
         })
         alertDialog.setAction(() => deleteActually)
         alertDialog.setOpen(true)

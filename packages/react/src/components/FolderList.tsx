@@ -1,7 +1,7 @@
 "use client"
 
 import { useGlobalContext } from "../context/GlobalContext"
-import type { Folder as FolderType } from "@filenest/handlers"
+import type { Folder as FolderType } from "@filenest/core"
 
 interface RenderProps {
     folders?: FolderType[]

@@ -11,7 +11,7 @@ import {
     RenameAssetReturn,
     RenameFolderInput,
     RenameFolderReturn,
-} from "@filenest/handlers"
+} from "@filenest/core"
 
 type CreateFetchersOpts = {
     endpoint: string
@@ -19,7 +19,6 @@ type CreateFetchersOpts = {
 }
 
 export function createFetchers({ endpoint, trpcMode }: CreateFetchersOpts) {
-
     function makeUrl(endpoint: string, path: string, trpcMode: boolean) {
         if (trpcMode) {
             return endpoint + "." + path
@@ -31,19 +30,19 @@ export function createFetchers({ endpoint, trpcMode }: CreateFetchersOpts) {
         const url = makeUrl(endpoint, path, trpcMode)
         return fetch(url, { method: "POST", body: JSON.stringify(body) }).then((res) => res.json())
     }
-    
+
     async function getResourcesByFolder(input: GetResourcesByFolderInput) {
         return (await handleFetch("getResourcesByFolder", input)) as GetResourcesByFolderReturn
     }
-    
+
     async function renameFolder(input: RenameFolderInput) {
         return (await handleFetch("renameFolder", input)) as RenameFolderReturn
     }
-    
+
     async function deleteFolder(input: DeleteFolderInput) {
         return (await handleFetch("deleteFolder", input)) as DeleteFolderReturn
     }
-    
+
     async function createFolder(input: CreateFolderInput) {
         return (await handleFetch("createFolder", input)) as CreateFolderReturn
     }
@@ -51,7 +50,7 @@ export function createFetchers({ endpoint, trpcMode }: CreateFetchersOpts) {
     async function renameAsset(input: RenameAssetInput) {
         return (await handleFetch("renameFolder", input)) as RenameAssetReturn
     }
-    
+
     async function deleteAsset(input: DeleteAssetInput) {
         return (await handleFetch("deleteFolder", input)) as DeleteAssetReturn
     }
