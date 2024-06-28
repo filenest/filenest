@@ -14,7 +14,7 @@
         "next": "^14 || ^15.0.0-0",
         "react": "^18.2.0 || ^19.0.0-0"
     },
-    "dependencies": {
-        "zod": "^3"
+    "peerDependencies": {
+        "zod": ">=3"
     }
 }
