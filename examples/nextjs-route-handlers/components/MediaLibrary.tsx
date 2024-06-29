@@ -124,9 +124,7 @@ const MediaLibraryBundle = () => {
                                                 alt={asset.name}
                                                 className="aspect-square w-full object-cover rounded-md"
                                             />
-                                            <div className="font-semibold text-gray-800 truncate mt-1">
-                                                {asset.name}
-                                            </div>
+                                            <Filenest.ResourceName className="font-semibold text-gray-800 truncate mt-1"/>
                                             <div className="flex gap-2 text-sm">
                                                 <div className="uppercase">{asset.format}</div>
                                                 <div>{prettyFilesize(asset.bytes)}</div>
@@ -155,7 +153,7 @@ const MediaLibraryBundle = () => {
                             {asset && (
                                 <Filenest.Asset asset={asset}>
                                     <img src={asset.url} alt={asset.name} className="rounded-md" />
-                                    <div className="font-semibold text-gray-800 mt-2 text-wrap">{asset.name}</div>
+                                    <Filenest.ResourceName className="font-semibold text-gray-800 mt-2 text-wrap"/>
                                     <div className="flex gap-2 text-sm mt-2">
                                         <div className="uppercase">{asset.format}</div>
                                         <div>{prettyFilesize(asset.bytes)}</div>
