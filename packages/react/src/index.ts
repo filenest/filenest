@@ -3,10 +3,11 @@ import { AssetDetails } from "./components/AssetDetails"
 import { AssetList } from "./components/AssetList"
 import { Bundle } from "./components/Bundle"
 import { Dialog } from "./components/Dialog"
-import { Folder, FolderCreateTrigger, FolderActionTrigger, FolderName } from "./components/Folder"
+import { Folder, FolderCreateTrigger, FolderActionTrigger } from "./components/Folder"
 import { FolderList } from "./components/FolderList"
 import { LoadMore } from "./components/LoadMore"
 import { Navigation } from "./components/Navigation"
+import { ResourceName } from "./components/ResourceName"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -30,7 +31,7 @@ export const Filenest = {
     Navigation,
     FolderList,
     Folder,
-    FolderName,
+    ResourceName,
     FolderActionTrigger,
     FolderCreateTrigger,
     AlertDialog,

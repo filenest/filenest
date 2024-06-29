@@ -71,7 +71,7 @@ const MediaLibraryBundle = () => {
                                             >
                                                 <div className="flex gap-1">
                                                     {isLoading ? "🔄" : "📁"}
-                                                    <Filenest.FolderName />
+                                                    <Filenest.ResourceName />
                                                 </div>
                                                 <div className="flex gap-2 text-xs">
                                                     <Filenest.FolderActionTrigger
@@ -100,7 +100,7 @@ const MediaLibraryBundle = () => {
                 )}
             </Filenest.FolderList>
 
-            <div className="grid grid-cols-[3fr_1fr] items-start gap-8 relative">
+            <div className="grid grid-cols-[auto_300px] items-start gap-8 relative">
                 <Filenest.AssetList>
                     {/* <Filenest.DragDropIndicator>
                         Drop files to upload
@@ -155,7 +155,7 @@ const MediaLibraryBundle = () => {
                             {asset && (
                                 <Filenest.Asset asset={asset}>
                                     <img src={asset.url} alt={asset.name} className="rounded-md" />
-                                    <div className="font-semibold text-gray-800 mt-2">{asset.name}</div>
+                                    <div className="font-semibold text-gray-800 mt-2 text-wrap">{asset.name}</div>
                                     <div className="flex gap-2 text-sm mt-2">
                                         <div className="uppercase">{asset.format}</div>
                                         <div>{prettyFilesize(asset.bytes)}</div>

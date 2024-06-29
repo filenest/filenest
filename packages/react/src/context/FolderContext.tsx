@@ -24,7 +24,7 @@ export interface FolderContext extends FolderInternals {
     create: () => void
 }
 
-const FolderContext = createContext<FolderContext | null>(null)
+export const FolderContext = createContext<FolderContext | null>(null)
 
 export const useFolderContext = () => {
     const context = useContext(FolderContext)

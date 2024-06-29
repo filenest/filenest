@@ -2,9 +2,6 @@
 
 import type { Folder as FolderType } from "@filenest/core"
 import { FolderProvider, useFolderContext, type FolderInternals } from "../context/FolderContext"
-import { useEffect, useRef } from "react"
-import { useClickOutside } from "../utils/useClickOutside"
-import { useMergedRef } from "../utils/useMergedRef"
 import { useGlobalContext } from "../context/GlobalContext"
 import { Slot } from "@radix-ui/react-slot"
 
@@ -42,77 +39,6 @@ const Folder = ({ children }: Pick<FolderProps, "children">) => {
     }
 
     return children
-}
-
-interface FolderNameProps {
-    className?: string
-}
-
-const FolderName = ({ className }: FolderNameProps) => {
-    const { folder, isRenaming, _internal, rename, create } = useFolderContext()
-    const { removeFolderFromCurrDir } = useGlobalContext()
-
-    const inputRef = useRef<HTMLInputElement>(null)
-    const clickOutsideRef = useClickOutside(() => {
-        if (isRenaming && _internal._newName.trim().length >= 1) {
-            if (isTemporary) {
-                create()
-            } else {
-                rename()
-            }
-        } else {
-            _internal._resetRename()
-            removeIfTemporary()
-        }
-    })
-
-    const isTemporary = folder.id.includes("__filenest-temporary")
-
-    function removeIfTemporary() {
-        if (isTemporary) {
-            removeFolderFromCurrDir(folder.id)
-        }
-    }
-
-    const ref = useMergedRef(inputRef, clickOutsideRef)
-
-    useEffect(() => {
-        if (isRenaming && inputRef.current) {
-            inputRef.current.focus()
-        }
-    }, [isRenaming])
-
-    function handleKeyDown(e: React.KeyboardEvent) {
-        if (e.key === "Enter") {
-            if (isTemporary) {
-                create()
-            } else {
-                rename()
-            }
-        } else if (e.key === "Escape") {
-            _internal._resetRename()
-            removeIfTemporary()
-        }
-    }
-
-    if (isRenaming) {
-        return (
-            <input
-                type="text"
-                ref={ref}
-                className={className}
-                onClick={(e) => {
-                    e.stopPropagation()
-                    e.preventDefault()
-                }}
-                onKeyDown={handleKeyDown}
-                value={_internal._newName}
-                onChange={(e) => _internal._setNewName(e.target.value)}
-            />
-        )
-    }
-
-    return <div className={className}>{folder.name}</div>
 }
 
 interface FolderActionTriggerProps extends React.ComponentPropsWithoutRef<"button"> {
@@ -166,4 +92,4 @@ const FolderCreateTrigger = ({ asChild, ...props }: FolderCreateTriggerProps) =>
     return <Comp {...props} onClick={createFolder} />
 }
 
-export { FolderWrapper as Folder, FolderName, FolderActionTrigger, FolderCreateTrigger }
+export { FolderWrapper as Folder, FolderActionTrigger, FolderCreateTrigger }

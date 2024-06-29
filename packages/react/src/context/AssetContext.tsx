@@ -13,7 +13,7 @@ export interface AssetContext {
     isLoading: boolean
 }
 
-const AssetContext = createContext<AssetContext | null>(null)
+export const AssetContext = createContext<AssetContext | null>(null)
 
 export const useAssetContext = () => {
     const context = useContext(AssetContext)
