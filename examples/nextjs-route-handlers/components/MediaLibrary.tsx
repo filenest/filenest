@@ -161,7 +161,13 @@ const MediaLibraryBundle = () => {
                         <div className="mt-14 sticky top-8 pl-8 border-l border-gray-300">
                             {asset && (
                                 <Filenest.Asset asset={asset}>
-                                    <img src={asset.url} alt={asset.name} className="rounded-md" />
+                                    {asset.type == "image" ? (
+                                        <img src={asset.url} alt={asset.name} className="rounded-md" />
+                                    ) : (
+                                        <div className="text-xl uppercase flex items-center justify-center rounded bg-gray-100 h-48">
+                                            .{asset.format}
+                                        </div>
+                                    )}
                                     <Filenest.AssetActionTrigger action="rename" asChild>
                                         <Filenest.ResourceName className="font-semibold text-gray-800 mt-2 text-wrap hover:bg-gray-100" />
                                     </Filenest.AssetActionTrigger>

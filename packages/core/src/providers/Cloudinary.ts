@@ -81,9 +81,10 @@ export class Cloudinary implements Provider {
         return (await this.doFetch(url)) as CloudinaryEnvironment
     }
 
-    private mapResourceType(type: string) {
+    private mapResourceType(type: string, format: string) {
         switch (type) {
             case "image":
+                if (format == "pdf") return "document"
                 return "image"
             case "video":
                 return "video"
@@ -98,7 +99,7 @@ export class Cloudinary implements Provider {
         return {
             assetId: resource.asset_id,
             publicId: resource.public_id,
-            type: this.mapResourceType(resource.resource_type) as AssetType,
+            type: this.mapResourceType(resource.resource_type, resource.format) as AssetType,
             format: resource.format,
             url: resource.url,
             folder: resource.folder,
