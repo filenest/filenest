@@ -3,6 +3,7 @@
 import { cn } from "@/lib/cn"
 import { prettyFilesize } from "@/lib/prettyFilesize"
 import { Filenest, FilenestRootProps } from "@filenest/react"
+import { IconEdit, IconPlus, IconTrash } from "@tabler/icons-react"
 import { Fragment } from "react"
 
 export const MediaLibrary = Filenest.Root
@@ -73,25 +74,26 @@ const MediaLibraryBundle = () => {
                                                     {isLoading ? "🔄" : "📁"}
                                                     <Filenest.ResourceName />
                                                 </div>
-                                                <div className="flex gap-2 text-xs">
+                                                <div className="flex gap-1">
                                                     <Filenest.FolderActionTrigger
                                                         action="rename"
                                                         className="hover:underline"
                                                     >
-                                                        Rename
+                                                        <IconEdit className="text-gray-600" size={20}/>
                                                     </Filenest.FolderActionTrigger>
                                                     <Filenest.FolderActionTrigger
                                                         action="remove"
                                                         className="hover:underline"
                                                     >
-                                                        Delete
+                                                        <IconTrash className="text-gray-600" size={20}/>
                                                     </Filenest.FolderActionTrigger>
                                                 </div>
                                             </div>
                                         )}
                                     </Filenest.Folder>
                                 ))}
-                                <Filenest.FolderCreateTrigger className="flex items-center px-2 py-1 border border-gray-300 rounded cursor-pointer hover:bg-gray-100">
+                                <Filenest.FolderCreateTrigger className="flex gap-1 items-center px-2 py-1 border border-gray-300 rounded cursor-pointer hover:bg-gray-100">
+                                    <IconPlus className="text-gray-600"/>
                                     Create Folder
                                 </Filenest.FolderCreateTrigger>
                             </Fragment>
@@ -177,7 +179,7 @@ const MediaLibraryBundle = () => {
                                             action="remove"
                                             className="py-2 px-3 rounded bg-red-400 hover:bg-red-300 cursor-pointer"
                                         >
-                                            Delete
+                                            <IconTrash/>
                                         </Filenest.AssetActionTrigger>
                                     </div>
                                 </Filenest.Asset>

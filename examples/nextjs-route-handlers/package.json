@@ -10,6 +10,7 @@
     },
     "dependencies": {
         "@filenest/core": "file:../../packages/core",
+        "@tabler/icons-react": "3.7.0",
         "clsx": "2.1.1",
         "next": "14.2.3",
         "react": "^18",
