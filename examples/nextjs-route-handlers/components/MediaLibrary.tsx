@@ -117,17 +117,21 @@ const MediaLibraryBundle = () => {
                                             key={asset.assetId}
                                             asset={asset}
                                             className={cn(
-                                                "p-2 rounded-lg border border-gray-300 cursor-pointer hover:bg-gray-100",
+                                                "p-2 flex flex-col rounded-lg border border-gray-300 cursor-pointer hover:bg-gray-100",
                                                 asset.isLoading && "animate-pulse"
                                             )}
                                         >
-                                            {asset.type == "image" && (
+                                            {asset.type == "image" ? (
                                                 <img
                                                     // Apply transformations to make asset list less resource intensive
                                                     src={asset.url.split("upload/").join("upload/w_300,h_300,c_fill/")}
                                                     alt={asset.name}
                                                     className="aspect-square w-full object-cover rounded-md"
                                                 />
+                                            ) : (
+                                                <div className="text-xl uppercase flex items-center justify-center rounded bg-gray-100 size-24 mx-auto mt-8 mb-auto">
+                                                    .{asset.format}
+                                                </div>
                                             )}
                                             <Filenest.ResourceName className="font-semibold text-gray-800 truncate mt-1" />
                                             <div className="flex gap-2 text-sm">
