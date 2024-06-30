@@ -1,7 +1,7 @@
 "use client"
 
 import type { Asset } from "@filenest/core"
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 import { useGlobalContext } from "./GlobalContext"
 import { createFetchers } from "../utils/fetchers"
 import type { SetState } from "../utils/types"
@@ -39,6 +39,10 @@ export const AssetProvider = ({ asset, children }: AssetProviderProps) => {
     const { endpoint, trpcMode, alertDialog, updateAsset, removeAssetFromCurrDir, _l } = useGlobalContext()
 
     const [assetName, setAssetName] = useState(asset.name)
+
+    useEffect(() => {
+        setAssetName(asset.name)
+    }, [asset])
 
     const [isLoading, setIsLoading] = useState(false)
 

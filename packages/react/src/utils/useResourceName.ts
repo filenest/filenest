@@ -47,8 +47,6 @@ export const useResourceName = () => {
 
     const isValidName = newName.trim().length >= 1
 
-    // TODO: Fix name not updating when underlaying data changes (e.g. when renaming file)
-
     const inputRef = useRef<HTMLInputElement>(null)
     const clickOutsideRef = useClickOutside(() => {
         if (isRenaming && isValidName && newName !== name) {
