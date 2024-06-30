@@ -119,12 +119,15 @@ const MediaLibraryBundle = () => {
                                                 asset.isLoading && "animate-pulse"
                                             )}
                                         >
-                                            <img
-                                                src={asset.url}
-                                                alt={asset.name}
-                                                className="aspect-square w-full object-cover rounded-md"
-                                            />
-                                            <Filenest.ResourceName className="font-semibold text-gray-800 truncate mt-1"/>
+                                            {asset.type == "image" && (
+                                                <img
+                                                    // Apply transformations to make asset list less resource intensive
+                                                    src={asset.url.split("upload/").join("upload/w_300,h_300,c_fill/")}
+                                                    alt={asset.name}
+                                                    className="aspect-square w-full object-cover rounded-md"
+                                                />
+                                            )}
+                                            <Filenest.ResourceName className="font-semibold text-gray-800 truncate mt-1" />
                                             <div className="flex gap-2 text-sm">
                                                 <div className="uppercase">{asset.format}</div>
                                                 <div>{prettyFilesize(asset.bytes)}</div>
@@ -154,7 +157,7 @@ const MediaLibraryBundle = () => {
                                 <Filenest.Asset asset={asset}>
                                     <img src={asset.url} alt={asset.name} className="rounded-md" />
                                     <Filenest.AssetActionTrigger action="rename" asChild>
-                                        <Filenest.ResourceName className="font-semibold text-gray-800 mt-2 text-wrap hover:bg-gray-100"/>
+                                        <Filenest.ResourceName className="font-semibold text-gray-800 mt-2 text-wrap hover:bg-gray-100" />
                                     </Filenest.AssetActionTrigger>
                                     <div className="flex gap-2 text-sm mt-2">
                                         <div className="uppercase">{asset.format}</div>
@@ -193,4 +196,4 @@ export const config: Partial<FilenestRootProps<any>> = {
     bundle: <MediaLibraryBundle />,
     dialog: <MediaLibraryDialog />,
     uploader: <MediaLibraryUploader />,
-} 
+}
