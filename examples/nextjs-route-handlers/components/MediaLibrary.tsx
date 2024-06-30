@@ -153,7 +153,9 @@ const MediaLibraryBundle = () => {
                             {asset && (
                                 <Filenest.Asset asset={asset}>
                                     <img src={asset.url} alt={asset.name} className="rounded-md" />
-                                    <Filenest.ResourceName className="font-semibold text-gray-800 mt-2 text-wrap"/>
+                                    <Filenest.AssetActionTrigger action="rename" asChild>
+                                        <Filenest.ResourceName className="font-semibold text-gray-800 mt-2 text-wrap hover:bg-gray-100"/>
+                                    </Filenest.AssetActionTrigger>
                                     <div className="flex gap-2 text-sm mt-2">
                                         <div className="uppercase">{asset.format}</div>
                                         <div>{prettyFilesize(asset.bytes)}</div>
@@ -186,9 +188,9 @@ const MediaLibraryBundle = () => {
     )
 }
 
-export const config = {
+export const config: Partial<FilenestRootProps<any>> = {
     endpoint: "/api/media",
     bundle: <MediaLibraryBundle />,
     dialog: <MediaLibraryDialog />,
     uploader: <MediaLibraryUploader />,
-} satisfies Partial<FilenestRootProps<any>>
+} 

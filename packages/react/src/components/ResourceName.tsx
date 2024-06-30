@@ -2,11 +2,11 @@
 
 import { useResourceName } from "../utils/useResourceName"
 
-interface ResourceNameProps {
+interface ResourceNameProps extends React.HTMLAttributes<HTMLElement> {
     className?: string
 }
 
-export const ResourceName = ({ className }: ResourceNameProps) => {
+export const ResourceName = ({ className, onClick }: ResourceNameProps) => {
     const { isRenaming, ref, handleKeyDown, newName, setNewName, name } = useResourceName()
 
     if (isRenaming) {
@@ -26,5 +26,5 @@ export const ResourceName = ({ className }: ResourceNameProps) => {
         )
     }
 
-    return <div className={className}>{name}</div>
+    return <div className={className} onClick={onClick}>{name}</div>
 }

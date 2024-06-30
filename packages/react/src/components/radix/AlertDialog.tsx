@@ -48,6 +48,14 @@ export const AlertDialogContent = ({ children, ...props }: Primitive.AlertDialog
 export const AlertDialogCancel = ({ children, ...props }: Primitive.AlertDialogCancelProps) => {
     const { alertDialog } = useGlobalContext()
 
+    if (alertDialog.cancel) {
+        return (
+            <Primitive.Action asChild {...props} onClick={alertDialog.cancel}>
+                <div>{alertDialog.content.cancel}</div>
+            </Primitive.Action>
+        )
+    }
+
     return (
         <Primitive.Cancel asChild {...props}>
             <div>{alertDialog.content.cancel}</div>

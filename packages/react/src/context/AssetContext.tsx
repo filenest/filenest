@@ -4,6 +4,7 @@ import type { Asset } from "@filenest/core"
 import { createContext, useContext, useState } from "react"
 import { useGlobalContext } from "./GlobalContext"
 import { createFetchers } from "../utils/fetchers"
+import type { SetState } from "../utils/types"
 
 export interface AssetContext {
     asset: Asset
@@ -11,6 +12,12 @@ export interface AssetContext {
     remove: () => void
     select: () => void
     isLoading: boolean
+    isRenaming: boolean
+    _internal: {
+        _setNewName: SetState<string>
+        _newName: string
+        _resetRename: () => void
+    }
 }
 
 export const AssetContext = createContext<AssetContext | null>(null)
@@ -29,7 +36,7 @@ interface AssetProviderProps {
 }
 
 export const AssetProvider = ({ asset, children }: AssetProviderProps) => {
-    const { endpoint, trpcMode, alertDialog, updateAsset, removeAssetFromCurrDir } = useGlobalContext()
+    const { endpoint, trpcMode, alertDialog, updateAsset, removeAssetFromCurrDir, _l } = useGlobalContext()
 
     const [assetName, setAssetName] = useState(asset.name)
 
@@ -74,7 +81,8 @@ export const AssetProvider = ({ asset, children }: AssetProviderProps) => {
         alertDialog.setOpen(true)
     }
 
-    async function public_renameAsset() {
+    async function public_renameAsset(updateDeliveryUrl?: boolean) {
+        alertDialog.setCancel(undefined)
         if (newName.length < 1) {
             setIsRenaming(true)
             setNewName(assetName)
@@ -89,11 +97,33 @@ export const AssetProvider = ({ asset, children }: AssetProviderProps) => {
             const result = await renameAsset({
                 id: asset.assetId,
                 name: newName,
+                updateDeliveryUrl
             })
             if (result.success) {
                 updateAsset(asset.assetId, { name: newName })
             } else {
-                throw new Error(result.message)
+                if (result.message === "ERR_DELIVERY_URL_WILL_CHANGE") {
+                    alertDialog.setContent({
+                        title: _l("alert.deliveryUrlChange.title"),
+                        text: _l("alert.deliveryUrlChange.text"),
+                        commit: _l("alert.deliveryUrlChange.commit"),
+                        cancel: _l("alert.deliveryUrlChange.cancel"),
+                    })
+                    alertDialog.setAction(() => () => public_renameAsset(true))
+                    alertDialog.setCancel(() => () => public_renameAsset(false))
+                    alertDialog.setOpen(true)
+                }
+                if (result.message === "ERR_UPDATE_DELIVERY_URL_REQUIRED") {
+                    alertDialog.setContent({
+                        title: _l("alert.deliveryUrlRequired.title"),
+                        text: _l("alert.deliveryUrlRequired.text"),
+                        commit: _l("alert.deliveryUrlRequired.commit"),
+                        cancel: _l("alert.deliveryUrlRequired.cancel"),
+                    })
+                    alertDialog.setAction(() => () => public_renameAsset(true))
+                    alertDialog.setCancel(() => () => public_renameAsset(false))
+                    alertDialog.setOpen(true)
+                }
             }
         } catch (error) {
             console.error("[Filenest] Error renaming asset:", error)
@@ -106,12 +136,23 @@ export const AssetProvider = ({ asset, children }: AssetProviderProps) => {
         alert("TODO: not implemented")
     }
 
+    const _internal = {
+        _newName: newName,
+        _setNewName: setNewName,
+        _resetRename: resetRename,
+    }
+
     const contextValue = {
         rename: public_renameAsset,
         remove: public_removeAsset,
         select: public_selectAsset,
+        asset: {
+            ...asset,
+            name: assetName,
+        },
         isLoading,
-        asset,
+        isRenaming,
+        _internal,
     }
 
     return <AssetContext.Provider value={contextValue}>{children}</AssetContext.Provider>

@@ -93,7 +93,7 @@ export interface Provider {
      *
      * @returns The updated asset
      */
-    renameAsset(input: RenameAssetInput): Promise<Asset>
+    renameAsset(input: RenameAssetInput): Promise<Response>
 
     /**
      * #### Delete an asset

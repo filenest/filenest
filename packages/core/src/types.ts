@@ -145,10 +145,11 @@ export type UploadReturn = z.infer<typeof UploadReturn>
 export const RenameAssetInput = z.object({
     id: z.string(),
     name: z.string(),
+    updateDeliveryUrl: z.boolean().optional(),
 })
 export type RenameAssetInput = z.infer<typeof RenameAssetInput>
 
-export const RenameAssetReturn = Asset
+export const RenameAssetReturn = Response
 export type RenameAssetReturn = z.infer<typeof RenameAssetReturn>
 
 export const DeleteAssetInput = z.object({

@@ -48,11 +48,11 @@ export function createFetchers({ endpoint, trpcMode }: CreateFetchersOpts) {
     }
 
     async function renameAsset(input: RenameAssetInput) {
-        return (await handleFetch("renameFolder", input)) as RenameAssetReturn
+        return (await handleFetch("renameAsset", input)) as RenameAssetReturn
     }
 
     async function deleteAsset(input: DeleteAssetInput) {
-        return (await handleFetch("deleteFolder", input)) as DeleteAssetReturn
+        return (await handleFetch("deleteAsset", input)) as DeleteAssetReturn
     }
 
     return {

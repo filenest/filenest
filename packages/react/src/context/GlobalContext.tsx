@@ -33,6 +33,8 @@ export interface GlobalContext {
         setContent: (content: Partial<AlertDialogContent>) => void
         action: () => void
         setAction: SetState<() => void>
+        cancel?: () => void
+        setCancel: SetState<(() => void) | undefined>
     }
     detailledAsset: (Asset & AssetExtraProps) | null
     setDetailledAsset: SetState<Asset | null>
@@ -194,6 +196,7 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
 
     const [alertDialogOpen, setAlertDialogOpen] = useState(false)
     const [alertDialogAction, setAlertDialogAction] = useState<() => void>(() => () => {})
+    const [alertDialogCancel, setAlertDialogCancel] = useState<() => void>()
     const [alertDialogContent, _setAlertDialogContent] = useState<Partial<AlertDialogContent>>({
         title: "",
         text: "",
@@ -226,6 +229,8 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
             setContent: setAlertDialogContent,
             action: alertDialogAction,
             setAction: setAlertDialogAction,
+            cancel: alertDialogCancel,
+            setCancel: setAlertDialogCancel,
         },
         detailledAsset: detailledAsset as any,
         setDetailledAsset,

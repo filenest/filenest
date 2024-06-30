@@ -14,34 +14,44 @@ export const useResourceName = () => {
     const assetCtx = useContext(AssetContext)
 
     let contextType: "folder" | "asset"
-    let _name: string = ""
-    let _newName: string = ""
-    let _setNewName: SetState<string>
-    let _isLoading: boolean = false
-    let _isRenaming: boolean = false
-    let _resetRename: () => void
+
+    let name: string
+    let newName: string
+    let isRenaming: boolean
+    let isTemporary: boolean
+    let isLoading: boolean
+    let setNewName: SetState<string>
+    let resetRename: () => void
 
     if (folderCtx && !assetCtx) {
         contextType = "folder"
-        _name = folderCtx.folder.name
-        _newName = folderCtx._internal._newName
-        _setNewName = folderCtx._internal._setNewName
-        _isLoading = folderCtx.isLoading
-        _isRenaming = folderCtx.isRenaming
-        _resetRename = folderCtx._internal._resetRename
+        name = folderCtx.folder.name
+        newName = folderCtx._internal._newName
+        setNewName = folderCtx._internal._setNewName
+        isLoading = folderCtx.isLoading
+        isRenaming = folderCtx.isRenaming
+        resetRename = folderCtx._internal._resetRename
+        isTemporary = folderCtx.folder.id.includes("__filenest-temporary")
     } else if (assetCtx && !folderCtx) {
         contextType = "asset"
-        _name = assetCtx.asset.name
+        name = assetCtx.asset.name
+        newName = assetCtx._internal._newName
+        setNewName = assetCtx._internal._setNewName
+        isLoading = assetCtx.isLoading
+        isRenaming = assetCtx.isRenaming
+        resetRename = assetCtx._internal._resetRename
+        isTemporary = false
     } else {
         throw new Error("Filenest.ResourceName must be used within a Filenest.Folder or Filenest.Asset component")
     }
 
-    const isTemporary = folderCtx?.folder.id.includes("__filenest-temporary")
-    const isValidName = _newName.trim().length >= 1
+    const isValidName = newName.trim().length >= 1
+
+    // TODO: Fix name not updating when underlaying data changes (e.g. when renaming file)
 
     const inputRef = useRef<HTMLInputElement>(null)
     const clickOutsideRef = useClickOutside(() => {
-        if (_isRenaming && isValidName) {
+        if (isRenaming && isValidName && newName !== name) {
             if (contextType === "folder") {
                 if (isTemporary) {
                     folderCtx!.create()
@@ -49,8 +59,11 @@ export const useResourceName = () => {
                     folderCtx!.rename()
                 }
             }
+            if (contextType === "asset") {
+                assetCtx!.rename()
+            }
         } else {
-            _resetRename()
+            resetRename()
             removeIfTemporary()
         }
     })
@@ -64,10 +77,10 @@ export const useResourceName = () => {
     const ref = useMergedRef(inputRef, clickOutsideRef)
 
     useEffect(() => {
-        if (_isRenaming && inputRef.current) {
+        if (isRenaming && inputRef.current) {
             inputRef.current.focus()
         }
-    }, [_isRenaming])
+    }, [isRenaming])
 
     function handleKeyDown(e: React.KeyboardEvent) {
         if (e.key === "Enter") {
@@ -79,19 +92,23 @@ export const useResourceName = () => {
                     folderCtx!.rename()
                 }
             }
+            if (contextType === "asset") {
+                assetCtx!.rename()
+            }
         } else if (e.key === "Escape") {
-            _resetRename()
+            resetRename()
             removeIfTemporary()
         }
     }
 
     return {
         ref,
-        name: _name,
-        newName: _newName,
-        setNewName: _setNewName!,
-        isLoading: _isLoading,
-        isRenaming: _isRenaming,
+        name,
+        newName,
+        setNewName,
+        isRenaming,
+        isLoading,
+        resetRename,
         handleKeyDown
     }
 }

@@ -3,6 +3,7 @@ import { type Provider } from ".."
 
 import {
     GetUploadSignatureInput,
+    RenameAssetInput,
     type Asset,
     type AssetType,
     type CreateFolderInput,
@@ -13,6 +14,7 @@ import {
     type RenameFolderInput,
     type UploadInput,
 } from "../types"
+import slugify from "slugify"
 
 type CloudinaryConfig = {
     API_KEY: string
@@ -60,7 +62,7 @@ export class Cloudinary implements Provider {
         }
 
         const to_sign = Object.entries(params)
-            .filter(([k, v]) => present(v))
+            .filter(([_, v]) => present(v))
             .map(([k, v]) => `${k}=${toArray(v).join(",")}`)
             .sort()
             .join("&")
@@ -100,7 +102,7 @@ export class Cloudinary implements Provider {
             format: resource.format,
             url: resource.url,
             folder: resource.folder,
-            name: resource.filename,
+            name: resource.display_name || resource.filename,
             bytes: resource.bytes,
             width: resource.width,
             height: resource.height,
@@ -123,6 +125,12 @@ export class Cloudinary implements Provider {
 
     private mapFoldersToSchema(data: CloudinaryFolder[]) {
         return data.map((folder) => this.mapFolderToSchema(folder))
+    }
+
+    public async getRawAssetByAssetId(id: string) {
+        const url = new URL(this.URL.toString() + "/resources/" + id)
+        const asset: CloudinaryResource = await this.doFetch(url)
+        return asset
     }
 
     public async getAsset(input: GetAssetInput) {
@@ -258,8 +266,8 @@ export class Cloudinary implements Provider {
             input.files.map((file) => {
                 const url = new URL(this.URL.toString() + "/auto/upload")
 
-                const filename = file.name
-                const publicId = input.folder ? `${input.folder}/${filename}` : filename
+                // const filename = file.name
+                // const publicId = input.folder ? `${input.folder}/${filename}` : filename
                 const timestamp = Math.floor(Date.now() / 1000)
                 const folder: Record<string, any> = {}
 
@@ -311,8 +319,54 @@ export class Cloudinary implements Provider {
         }
     }
 
-    public async renameAsset() {
-        return null as any
+    public async renameAsset(input: RenameAssetInput) {
+        const { id, name, updateDeliveryUrl } = input
+
+        const { settings } = await this.getConfig()
+
+        if (settings.folder_mode === "fixed" && !updateDeliveryUrl) {
+            throw new Error("ERR_DELIVERY_URL_WILL_CHANGE")
+        }
+
+        if (settings.folder_mode === "dynamic" && updateDeliveryUrl === undefined) {
+            throw new Error("ERR_UPDATE_DELIVERY_URL_REQUIRED")
+        }
+
+        const { resource_type, type, public_id } = await this.getRawAssetByAssetId(id)
+
+        if (settings.folder_mode === "dynamic") {
+            const url = new URL(this.URL.toString() + `/resources/${resource_type}/${type}/` + public_id)
+            url.searchParams.append("display_name", name.replace("/", "-"))
+            await this.doFetch(url, { method: "POST" })
+        }
+
+        if (
+            (settings.folder_mode === "fixed" && updateDeliveryUrl) ||
+            (settings.folder_mode === "dynamic" && updateDeliveryUrl === true)
+        ) {
+            const timestamp = Math.floor(Date.now() / 1000).toString()
+
+            const url = new URL(this.URL.toString() + `/${resource_type}/rename`)
+            url.searchParams.append("from_public_id", public_id)
+            url.searchParams.append("to_public_id", slugify(name))
+            url.searchParams.append("api_key", this.API_KEY)
+            url.searchParams.append("timestamp", timestamp)
+
+            const signature = this.makeSignature({
+                timestamp,
+                from_public_id: public_id,
+                to_public_id: slugify(name),
+            })
+
+            url.searchParams.append("signature", signature)
+            url.searchParams.sort()
+
+            await this.doFetch(url, { method: "POST" })
+        }
+
+        return {
+            success: true,
+        }
     }
 
     public async deleteAsset() {
@@ -333,6 +387,7 @@ type CloudinaryResource = {
     public_id: string
     folder: string
     filename: string
+    display_name?: string
     format: string
     version: number
     resource_type: "image" | "raw" | "video"
