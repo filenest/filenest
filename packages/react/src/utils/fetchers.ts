@@ -23,7 +23,7 @@ export function createFetchers({ endpoint, trpcMode }: CreateFetchersOpts) {
         if (trpcMode) {
             return endpoint + "." + path
         }
-        return endpoint + "/" + path
+        return endpoint.replace(/\/+$/, '') + "/" + path
     }
 
     async function handleFetch(path: string, body?: any) {
