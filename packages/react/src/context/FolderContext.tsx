@@ -3,7 +3,6 @@
 import type { Folder } from "@filenest/core"
 import { createContext, useContext, useState } from "react"
 import { useGlobalContext } from "./GlobalContext"
-import { createFetchers } from "../utils/fetchers"
 import type { SetState } from "../utils/types"
 
 export interface FolderInternals {
@@ -42,13 +41,12 @@ interface FolderProviderProps {
 export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
     const {
         navigateTo,
-        endpoint,
         removeFolderFromCurrDir,
         addFolderToCurrDir,
         currentFolder,
         alertDialog,
         _l,
-        trpcMode,
+        fetchers,
     } = useGlobalContext()
     const _folder = folder as Folder & { isRenaming?: boolean; isLoading?: boolean }
 
@@ -64,11 +62,7 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
         setIsRenaming(false)
     }
 
-    const { renameFolder, deleteFolder, createFolder } = createFetchers({
-        endpoint,
-        trpcMode,
-    })
-
+    const { renameFolder, deleteFolder, createFolder } = fetchers
     async function public_removeFolder(force?: boolean) {
         try {
             setIsLoading(true)

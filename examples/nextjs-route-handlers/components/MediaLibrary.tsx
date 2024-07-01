@@ -104,11 +104,11 @@ const MediaLibraryBundle = () => {
 
             <div className="grid grid-cols-[auto_300px] items-start gap-8 relative">
                 <Filenest.AssetList>
-                    {/* <Filenest.DragDropIndicator>
-                        Drop files to upload
-                    </Filenest.DragDropIndicator> */}
                     {({ assets, isLoading, isLoadingMore }) => (
-                        <div>
+                        <div className="relative">
+                            <Filenest.DragDropIndicator className="absolute w-full h-full bg-green-300 flex items-center justify-center rounded-lg bg-opacity-50">
+                                Drop files to upload
+                            </Filenest.DragDropIndicator>
                             <div className="my-4">{isLoading ? null : `Showing ${assets?.length} assets`}</div>
                             <div className="grid grid-cols-4 gap-6">
                                 {!isLoading &&
@@ -203,9 +203,9 @@ const MediaLibraryBundle = () => {
     )
 }
 
-export const config: Partial<FilenestRootProps<any>> = {
+export const config = {
     endpoint: "/api/media",
     bundle: <MediaLibraryBundle />,
     dialog: <MediaLibraryDialog />,
     uploader: <MediaLibraryUploader />,
-}
+} satisfies Partial<FilenestRootProps<any>>

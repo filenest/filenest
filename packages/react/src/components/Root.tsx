@@ -9,6 +9,7 @@ type FilenestBaseProps<R extends RenderMode> = {
     bundle: React.ReactNode
     dialog: React.ReactNode
     endpoint: string
+    endpointIsTRPC?: boolean
     renderMode: R
     uploader: React.ReactNode
     labels?: Partial<typeof labels>
@@ -17,7 +18,7 @@ type FilenestBaseProps<R extends RenderMode> = {
 export type FilenestRootProps<R extends RenderMode> = R extends "dialog"
     ? FilenestBaseProps<R> & { dialogTrigger: React.ReactNode; uploadMultiple?: never }
     : R extends "uploader"
-    ? FilenestBaseProps<R> & { uploadMultiple: boolean; dialogTrigger?: never }
+    ? FilenestBaseProps<R> & { uploadMultiple?: boolean; dialogTrigger?: never }
     : FilenestBaseProps<R> & { dialogTrigger?: never; uploadMultiple?: never }
 
 const queryClient = new QueryClient({
@@ -33,12 +34,14 @@ export const Root = <R extends RenderMode>({
     dialog,
     dialogTrigger,
     endpoint,
+    endpointIsTRPC = false,
     renderMode,
     uploader,
     uploadMultiple,
 }: FilenestRootProps<R>) => {
     const config = {
         endpoint,
+        endpointIsTRPC,
         renderMode,
         uploadMultiple,
         dialogTrigger,

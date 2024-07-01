@@ -3,7 +3,6 @@
 import type { Asset } from "@filenest/core"
 import { createContext, useContext, useEffect, useState } from "react"
 import { useGlobalContext } from "./GlobalContext"
-import { createFetchers } from "../utils/fetchers"
 import type { SetState } from "../utils/types"
 
 export interface AssetContext {
@@ -36,7 +35,7 @@ interface AssetProviderProps {
 }
 
 export const AssetProvider = ({ asset, children }: AssetProviderProps) => {
-    const { endpoint, trpcMode, alertDialog, updateAsset, removeAssetFromCurrDir, _l } = useGlobalContext()
+    const { alertDialog, updateAsset, removeAssetFromCurrDir, _l, fetchers } = useGlobalContext()
 
     const [assetName, setAssetName] = useState(asset.name)
 
@@ -54,10 +53,7 @@ export const AssetProvider = ({ asset, children }: AssetProviderProps) => {
         setIsRenaming(false)
     }
 
-    const { renameAsset, deleteAsset } = createFetchers({
-        endpoint,
-        trpcMode,
-    })
+    const { renameAsset, deleteAsset } = fetchers
 
     async function deleteActually() {
         try {
@@ -101,7 +97,7 @@ export const AssetProvider = ({ asset, children }: AssetProviderProps) => {
             const result = await renameAsset({
                 id: asset.assetId,
                 name: newName,
-                updateDeliveryUrl
+                updateDeliveryUrl,
             })
             if (result.success) {
                 updateAsset(asset.assetId, { name: newName })

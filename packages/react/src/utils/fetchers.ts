@@ -15,19 +15,19 @@ import {
 
 type CreateFetchersOpts = {
     endpoint: string
-    trpcMode: boolean
+    endpointIsTRPC: boolean
 }
 
-export function createFetchers({ endpoint, trpcMode }: CreateFetchersOpts) {
-    function makeUrl(endpoint: string, path: string, trpcMode: boolean) {
-        if (trpcMode) {
+export function createFetchers({ endpoint, endpointIsTRPC }: CreateFetchersOpts) {
+    function makeUrl(endpoint: string, path: string, endpointIsTRPC: boolean) {
+        if (endpointIsTRPC) {
             return endpoint + "." + path
         }
-        return endpoint.replace(/\/+$/, '') + "/" + path
+        return endpoint.replace(/\/+$/, "") + "/" + path
     }
 
     async function handleFetch(path: string, body?: any) {
-        const url = makeUrl(endpoint, path, trpcMode)
+        const url = makeUrl(endpoint, path, endpointIsTRPC)
         return fetch(url, { method: "POST", body: JSON.stringify(body) }).then((res) => res.json())
     }
 

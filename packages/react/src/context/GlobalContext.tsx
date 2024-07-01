@@ -10,6 +10,7 @@ import { labels } from "../utils/labels"
 export interface GlobalContext {
     currentFolder: Folder
     endpoint: string
+    endpointIsTRPC: boolean
     navigation: Folder[]
     navigateTo: (folder: Folder) => void
     renderMode: RenderMode
@@ -38,7 +39,7 @@ export interface GlobalContext {
     }
     detailledAsset: (Asset & AssetExtraProps) | null
     setDetailledAsset: SetState<Asset | null>
-    trpcMode: boolean
+    fetchers: ReturnType<typeof createFetchers>
 }
 
 const GlobalContext = createContext<GlobalContext | null>(null)
@@ -55,7 +56,7 @@ interface GlobalProviderProps {
     children: React.ReactNode
     config: {
         endpoint: string
-        trpcMode: boolean
+        endpointIsTRPC: boolean
         renderMode: RenderMode
         uploadMultiple?: boolean
         dialogTrigger?: React.ReactNode
@@ -64,7 +65,9 @@ interface GlobalProviderProps {
 }
 
 export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
-    const { endpoint, renderMode, uploadMultiple, dialogTrigger, trpcMode = false } = config
+    const { endpoint, renderMode, uploadMultiple, dialogTrigger, endpointIsTRPC = false } = config
+
+    const fetchers = createFetchers({ endpoint, endpointIsTRPC })
 
     const _labels = { ...labels, ...config.labels }
     function _l(label: keyof typeof labels): string {
@@ -84,7 +87,7 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         })
     }
 
-    const { getResourcesByFolder } = createFetchers({ endpoint, trpcMode })
+    const { getResourcesByFolder } = createFetchers({ endpoint, endpointIsTRPC })
 
     const resourcesQuery = useInfiniteQuery({
         queryKey: ["folderWithResources", currentFolder],
@@ -234,7 +237,8 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         },
         detailledAsset: detailledAsset as any,
         setDetailledAsset,
-        trpcMode,
+        endpointIsTRPC,
+        fetchers
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>
