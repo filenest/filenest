@@ -40,14 +40,14 @@ class ProcedureWithMiddleware {
         return this
     }
 
-    public query(action: Provider[keyof Provider]) {
+    public execute(action: Provider[keyof Provider]) {
         const procedure = this.middlewares.reduce((procWithMw, mw) => {
             return procWithMw.use(mw)
         }, t.procedure)
 
         return procedure
             .input(this.inputSchema)
-            .query(async ({ input }) => await action(input as any))
+            .mutation(async ({ input }) => await action(input as any))
     }
 }
 
@@ -76,7 +76,7 @@ class FilenestTRPCRouter {
                 const mw = this.routeMiddleware[key] || []
                 const proc = new ProcedureWithMiddleware(mw)
                     .input(inputSchemas[schemaName])
-                    .query(this.provider[key])
+                    .execute(this.provider[key])
                 return [key, proc]
             })
         )
