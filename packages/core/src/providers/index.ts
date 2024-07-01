@@ -1,1 +1,1 @@
-export { Cloudinary } from "./Cloudinary"
+export { Cloudinary } from "./cloudinary"
