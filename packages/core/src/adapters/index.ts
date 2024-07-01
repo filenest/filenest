@@ -1,1 +1,2 @@
-export { experimental_createNextRouteHandlers } from "./next";
+export { initNextjsAdapter } from "./next"
+export { initTRPCAdapter } from "./trpc"

@@ -1,4 +1,4 @@
-import { Cloudinary, experimental_createNextRouteHandlers } from "@filenest/core"
+import { Cloudinary, initNextjsAdapter } from "@filenest/core"
 
 const provider = new Cloudinary({
     API_KEY: process.env.CLOUDINARY_API_KEY!,
@@ -6,4 +6,4 @@ const provider = new Cloudinary({
     CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME!,
 })
 
-export const { POST } = experimental_createNextRouteHandlers({ provider })
+export const { POST } = initNextjsAdapter({ provider })
