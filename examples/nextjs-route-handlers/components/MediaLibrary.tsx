@@ -64,12 +64,9 @@ const MediaLibraryBundle = () => {
                         {!isLoading && (
                             <Fragment>
                                 {folders?.map((folder) => (
-                                    <Filenest.Folder key={folder.id} folder={folder}>
-                                        {({ navigateTo, isLoading }) => (
-                                            <div
-                                                onClick={navigateTo}
-                                                className="px-2 py-1 border border-gray-300 rounded cursor-pointer hover:bg-gray-100"
-                                            >
+                                    <Filenest.Folder key={folder.id} folder={folder} asChild>
+                                        {({ isLoading }) => (
+                                            <div className="px-2 py-1 border border-gray-300 rounded cursor-pointer hover:bg-gray-100">
                                                 <div className="flex gap-1">
                                                     {isLoading ? "🔄" : "📁"}
                                                     <Filenest.ResourceName />

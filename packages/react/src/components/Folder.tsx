@@ -5,26 +5,27 @@ import { FolderProvider, useFolderContext, type FolderInternals } from "../conte
 import { useGlobalContext } from "../context/GlobalContext"
 import { Slot } from "@radix-ui/react-slot"
 
-interface RenderProps extends Omit<FolderInternals, "_internal"> {
+interface RenderProps extends Omit<FolderInternals, "_internal" | "navigateTo"> {
     stopPropagate: {
         onClick: (e: React.MouseEvent) => void
     }
 }
 
-interface FolderProps {
+interface FolderProps extends Omit<React.ComponentPropsWithoutRef<"div">, "children"> {
     children: ((props: RenderProps) => React.ReactNode) | React.ReactNode
     folder: FolderType
+    asChild?: boolean
 }
 
-const FolderWrapper = ({ children, folder }: FolderProps) => {
+const FolderWrapper = ({ children, folder, ...props }: FolderProps) => {
     return (
         <FolderProvider folder={folder}>
-            <Folder children={children} />
+            <Folder children={children} {...props}/>
         </FolderProvider>
     )
 }
 
-const Folder = ({ children }: Pick<FolderProps, "children">) => {
+const Folder = ({ children, asChild, ...props }: Omit<FolderProps, "folder">) => {
     const { remove, rename, navigateTo, isLoading, isRenaming } = useFolderContext()
 
     const stopPropagate = {
@@ -34,11 +35,17 @@ const Folder = ({ children }: Pick<FolderProps, "children">) => {
         },
     }
 
-    if (typeof children === "function") {
-        return children({ remove, rename, navigateTo, isLoading, isRenaming, stopPropagate })
+    const Comp = asChild ? Slot : "div"
+
+    function getChildren() {
+        if (typeof children === "function") {
+            return children({ remove, rename, isLoading, isRenaming, stopPropagate })
+        }
+
+        return children
     }
 
-    return children
+    return <Comp {...props} onClick={navigateTo}>{getChildren()}</Comp>
 }
 
 interface FolderActionTriggerProps extends React.ComponentPropsWithoutRef<"button"> {
