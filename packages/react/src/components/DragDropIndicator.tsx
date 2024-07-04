@@ -3,7 +3,7 @@
 import { Slot } from "@radix-ui/react-slot"
 import { useAssetListContext } from "../context/AssetListContext"
 
-interface DragDropIndicatorProps extends React.ComponentPropsWithoutRef<"div"> {
+export interface DragDropIndicatorProps extends React.ComponentPropsWithoutRef<"div"> {
     asChild?: boolean
 }
 

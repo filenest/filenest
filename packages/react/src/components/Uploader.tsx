@@ -11,7 +11,7 @@ export const Uploader = () => {
 }
 
 
-export type MediaLibraryDropzoneProps =
+/* export type MediaLibraryDropzoneProps =
     | {
         multiple?: boolean
         isWrapper: true
@@ -230,3 +230,4 @@ export const MediaLibraryDropzone = ({
         </div>
     )
 }
+ */

@@ -1,6 +1,6 @@
 "use client"
 
-interface FilenestBundleProps {
+export interface FilenestBundleProps {
     children: React.ReactNode
 }
 

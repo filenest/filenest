@@ -15,7 +15,7 @@ interface RenderProps {
     navigation: ReturnType<typeof useNavigationContext>["navigation"]
 }
 
-interface NavigationProps {
+export interface NavigationProps {
     children: ((props: RenderProps) => React.ReactNode) | React.ReactNode
 }
 

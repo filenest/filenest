@@ -3,7 +3,7 @@
 import { Slot } from "@radix-ui/react-slot"
 import { useGlobalContext } from "../context/GlobalContext"
 
-interface LoadMoreProps extends React.ComponentPropsWithoutRef<"button"> {
+export interface LoadMoreProps extends React.ComponentPropsWithoutRef<"button"> {
     asChild?: boolean
 }
 

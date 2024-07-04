@@ -17,7 +17,7 @@ interface RenderProps {
     isLoading: boolean
 }
 
-interface AssetProps extends Omit<React.ComponentPropsWithoutRef<"div">, "children"> {
+export interface AssetProps extends Omit<React.ComponentPropsWithoutRef<"div">, "children"> {
     asset: AssetType
     asChild?: boolean
     children: ((props: RenderProps) => React.ReactNode) | React.ReactNode
@@ -50,7 +50,7 @@ const Asset = ({ asset, asChild, children, ...props }: AssetProps) => {
 
 export { AssetWrapper as Asset }
 
-interface AssetActionTriggerProps extends React.ComponentPropsWithoutRef<"button"> {
+export interface AssetActionTriggerProps extends React.ComponentPropsWithoutRef<"button"> {
     action: "remove" | "rename" | "select"
     asChild?: boolean
 }

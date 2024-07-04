@@ -1,6 +1,6 @@
 "use client"
 
-interface FilenestDialogProps {}
+export interface FilenestDialogProps {}
 
 export const Dialog = () => {
     return (

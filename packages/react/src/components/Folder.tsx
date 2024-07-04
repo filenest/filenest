@@ -11,7 +11,7 @@ interface RenderProps extends Omit<FolderInternals, "_internal" | "navigateTo"> 
     }
 }
 
-interface FolderProps extends Omit<React.ComponentPropsWithoutRef<"div">, "children"> {
+export interface FolderProps extends Omit<React.ComponentPropsWithoutRef<"div">, "children"> {
     children: ((props: RenderProps) => React.ReactNode) | React.ReactNode
     folder: FolderType
     asChild?: boolean
@@ -48,7 +48,7 @@ const Folder = ({ children, asChild, ...props }: Omit<FolderProps, "folder">) =>
     return <Comp {...props} onClick={navigateTo}>{getChildren()}</Comp>
 }
 
-interface FolderActionTriggerProps extends React.ComponentPropsWithoutRef<"button"> {
+export interface FolderActionTriggerProps extends React.ComponentPropsWithoutRef<"button"> {
     action: "remove" | "rename" | "navigateTo"
     asChild?: boolean
 }
@@ -73,7 +73,7 @@ const FolderActionTrigger = ({ action, asChild, ...props }: FolderActionTriggerP
     return <Comp {...props} onClick={onClick} />
 }
 
-interface FolderCreateTriggerProps extends React.ComponentPropsWithoutRef<"button"> {
+export interface FolderCreateTriggerProps extends React.ComponentPropsWithoutRef<"button"> {
     asChild?: boolean
 }
 

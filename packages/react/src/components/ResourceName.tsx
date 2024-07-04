@@ -2,7 +2,7 @@
 
 import { useResourceName } from "../utils/useResourceName"
 
-interface ResourceNameProps extends React.HTMLAttributes<HTMLElement> {
+export interface ResourceNameProps extends React.HTMLAttributes<HTMLElement> {
     className?: string
 }
 

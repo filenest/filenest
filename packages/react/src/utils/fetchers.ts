@@ -1,16 +1,16 @@
 import {
-    CreateFolderInput,
-    CreateFolderReturn,
-    DeleteAssetInput,
-    DeleteAssetReturn,
-    DeleteFolderInput,
-    DeleteFolderReturn,
-    GetResourcesByFolderInput,
-    GetResourcesByFolderReturn,
-    RenameAssetInput,
-    RenameAssetReturn,
-    RenameFolderInput,
-    RenameFolderReturn,
+    type CreateFolderInput,
+    type CreateFolderReturn,
+    type DeleteAssetInput,
+    type DeleteAssetReturn,
+    type DeleteFolderInput,
+    type DeleteFolderReturn,
+    type GetResourcesByFolderInput,
+    type GetResourcesByFolderReturn,
+    type RenameAssetInput,
+    type RenameAssetReturn,
+    type RenameFolderInput,
+    type RenameFolderReturn,
 } from "@filenest/core"
 
 type CreateFetchersOpts = {

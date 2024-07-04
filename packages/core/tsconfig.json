@@ -1,19 +1,18 @@
 {
     "compilerOptions": {
-        "lib": ["DOM", "ESNext"],
         "target": "ESNext",
         "module": "ESNext",
-        "moduleDetection": "force",
+        "outDir": "dist",
+        "isolatedModules": true,
         "allowJs": true,
+        "declaration": true,
+        "declarationDir": "dist",
         "moduleResolution": "bundler",
-        "allowImportingTsExtensions": true,
         "verbatimModuleSyntax": true,
-        "noEmit": true,
-        "jsx": "react-jsx",
         "strict": true,
         "skipLibCheck": true,
-        "noFallthroughCasesInSwitch": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-    }
+        "esModuleInterop": true,
+        "sourceMap": true
+    },
+    "include": ["src"],
 }

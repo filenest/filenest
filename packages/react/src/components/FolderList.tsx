@@ -8,7 +8,7 @@ interface RenderProps {
     isLoading: boolean
 }
 
-interface FolderListProps {
+export interface FolderListProps {
     children: ((props: RenderProps) => React.ReactNode) | React.ReactNode
 }
 

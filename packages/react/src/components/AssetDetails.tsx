@@ -8,7 +8,7 @@ interface RenderProps {
     asset: (Asset & AssetExtraProps) | null
 }
 
-interface AssetDetailsProps {
+export interface AssetDetailsProps {
     children: ((props: RenderProps) => React.ReactNode) | React.ReactNode
 }
 

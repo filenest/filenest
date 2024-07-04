@@ -2,7 +2,13 @@
     "name": "@filenest/react",
     "version": "0.1.0",
     "description": "",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
     "main": "src/index.ts",
+    "files": [
+        "src/*"
+    ],
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
@@ -24,10 +30,14 @@
     "devDependencies": {
         "@types/react": "^18",
         "@types/react-dom": "^18",
+        "esbuild": "0.23.0",
         "react": "^18",
-        "react-dom": "^18"
+        "react-dom": "^18",
+        "typescript": "5.5.3"
     },
-    "keywords": [],
-    "author": "",
-    "license": "ISC"
+    "engines": {
+        "node": ">=20",
+        "pnpm": "*"
+    },
+    "platform": "browser"
 }

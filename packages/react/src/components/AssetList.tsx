@@ -16,7 +16,7 @@ interface RenderProps {
     isLoadingMore: boolean
 }
 
-interface AssetListProps extends Omit<React.ComponentPropsWithoutRef<"div">, "children"> {
+export interface AssetListProps extends Omit<React.ComponentPropsWithoutRef<"div">, "children"> {
     children: ((props: RenderProps) => React.ReactNode) | React.ReactNode
 }
 
