@@ -1,69 +1,66 @@
 "use client"
 
-import { useDropzone } from "react-dropzone"
 import type { WithoutChildren } from "../utils/types"
 import { Slot } from "@radix-ui/react-slot"
+import { UploaderProvider, useUploaderContext, type UploaderProviderProps } from "../context/UploaderContext"
 
-export interface UploaderProps extends WithoutChildren<Omit<React.ComponentPropsWithoutRef<"div">, "onProgress" | "onError">> {
-    noDrop?: boolean
-    noClick?: boolean
-    multiple?: boolean
-    asChild?: boolean
-    uploadOnDrop?: boolean
-    onUpload?: (files: File[]) => void
-    onProgress?: (progress: number) => void
-    onSuccess?: () => void
-    onError?: (error: Error) => void
-    disabled?: boolean
-    maxFiles?: number
-    maxSize?: number
-    children?: React.ReactNode
-}
-
-export const Uploader = ({
-    noDrop,
-    noClick,
-    multiple = true,
-    asChild,
-    uploadOnDrop,
-    onUpload,
-    onProgress,
-    onSuccess,
-    onError,
+const UploaderWrapper = ({
+    children,
     disabled,
     maxFiles,
     maxSize = 2.5e+8, // 250 MB,
-    children,
+    multiple = true,
+    noClick,
+    noDrop,
+    onError,
+    onProgress,
+    onSuccess,
+    onUpload,
+    uploadOnDrop,
     ...props
-}: UploaderProps) => {
-    const dropzone = useDropzone({
-        maxSize,
+}: UploaderProps & UploaderProviderProps) => {
+    const uploaderConfig = {
+        disabled,
         maxFiles,
+        maxSize,
         multiple,
         noClick,
-        noDrag: noDrop,
-        onDrop(acceptedFiles) {
-            if (uploadOnDrop) {
-                onUpload?.(acceptedFiles)
-                // upload...
-            }
-        },
-        onError(err) {
-            onError?.(err)
-        },
-        disabled
-    })
+        noDrop,
+        onError,
+        onProgress,
+        onSuccess,
+        onUpload,
+        uploadOnDrop,
+    }
+
+    return (
+        <UploaderProvider {...uploaderConfig}>
+            <Uploader {...props}>
+                {children}
+            </Uploader>
+        </UploaderProvider>
+    )
+}
+
+export interface UploaderProps extends WithoutChildren<Omit<React.ComponentPropsWithoutRef<"div">, "onProgress" | "onError">> {
+    asChild?: boolean
+    children?: React.ReactNode
+}
+
+const Uploader = ({ children, asChild, ...props }: UploaderProps) => {
+    const { dropzone } = useUploaderContext()
 
     const Comp = asChild ? Slot : "div"
 
     return (
-        <Comp {...dropzone.getRootProps()} {...props}>
+        <Comp {...dropzone.getRootProps({...props})}>
             <input {...dropzone.getInputProps()} />
             {children}
         </Comp>
     )
 }
 
+export { UploaderWrapper as Uploader }
 
 /* export type MediaLibraryDropzoneProps =
     | {

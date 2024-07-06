@@ -94,12 +94,12 @@ export const MediaLibrary = () => {
                 <Filenest.AssetList>
                     {({ assets, isLoading, isLoadingMore }) => (
                         <div className="relative">
-                            <Filenest.DropIndicator className="absolute w-full h-full bg-green-300 flex items-center justify-center rounded-lg bg-opacity-50" />
-                            <Filenest.DropIndicator className="fixed z-10 p-4 rounded bg-blue-300 bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2">
-                                <IconFilePlus /> Drop files to upload
-                            </Filenest.DropIndicator>
                             <div className="my-4">{isLoading ? null : `Showing ${assets?.length} assets`}</div>
-                            <div className="grid grid-cols-4 gap-6">
+                            <Filenest.Uploader uploadOnDrop className="grid grid-cols-4 gap-6">
+                                <Filenest.DropIndicator className="absolute w-full h-full bg-blue-100 flex items-center justify-center rounded-lg bg-opacity-50" />
+                                <Filenest.DropIndicator className="fixed z-10 p-4 rounded bg-blue-300 bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                                    <IconFilePlus /> Drop files to upload
+                                </Filenest.DropIndicator>
                                 {!isLoading &&
                                     assets?.map((asset) => (
                                         <Filenest.Asset
@@ -136,7 +136,7 @@ export const MediaLibrary = () => {
                                             className="h-[250px] border border-gray-300 bg-gray-100 animate-pulse rounded-lg"
                                         />
                                     ))}
-                            </div>
+                            </Filenest.Uploader>
                             <div className="flex justify-center mt-8">
                                 <Filenest.LoadMore className="py-2 px-3 rounded bg-gray-300 hover:bg-gray-200 cursor-pointer">
                                     Load more
