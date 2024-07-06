@@ -2,6 +2,7 @@
 
 import { Slot } from "@radix-ui/react-slot"
 import { AssetListProvider, useAssetListContext } from "../context/AssetListContext"
+import type { WithoutChildren } from "../utils/types"
 
 const AssetListWrapper = (props: AssetListProps) => {
     return (
@@ -17,7 +18,7 @@ interface RenderProps {
     isLoadingMore: boolean
 }
 
-export interface AssetListProps extends Omit<React.ComponentPropsWithoutRef<"div">, "children"> {
+export interface AssetListProps extends WithoutChildren<React.ComponentPropsWithoutRef<"div">> {
     children: ((props: RenderProps) => React.ReactNode) | React.ReactNode
     asChild?: boolean
 }

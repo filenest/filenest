@@ -4,6 +4,7 @@ import type { Folder as FolderType } from "@filenest/core"
 import { FolderProvider, useFolderContext, type FolderInternals } from "../context/FolderContext"
 import { useGlobalContext } from "../context/GlobalContext"
 import { Slot } from "@radix-ui/react-slot"
+import type { WithoutChildren } from "../utils/types"
 
 interface RenderProps extends Omit<FolderInternals, "_internal" | "navigateTo"> {
     stopPropagate: {
@@ -11,7 +12,7 @@ interface RenderProps extends Omit<FolderInternals, "_internal" | "navigateTo"> 
     }
 }
 
-export interface FolderProps extends Omit<React.ComponentPropsWithoutRef<"div">, "children"> {
+export interface FolderProps extends WithoutChildren<React.ComponentPropsWithoutRef<"div">> {
     children: ((props: RenderProps) => React.ReactNode) | React.ReactNode
     folder: FolderType
     asChild?: boolean

@@ -6,7 +6,7 @@ import type { Asset, Folder, FolderWithResources, GetResourcesByFolderReturn } f
 import type { AssetExtraProps, SetState } from "../utils/types"
 import { createFetchers } from "../utils/fetchers"
 import { labels } from "../utils/labels"
-import type { FilenestRootProps } from "../components/Root"
+import type { RootProps } from "../components/Root"
 
 export interface GlobalContext {
     currentFolder: Folder
@@ -50,7 +50,7 @@ export const useGlobalContext = () => {
     return context
 }
 
-interface GlobalProviderProps extends FilenestRootProps {}
+interface GlobalProviderProps extends RootProps {}
 
 export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
     const { endpoint, endpointIsTRPC = false } = props

@@ -4,6 +4,7 @@ import type { Asset as AssetType } from "@filenest/core"
 import { Slot } from "@radix-ui/react-slot"
 import { useGlobalContext } from "../context/GlobalContext"
 import { AssetProvider, useAssetContext } from "../context/AssetContext"
+import type { WithoutChildren } from "../utils/types"
 
 const AssetWrapper = ({ asset, ...props }: AssetProps) => {
     return (
@@ -17,7 +18,7 @@ interface RenderProps {
     isLoading: boolean
 }
 
-export interface AssetProps extends Omit<React.ComponentPropsWithoutRef<"div">, "children"> {
+export interface AssetProps extends WithoutChildren<React.ComponentPropsWithoutRef<"div">> {
     asset: AssetType
     asChild?: boolean
     children: ((props: RenderProps) => React.ReactNode) | React.ReactNode

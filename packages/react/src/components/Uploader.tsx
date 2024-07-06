@@ -1,6 +1,10 @@
 "use client"
 
-interface FilenestUploaderProps {}
+import type { WithoutChildren } from "../utils/types"
+
+interface UploaderProps extends WithoutChildren<React.ComponentPropsWithoutRef<"div">> {
+
+}
 
 export const Uploader = () => {
     return (
