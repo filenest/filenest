@@ -3,9 +3,10 @@
 import { useInfiniteQuery, type UseInfiniteQueryResult, type InfiniteData } from "@tanstack/react-query"
 import { createContext, useContext, useEffect, useState } from "react"
 import type { Asset, Folder, FolderWithResources, GetResourcesByFolderReturn } from "@filenest/core"
-import type { AssetExtraProps, RenderMode, SetState } from "../utils/types"
+import type { AssetExtraProps, SetState } from "../utils/types"
 import { createFetchers } from "../utils/fetchers"
 import { labels } from "../utils/labels"
+import type { FilenestRootProps } from "../components/Root"
 
 export interface GlobalContext {
     currentFolder: Folder
@@ -13,7 +14,6 @@ export interface GlobalContext {
     endpointIsTRPC: boolean
     navigation: Folder[]
     navigateTo: (folder: Folder) => void
-    renderMode: RenderMode
     resources?: FolderWithResources | undefined
     addFolderToCurrDir: (
         folder: Folder,
@@ -24,8 +24,6 @@ export interface GlobalContext {
     resourcesQuery: UseInfiniteQueryResult<InfiniteData<GetResourcesByFolderReturn, unknown>>
     updateAsset: (assetId: string, data: Partial<Asset & AssetExtraProps>) => void
     removeAssetFromCurrDir: (id: string) => void
-    uploadMultiple: boolean
-    dialogTrigger: React.ReactNode
     _l: (label: keyof typeof labels) => string
     alertDialog: {
         open: boolean
@@ -52,24 +50,14 @@ export const useGlobalContext = () => {
     return context
 }
 
-interface GlobalProviderProps {
-    children: React.ReactNode
-    config: {
-        endpoint: string
-        endpointIsTRPC: boolean
-        renderMode: RenderMode
-        uploadMultiple?: boolean
-        dialogTrigger?: React.ReactNode
-        labels?: Partial<typeof labels>
-    }
-}
+interface GlobalProviderProps extends FilenestRootProps {}
 
-export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
-    const { endpoint, renderMode, uploadMultiple, dialogTrigger, endpointIsTRPC = false } = config
+export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
+    const { endpoint, endpointIsTRPC = false } = props
 
     const fetchers = createFetchers({ endpoint, endpointIsTRPC })
 
-    const _labels = { ...labels, ...config.labels }
+    const _labels = { ...labels, ...props.labels }
     function _l(label: keyof typeof labels): string {
         return _labels[label]
     }
@@ -215,15 +203,12 @@ export const GlobalProvider = ({ children, config }: GlobalProviderProps) => {
         endpoint,
         navigation,
         navigateTo,
-        renderMode,
         resources: data,
         addFolderToCurrDir,
         removeFolderFromCurrDir,
         updateAsset,
         removeAssetFromCurrDir,
         resourcesQuery,
-        uploadMultiple: uploadMultiple || false,
-        dialogTrigger,
         _l,
         alertDialog: {
             open: alertDialogOpen,

@@ -9,6 +9,12 @@
     "files": [
         "src/*"
     ],
+    "exports": {
+        ".": {
+            "import": "./src/index.ts",
+            "types": "./src/index.ts"
+        }
+    },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
@@ -38,6 +44,5 @@
     "engines": {
         "node": ">=20",
         "pnpm": "*"
-    },
-    "platform": "browser"
+    }
 }

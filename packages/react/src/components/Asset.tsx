@@ -56,13 +56,7 @@ export interface AssetActionTriggerProps extends React.ComponentPropsWithoutRef<
 }
 
 export const AssetActionTrigger = ({ action, asChild, ...props }: AssetActionTriggerProps) => {
-    const { renderMode } = useGlobalContext()
-
     const { remove, rename, select } = useAssetContext()
-
-    if (renderMode === "bundle" && action === "select") {
-        return null
-    }
 
     const actions = {
         remove,

@@ -1,5 +1,6 @@
 "use client"
 
+import { Slot } from "@radix-ui/react-slot"
 import { AssetListProvider, useAssetListContext } from "../context/AssetListContext"
 
 const AssetListWrapper = (props: AssetListProps) => {
@@ -18,10 +19,13 @@ interface RenderProps {
 
 export interface AssetListProps extends Omit<React.ComponentPropsWithoutRef<"div">, "children"> {
     children: ((props: RenderProps) => React.ReactNode) | React.ReactNode
+    asChild?: boolean
 }
 
-const AssetList = ({ children, ...props }: AssetListProps) => {
-    const { assets, isLoading, isLoadingMore, dropzone } = useAssetListContext()
+const AssetList = ({ children, asChild, ...props }: AssetListProps) => {
+    const { assets, isLoading, isLoadingMore } = useAssetListContext()
+
+    const Comp = asChild ? Slot : "div"
 
     function getChildren() {
         if (typeof children === "function") {
@@ -31,16 +35,7 @@ const AssetList = ({ children, ...props }: AssetListProps) => {
         return children
     }
 
-    const { getRootProps, getInputProps } = dropzone
-
-    return (
-        <div
-            {...getRootProps({...props})}
-        >
-            <input {...getInputProps()} />
-            <>{getChildren()}</>
-        </div>
-    )
+    return <Comp {...props}>{getChildren()}</Comp>
 }
 
 export { AssetListWrapper as AssetList }

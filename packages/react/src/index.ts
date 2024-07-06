@@ -10,9 +10,7 @@ import {
 import { Asset, AssetActionTrigger } from "./components/Asset"
 import { AssetDetails } from "./components/AssetDetails"
 import { AssetList } from "./components/AssetList"
-import { Bundle } from "./components/Bundle"
-import { Dialog } from "./components/Dialog"
-import { DragDropIndicator } from "./components/DragDropIndicator"
+import { DropIndicator } from "./components/DropIndicator"
 import { Folder, FolderCreateTrigger, FolderActionTrigger } from "./components/Folder"
 import { FolderList } from "./components/FolderList"
 import { LoadMore } from "./components/LoadMore"
@@ -21,7 +19,6 @@ import { ResourceName } from "./components/ResourceName"
 import { Root } from "./components/Root"
 import { Uploader } from "./components/Uploader"
 
-export type { RenderMode } from "./utils/types"
 export type { FilenestRootProps } from "./components/Root"
 
 export const Filenest = {
@@ -36,9 +33,7 @@ export const Filenest = {
     AssetActionTrigger,
     AssetDetails,
     AssetList,
-    Bundle,
-    Dialog,
-    DragDropIndicator,
+    DropIndicator,
     Folder,
     FolderActionTrigger,
     FolderCreateTrigger,

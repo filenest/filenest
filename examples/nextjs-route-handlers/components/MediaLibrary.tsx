@@ -2,23 +2,13 @@
 
 import { cn } from "@/lib/cn"
 import { prettyFilesize } from "@/lib/prettyFilesize"
-import { Filenest, FilenestRootProps } from "@filenest/react"
-import { IconEdit, IconPlus, IconTrash } from "@tabler/icons-react"
+import { Filenest } from "@filenest/react"
+import { IconEdit, IconFilePlus, IconPlus, IconTrash } from "@tabler/icons-react"
 import { Fragment } from "react"
 
-export const MediaLibrary = Filenest.Root
-
-const MediaLibraryUploader = () => {
-    return <Filenest.Uploader />
-}
-
-const MediaLibraryDialog = () => {
-    return <Filenest.Dialog />
-}
-
-const MediaLibraryBundle = () => {
+export const MediaLibrary = () => {
     return (
-        <Filenest.Bundle>
+        <Filenest.Root endpoint="/api/media">
             <h2>My Media</h2>
 
             <Filenest.AlertDialog>
@@ -76,13 +66,13 @@ const MediaLibraryBundle = () => {
                                                         action="rename"
                                                         className="hover:underline"
                                                     >
-                                                        <IconEdit className="text-gray-600" size={20}/>
+                                                        <IconEdit className="text-gray-600" size={20} />
                                                     </Filenest.FolderActionTrigger>
                                                     <Filenest.FolderActionTrigger
                                                         action="remove"
                                                         className="hover:underline"
                                                     >
-                                                        <IconTrash className="text-gray-600" size={20}/>
+                                                        <IconTrash className="text-gray-600" size={20} />
                                                     </Filenest.FolderActionTrigger>
                                                 </div>
                                             </div>
@@ -90,7 +80,7 @@ const MediaLibraryBundle = () => {
                                     </Filenest.Folder>
                                 ))}
                                 <Filenest.FolderCreateTrigger className="flex gap-1 items-center px-2 py-1 border border-gray-300 rounded cursor-pointer hover:bg-gray-100">
-                                    <IconPlus className="text-gray-600"/>
+                                    <IconPlus className="text-gray-600" />
                                     Create Folder
                                 </Filenest.FolderCreateTrigger>
                             </Fragment>
@@ -103,9 +93,10 @@ const MediaLibraryBundle = () => {
                 <Filenest.AssetList>
                     {({ assets, isLoading, isLoadingMore }) => (
                         <div className="relative">
-                            <Filenest.DragDropIndicator className="absolute w-full h-full bg-green-300 flex items-center justify-center rounded-lg bg-opacity-50">
-                                Drop files to upload
-                            </Filenest.DragDropIndicator>
+                            <Filenest.DropIndicator className="absolute w-full h-full bg-green-300 flex items-center justify-center rounded-lg bg-opacity-50" />
+                            <Filenest.DropIndicator className="fixed z-10 p-4 rounded bg-blue-300 bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                                <IconFilePlus /> Drop files to upload
+                            </Filenest.DropIndicator>
                             <div className="my-4">{isLoading ? null : `Showing ${assets?.length} assets`}</div>
                             <div className="grid grid-cols-4 gap-6">
                                 {!isLoading &&
@@ -186,7 +177,7 @@ const MediaLibraryBundle = () => {
                                             action="remove"
                                             className="py-2 px-3 rounded bg-red-400 hover:bg-red-300 cursor-pointer"
                                         >
-                                            <IconTrash/>
+                                            <IconTrash />
                                         </Filenest.AssetActionTrigger>
                                     </div>
                                 </Filenest.Asset>
@@ -196,13 +187,6 @@ const MediaLibraryBundle = () => {
                     )}
                 </Filenest.AssetDetails>
             </div>
-        </Filenest.Bundle>
+        </Filenest.Root>
     )
 }
-
-export const config = {
-    endpoint: "/api/media",
-    bundle: <MediaLibraryBundle />,
-    dialog: <MediaLibraryDialog />,
-    uploader: <MediaLibraryUploader />,
-} satisfies Partial<FilenestRootProps<any>>

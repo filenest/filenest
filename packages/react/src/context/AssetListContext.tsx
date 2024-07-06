@@ -4,13 +4,11 @@ import { createContext, useContext } from "react"
 import { useGlobalContext } from "./GlobalContext"
 import type { Asset } from "@filenest/core"
 import type { AssetExtraProps } from "../utils/types"
-import { useDropzone } from "react-dropzone"
 
 export interface AssetListContext {
     assets?: Array<Asset & AssetExtraProps>
     isLoading: boolean
     isLoadingMore: boolean
-    dropzone: ReturnType<typeof useDropzone>
 }
 
 const AssetListContext = createContext<AssetListContext | null>(null)
@@ -28,26 +26,16 @@ interface AssetListProviderProps {
 }
 
 export const AssetListProvider = ({ children }: AssetListProviderProps) => {
-    const { resources, resourcesQuery, uploadMultiple } = useGlobalContext()
+    const { resources, resourcesQuery } = useGlobalContext()
 
     const assets: any = resources?.resources.assets.data
     const isLoading = resourcesQuery.isLoading
     const isLoadingMore = resourcesQuery.isFetchingNextPage
-    
-    const dropzone = useDropzone({
-        maxSize: 2.5e+8, // 250 MB
-        multiple: uploadMultiple,
-        noClick: true,
-        onDrop(acceptedFiles) {
-            // upload
-        },
-    })
 
     const contextValue = {
         assets,
         isLoading,
         isLoadingMore,
-        dropzone
     }
 
     return <AssetListContext.Provider value={contextValue}>{children}</AssetListContext.Provider>
