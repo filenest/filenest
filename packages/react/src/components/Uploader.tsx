@@ -1,16 +1,66 @@
 "use client"
 
+import { useDropzone } from "react-dropzone"
 import type { WithoutChildren } from "../utils/types"
+import { Slot } from "@radix-ui/react-slot"
 
-interface UploaderProps extends WithoutChildren<React.ComponentPropsWithoutRef<"div">> {
-
+export interface UploaderProps extends WithoutChildren<Omit<React.ComponentPropsWithoutRef<"div">, "onProgress" | "onError">> {
+    noDrop?: boolean
+    noClick?: boolean
+    multiple?: boolean
+    asChild?: boolean
+    uploadOnDrop?: boolean
+    onUpload?: (files: File[]) => void
+    onProgress?: (progress: number) => void
+    onSuccess?: () => void
+    onError?: (error: Error) => void
+    disabled?: boolean
+    maxFiles?: number
+    maxSize?: number
+    children?: React.ReactNode
 }
 
-export const Uploader = () => {
+export const Uploader = ({
+    noDrop,
+    noClick,
+    multiple = true,
+    asChild,
+    uploadOnDrop,
+    onUpload,
+    onProgress,
+    onSuccess,
+    onError,
+    disabled,
+    maxFiles,
+    maxSize = 2.5e+8, // 250 MB,
+    children,
+    ...props
+}: UploaderProps) => {
+    const dropzone = useDropzone({
+        maxSize,
+        maxFiles,
+        multiple,
+        noClick,
+        noDrag: noDrop,
+        onDrop(acceptedFiles) {
+            if (uploadOnDrop) {
+                onUpload?.(acceptedFiles)
+                // upload...
+            }
+        },
+        onError(err) {
+            onError?.(err)
+        },
+        disabled
+    })
+
+    const Comp = asChild ? Slot : "div"
+
     return (
-        <div>
-            Uploader
-        </div>
+        <Comp {...dropzone.getRootProps()} {...props}>
+            <input {...dropzone.getInputProps()} />
+            {children}
+        </Comp>
     )
 }
 
