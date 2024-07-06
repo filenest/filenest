@@ -2,7 +2,7 @@ import crypto from "crypto"
 import { type Provider } from ".."
 
 import {
-    GetUploadSignatureInput,
+    GetUploadUrlInput,
     RenameAssetInput,
     type Asset,
     type AssetType,
@@ -304,7 +304,7 @@ export class Cloudinary implements Provider {
         return uploadedFiles
     }
 
-    public getUploadSignature(input: GetUploadSignatureInput) {
+    public getUploadUrl(input: GetUploadUrlInput) {
         if (!input.folder) {
             input.folder = ""
         }

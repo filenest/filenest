@@ -130,14 +130,14 @@ export const UploadInput = z.object({
 })
 export type UploadInput = z.infer<typeof UploadInput>
 
-export const GetUploadSignatureInput = z.record(z.string())
-export type GetUploadSignatureInput = z.infer<typeof GetUploadSignatureInput>
+export const GetUploadUrlInput = z.record(z.string())
+export type GetUploadUrlInput = z.infer<typeof GetUploadUrlInput>
 
-export const GetUploadSignatureReturn = z.object({
+export const GetUploadUrlReturn = z.object({
     timestamp: z.string(),
     signature: z.string(),
 })
-export type GetUploadSignatureReturn = z.infer<typeof GetUploadSignatureReturn>
+export type GetUploadUrlReturn = z.infer<typeof GetUploadUrlReturn>
 
 export const UploadReturn = z.array(Asset)
 export type UploadReturn = z.infer<typeof UploadReturn>

@@ -13,7 +13,7 @@ import {
     RenameAssetInput,
     DeleteAssetInput,
     type Response,
-    GetUploadSignatureInput,
+    GetUploadUrlInput,
 } from "./types"
 
 export * from "./types"
@@ -84,7 +84,7 @@ export interface Provider {
     /**
      * #### Get a signature for uploading files
      */
-    getUploadSignature(input: GetUploadSignatureInput): { timestamp: number; signature: string }
+    getUploadUrl(input: GetUploadUrlInput): { timestamp: number; signature: string }
 
     /**
      * #### Rename an asset
