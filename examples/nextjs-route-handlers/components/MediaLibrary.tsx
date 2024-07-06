@@ -6,6 +6,10 @@ import { Filenest } from "@filenest/react"
 import { IconEdit, IconFilePlus, IconPlus, IconTrash } from "@tabler/icons-react"
 import { Fragment } from "react"
 
+function makeArray(length: number) {
+    return Array.from({ length })
+}
+
 export const MediaLibrary = () => {
     return (
         <Filenest.Root endpoint="/api/media">
@@ -42,7 +46,7 @@ export const MediaLibrary = () => {
                 {({ folders, isLoading }) => (
                     <div className="flex gap-2 flex-wrap">
                         {isLoading &&
-                            Array.from({ length: 3 }).map((_, i) => (
+                            makeArray(3).map((_, i) => (
                                 <div
                                     key={i}
                                     className="w-40 h-[50px] border border-gray-300 bg-gray-100 animate-pulse rounded"
@@ -126,7 +130,7 @@ export const MediaLibrary = () => {
                                         </Filenest.Asset>
                                     ))}
                                 {(isLoading || isLoadingMore) &&
-                                    Array.from({ length: 5 }).map((_, i) => (
+                                    makeArray(5).map((_, i) => (
                                         <div
                                             key={i}
                                             className="h-[250px] border border-gray-300 bg-gray-100 animate-pulse rounded-lg"
