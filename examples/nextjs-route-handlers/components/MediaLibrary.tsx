@@ -24,16 +24,13 @@ export const MediaLibrary = () => {
             </Filenest.AlertDialog>
 
             <Filenest.Navigation>
-                {({ navigateTo, navigation }) => (
+                {({ navigation }) => (
                     <div className="flex gap-1 my-4 items-center">
                         {navigation.map((folder, index) => (
                             <Fragment key={folder.path}>
-                                <div
-                                    onClick={() => navigateTo(folder)}
-                                    className="py-1 px-2 hover:bg-gray-100 rounded cursor-pointer"
-                                >
+                                <Filenest.NavigationItem folder={folder} className="py-1 px-2 hover:bg-gray-100 rounded cursor-pointer">
                                     {folder.name}
-                                </div>
+                                </Filenest.NavigationItem>
                                 {index < navigation.length - 1 && <span>/</span>}
                             </Fragment>
                         ))}

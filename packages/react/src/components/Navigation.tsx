@@ -1,6 +1,8 @@
 "use client"
 
+import type { Folder } from "@filenest/core"
 import { NavigationProvider, useNavigationContext } from "../context/NavigationContext"
+import { Slot } from "@radix-ui/react-slot"
 
 const NavigationWrapper = (props: NavigationProps) => {
     return (
@@ -11,7 +13,6 @@ const NavigationWrapper = (props: NavigationProps) => {
 }
 
 interface RenderProps {
-    navigateTo: ReturnType<typeof useNavigationContext>["navigateTo"]
     navigation: ReturnType<typeof useNavigationContext>["navigation"]
 }
 
@@ -20,13 +21,30 @@ export interface NavigationProps {
 }
 
 const Navigation = ({ children }: NavigationProps) => {
-    const { navigateTo, navigation } = useNavigationContext()
+    const { navigation } = useNavigationContext()
 
     if (typeof children === "function") {
-        return children({ navigateTo, navigation })
+        return children({ navigation })
     }
 
     return children
 }
 
 export { NavigationWrapper as Navigation }
+
+export interface NavigationItemProps extends React.ComponentPropsWithoutRef<"div"> {
+    folder: Folder
+    asChild?: boolean
+}
+
+export const NavigationItem = ({ folder, asChild, ...props }: NavigationItemProps) => {
+    const { navigateTo } = useNavigationContext()
+
+    const Comp = asChild ? Slot : "div"
+
+    return (
+        <Comp {...props} onClick={() => navigateTo(folder)}>
+            {folder.name}
+        </Comp>
+    )
+}

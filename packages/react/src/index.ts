@@ -14,12 +14,12 @@ import { DropIndicator } from "./components/DropIndicator"
 import { Folder, FolderCreateTrigger, FolderActionTrigger } from "./components/Folder"
 import { FolderList } from "./components/FolderList"
 import { LoadMore } from "./components/LoadMore"
-import { Navigation } from "./components/Navigation"
+import { Navigation, NavigationItem } from "./components/Navigation"
 import { ResourceName } from "./components/ResourceName"
 import { Root } from "./components/Root"
 import { Uploader } from "./components/Uploader"
 
-export type { FilenestRootProps } from "./components/Root"
+export type { RootProps } from "./components/Root"
 
 export const Filenest = {
     AlertDialog,
@@ -40,6 +40,7 @@ export const Filenest = {
     FolderList,
     LoadMore,
     Navigation,
+    NavigationItem,
     ResourceName,
     Root,
     Uploader,
