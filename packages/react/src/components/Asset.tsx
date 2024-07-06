@@ -3,12 +3,19 @@
 import type { Asset as AssetType } from "@filenest/core"
 import { Slot } from "@radix-ui/react-slot"
 import { useGlobalContext } from "../context/GlobalContext"
-import { AssetProvider, useAssetContext } from "../context/AssetContext"
+import { AssetProvider, useAssetContext, type AssetProviderProps } from "../context/AssetContext"
 import type { WithoutChildren } from "../utils/types"
 
-const AssetWrapper = ({ asset, ...props }: AssetProps) => {
+const AssetWrapper = ({ asset, noRemove, noRename, noSelect, ...props }: AssetProps & AssetProviderProps) => {
+    const assetConfig = {
+        asset,
+        noRemove,
+        noRename,
+        noSelect,
+    }
+
     return (
-        <AssetProvider asset={asset}>
+        <AssetProvider {...assetConfig}>
             <Asset asset={asset} {...props} />
         </AssetProvider>
     )
@@ -57,7 +64,20 @@ export interface AssetActionTriggerProps extends React.ComponentPropsWithoutRef<
 }
 
 export const AssetActionTrigger = ({ action, asChild, ...props }: AssetActionTriggerProps) => {
-    const { remove, rename, select } = useAssetContext()
+    const { remove, rename, select, noRemove, noRename, noSelect } = useAssetContext()
+
+    function shouldRender() {
+        switch (action) {
+            case "remove":
+                return !noRemove
+            case "rename":
+                return !noRename
+            case "select":
+                return !noSelect
+        }
+    }
+
+    if (!shouldRender()) return null
 
     const actions = {
         remove,

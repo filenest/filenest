@@ -95,7 +95,7 @@ export const MediaLibrary = () => {
                     {({ assets, isLoading, isLoadingMore }) => (
                         <div className="relative">
                             <div className="my-4">{isLoading ? null : `Showing ${assets?.length} assets`}</div>
-                            <Filenest.Uploader uploadOnDrop className="grid grid-cols-4 gap-6">
+                            <Filenest.Uploader noClick uploadOnDrop className="grid grid-cols-4 gap-6">
                                 <Filenest.DropIndicator className="absolute w-full h-full bg-blue-100 flex items-center justify-center rounded-lg bg-opacity-50" />
                                 <Filenest.DropIndicator className="fixed z-10 p-4 rounded bg-blue-300 bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2">
                                     <IconFilePlus /> Drop files to upload

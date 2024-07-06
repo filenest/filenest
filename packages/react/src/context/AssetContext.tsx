@@ -7,8 +7,11 @@ import type { SetState } from "../utils/types"
 
 export interface AssetContext {
     asset: Asset
+    noRename?: boolean
     rename: () => void
+    noRemove?: boolean
     remove: () => void
+    noSelect?: boolean
     select: () => void
     isLoading: boolean
     isRenaming: boolean
@@ -29,12 +32,15 @@ export const useAssetContext = () => {
     return context
 }
 
-interface AssetProviderProps {
+export interface AssetProviderProps {
     asset: Asset
     children: React.ReactNode
+    noRename?: boolean
+    noRemove?: boolean
+    noSelect?: boolean
 }
 
-export const AssetProvider = ({ asset, children }: AssetProviderProps) => {
+export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }: AssetProviderProps) => {
     const { alertDialog, updateAsset, removeAssetFromCurrDir, _l, fetchers } = useGlobalContext()
 
     const [assetName, setAssetName] = useState(asset.name)
@@ -143,8 +149,11 @@ export const AssetProvider = ({ asset, children }: AssetProviderProps) => {
     }
 
     const contextValue = {
+        noRename,
         rename: public_renameAsset,
+        noRemove,
         remove: public_removeAsset,
+        noSelect,
         select: public_selectAsset,
         asset: {
             ...asset,
