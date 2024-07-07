@@ -5,5 +5,26 @@
         "label": "Getting Started",
         "collapsable": true,
         "collapsed": false
+    },
+    {
+        "type": "dir",
+        "name": "providers",
+        "label": "Providers",
+        "collapsable": true,
+        "collapsed": false
+    },
+    {
+        "type": "dir",
+        "name": "adapters",
+        "label": "Adapters",
+        "collapsable": true,
+        "collapsed": false
+    },
+    {
+        "type": "dir",
+        "name": "components",
+        "label": "Components",
+        "collapsable": true,
+        "collapsed": false
     }
 ]

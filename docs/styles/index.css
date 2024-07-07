@@ -81,6 +81,7 @@
     --rp-c-bg-mute: #f3e4d0;
     --rp-c-brand-light: #b4966b;
     --rp-c-brand-dark: #92754c;
+    --rp-c-brand-tint: var(--rp-c-bg-mute);
     --rp-c-gray: #75726c;
     --rp-home-hero-name-background: #b4966b;
     --rp-home-feature-bg: var(--rp-c-bg-mute);
