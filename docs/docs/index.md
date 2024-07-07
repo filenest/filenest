@@ -8,7 +8,7 @@ hero:
     text: |
         Build your own
         File Manager Component
-    tagline: Filenest provides everything you need to integrate your favorite CDN into your app.
+    tagline: Filenest provides everything you need to integrate your favorite CDN into your JS/TS app.
     actions:
         - theme: brand
           text: Introduction
@@ -24,7 +24,7 @@ features:
       details: Load and manage your assets from third party services like Cloudinary in your own app.
       icon: 🔥
     - title: "Build Your Own Component"
-      details: Just like Radix UI, Filenest provides you with the core building blocks. Just add your own styles and layout on top!
+      details: Just like Radix UI, Filenest provides you with all the core building blocks. Just add your own styles on top!
       icon: 🎨
     - title: "Integrate Into Your Existing API"
       details: Filesnest comes with adapters to easily create API routes Filenest uses to fetch your data.
