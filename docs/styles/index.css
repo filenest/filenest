@@ -87,6 +87,10 @@
     --rp-home-feature-hover-bg: var(--rp-home-feature-bg);
     --rp-code-block-bg: #fffaf4;
     --rp-code-title-bg: var(--rp-c-bg-mute);
+
+    --rp-radius-small: 0.25rem;
+    --rp-radius: 0.5rem;
+    --rp-radius-large: 1rem;
 }
 
 /*===================================================================*/
@@ -94,4 +98,8 @@
 .rspress-home-hero-tagline {
     line-height: 1.25;
     font-weight: normal;
+}
+
+.rspress-home-feature-title {
+    margin-top: 0.25rem;
 }
