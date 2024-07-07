@@ -74,10 +74,24 @@
 
 :root {
     --rp-font-family-base: "Radio Canada Big", "Inter var experimental", "Inter var", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    --rp-c-text-1: #332f2a;
+    --rp-c-text-2: #58524a;
+    --rp-c-brand: #b4966b;
+    --rp-c-bg: #fff3e2;
+    --rp-c-bg-mute: #eedabf;
+    --rp-c-brand-light: #b4966b;
+    --rp-c-brand-dark: #92754c;
+    --rp-c-gray: #75726c;
+    --rp-home-hero-name-background: #b4966b;
+    --rp-home-feature-bg: var(--rp-c-bg-mute);
+    --rp-home-feature-hover-bg: var(--rp-home-feature-bg);
+    --rp-code-block-bg: #fffaf4;
+    --rp-code-title-bg: var(--rp-c-bg-mute);
 }
 
 /*===================================================================*/
 
 .rspress-home-hero-tagline {
     line-height: 1.25;
+    font-weight: normal;
 }

@@ -7,14 +7,15 @@ export default defineConfig({
     description: "Building blocks for your own React file browser, connecting your favorite CDN with your app",
     icon: "/logo.svg",
     logo: {
-        light: "/logo.png",
-        dark: "/logo.png",
+        light: "/logo.svg",
+        dark: "/logo.svg",
     },
     themeConfig: {
         socialLinks: [{ icon: "github", mode: "link", content: "https://github.com/filenest/filenest" }],
         footer: {
             message: "Made with ❤️ by @nordowl",
         },
+        darkMode: false,
     },
     globalStyles: path.join(__dirname, "styles/index.css"),
 })
