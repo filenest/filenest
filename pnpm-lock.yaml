@@ -21,6 +21,12 @@ importers:
       '@types/node':
         specifier: ^16
         version: 16.18.101
+      '@types/react':
+        specifier: latest
+        version: 18.3.3
+      '@types/react-dom':
+        specifier: latest
+        version: 18.3.0
 
   examples/nextjs-route-handlers:
     dependencies:

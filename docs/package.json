@@ -11,6 +11,8 @@
         "rspress": "^1.25.0"
     },
     "devDependencies": {
-        "@types/node": "^16"
+        "@types/node": "^16",
+        "@types/react": "latest",
+        "@types/react-dom": "latest"
     }
 }
