@@ -1,0 +1,16 @@
+{
+    "name": "docs",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "rspress dev --port 3300",
+        "build": "rspress build",
+        "preview": "rspress preview"
+    },
+    "dependencies": {
+        "rspress": "^1.25.0"
+    },
+    "devDependencies": {
+        "@types/node": "^16"
+    }
+}
