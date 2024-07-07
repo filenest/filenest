@@ -103,3 +103,7 @@
 .rspress-home-feature-title {
     margin-top: 0.25rem;
 }
+
+#nprogress .bar {
+    background: var(--rp-c-brand);
+}

@@ -12,10 +12,10 @@ hero:
     actions:
         - theme: brand
           text: Introduction
-          link: /guide/introduction
+          link: /docs/getting-started/introduction
         - theme: alt
           text: Quick Start
-          link: /guide/getting-started
+          link: /docs/getting-started/quick-start
     image:
         src: /logo.svg
 

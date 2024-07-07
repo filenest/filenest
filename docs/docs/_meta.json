@@ -1,12 +1,12 @@
 [
     {
         "text": "Docs",
-        "link": "/docs/",
-        "activeMatch": "/docs/"
+        "link": "/docs/getting-started/introduction",
+        "activeMatch": "^/docs/"
     },
     {
         "text": "Recipes",
         "link": "/recipes/",
-        "activeMatch": "/recipes/"
+        "activeMatch": "^/recipes/"
     }
 ]
