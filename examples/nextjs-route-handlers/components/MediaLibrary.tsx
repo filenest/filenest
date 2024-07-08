@@ -149,7 +149,10 @@ export const MediaLibrary = () => {
                     {({ asset }) => (
                         <div className="mt-14 sticky top-8 pl-8 border-l border-gray-300">
                             {asset && (
-                                <Filenest.Asset asset={asset}>
+                                <Filenest.Asset
+                                    asset={asset}
+                                    className={cn(asset.isLoading && "animate-pulse")}
+                                >
                                     {asset.type == "image" ? (
                                         <img src={asset.url} alt={asset.name} className="rounded-md" />
                                     ) : (

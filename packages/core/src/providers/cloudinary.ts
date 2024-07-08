@@ -2,6 +2,7 @@ import crypto from "crypto"
 import { type Provider } from ".."
 
 import {
+    DeleteAssetInput,
     GetUploadUrlInput,
     RenameAssetInput,
     type Asset,
@@ -370,8 +371,17 @@ export class Cloudinary implements Provider {
         }
     }
 
-    public async deleteAsset() {
-        return null as any
+    public async deleteAsset(input: DeleteAssetInput) {
+        const { resource_type, type, public_id } = await this.getRawAssetByAssetId(input.id)
+
+        const url = new URL(this.URL.toString() + `/resources/${resource_type}/${type}`)
+        url.searchParams.append("public_ids", [public_id].toString())
+
+        await this.doFetch(url, { method: "DELETE" })
+
+        return {
+            success: true,
+        }
     }
 }
 

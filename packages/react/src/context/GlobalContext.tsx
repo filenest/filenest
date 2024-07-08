@@ -36,7 +36,7 @@ export interface GlobalContext {
         setCancel: SetState<(() => void) | undefined>
     }
     detailledAsset: (Asset & AssetExtraProps) | null
-    setDetailledAsset: SetState<Asset | null>
+    setDetailledAsset: SetState<(Asset & Partial<AssetExtraProps>) | null>
     fetchers: ReturnType<typeof createFetchers>
 }
 
@@ -223,7 +223,7 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         detailledAsset: detailledAsset as any,
         setDetailledAsset,
         endpointIsTRPC,
-        fetchers
+        fetchers,
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>

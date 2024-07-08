@@ -41,7 +41,7 @@ export interface AssetProviderProps {
 }
 
 export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }: AssetProviderProps) => {
-    const { alertDialog, updateAsset, removeAssetFromCurrDir, _l, fetchers } = useGlobalContext()
+    const { alertDialog, updateAsset, removeAssetFromCurrDir, _l, fetchers, detailledAsset, setDetailledAsset } = useGlobalContext()
 
     const [assetName, setAssetName] = useState(asset.name)
 
@@ -59,21 +59,31 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
         setIsRenaming(false)
     }
 
+    function updateLoadingState(value: boolean, dontUpdateDetailledAsset?: boolean) {
+        updateAsset(asset.assetId, { isLoading: value })
+        if (detailledAsset?.assetId === asset.assetId && !dontUpdateDetailledAsset) {
+            setDetailledAsset({ ...detailledAsset, isLoading: value })
+        }
+    }
+
     const { renameAsset, deleteAsset } = fetchers
 
     async function deleteActually() {
         try {
-            setIsLoading(true)
+            updateLoadingState(true)
             const result = await deleteAsset({ id: asset.assetId })
             if (result.success) {
                 removeAssetFromCurrDir(asset.assetId)
+                if (detailledAsset?.assetId == asset.assetId) {
+                    setDetailledAsset(null)
+                }
             } else {
                 throw new Error(result.message)
             }
         } catch (error) {
             console.error("[Filenest] Error deleting asset:", error)
         }
-        setIsLoading(false)
+        updateLoadingState(false, true)
     }
 
     async function public_removeAsset() {
