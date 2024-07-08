@@ -74,6 +74,8 @@ importers:
         specifier: ^5
         version: 5.4.5
 
+  internal/tsconfig: {}
+
   packages/core:
     dependencies:
       slugify:
@@ -83,6 +85,9 @@ importers:
         specifier: '>=3'
         version: 3.23.8
     devDependencies:
+      '@internal/tsconfig':
+        specifier: workspace:*
+        version: link:../../internal/tsconfig
       '@trpc/server':
         specifier: 10.45.2
         version: 10.45.2
@@ -132,6 +137,9 @@ importers:
         specifier: 2.3.0
         version: 2.3.0
     devDependencies:
+      '@internal/tsconfig':
+        specifier: workspace:*
+        version: link:../../internal/tsconfig
       '@types/react':
         specifier: ^18
         version: 18.3.3

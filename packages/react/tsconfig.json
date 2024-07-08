@@ -1,21 +1,9 @@
 {
+    "extends": "@internal/tsconfig/base.tsconfig.json",
     "compilerOptions": {
         "lib": ["DOM", "ESNext"],
-        "target": "ESNext",
-        "module": "ESNext",
-        "outDir": "dist",
-        "isolatedModules": true,
-        "allowJs": true,
-        "declaration": true,
-        "declarationDir": "dist",
-        "moduleResolution": "bundler",
-        "verbatimModuleSyntax": true,
         "jsx": "react-jsx",
-        "strict": true,
-        "skipLibCheck": true,
         "noFallthroughCasesInSwitch": true,
-        "esModuleInterop": true,
-        "sourceMap": true
     },
     "include": ["src/index.ts"]
 }

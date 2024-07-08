@@ -1,0 +1,5 @@
+{
+    "name": "@internal/tsconfig",
+    "version": "0.0.0",
+    "files": ["base.tsconfig.json"]
+}
