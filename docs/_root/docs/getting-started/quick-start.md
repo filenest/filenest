@@ -14,7 +14,7 @@ Find your provider in the list below and learn how to set it up in your backend:
 An adapter creates API routes for your backend. You can use an adapter if your backend framework is supported, or manually integrate the required API routes if your framework is not supported. This may require a bit more effort.
 
 - [Next.js Route Handlers](/docs/backend/adapters/nextjs-route-handlers)
-- [tRPC](/docs/adapters/trpc)
+- [tRPC](/docs/backend/adapters/trpc)
 - [Manual Integration](/docs/backend/adapters/custom-integration)
 
 ## 3. Build your UI using Components
