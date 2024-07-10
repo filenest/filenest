@@ -108,3 +108,7 @@
 #nprogress .bar {
     background: var(--rp-c-brand);
 }
+
+.footer-link {
+    text-decoration: underline;
+}

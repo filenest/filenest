@@ -13,7 +13,7 @@ export default defineConfig({
     themeConfig: {
         socialLinks: [{ icon: "github", mode: "link", content: "https://github.com/filenest/filenest" }],
         footer: {
-            message: "Made with ❤️ by @nordowl",
+            message: "Made with ❤️ by <a href='https://github.com/nordowl' class='footer-link' target='blank'>nordowl</a>",
         },
         darkMode: false,
     },
