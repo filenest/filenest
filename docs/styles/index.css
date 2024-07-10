@@ -96,6 +96,11 @@
 
 /*===================================================================*/
 
+html, body {
+    scroll-behavior: smooth;
+    scroll-padding-top: 4rem;
+}
+
 .rspress-home-hero-tagline {
     line-height: 1.25;
     font-weight: normal;
