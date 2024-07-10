@@ -13,15 +13,15 @@ Find your provider in the list below and learn how to set it up in your backend:
 ## 2. Configure an Adapter
 An adapter creates API routes for your backend. You can use an adapter if your backend framework is supported, or manually integrate the required API routes if your framework is not supported. This may require a bit more effort.
 
-- [Next.js Route Handlers](/docs/adapters/nextjs-route-handlers)
+- [Next.js Route Handlers](/docs/backend/adapters/nextjs-route-handlers)
 - [tRPC](/docs/adapters/trpc)
-- [Manual Integration](/docs/adapters/custom-integration)
+- [Manual Integration](/docs/backend/adapters/custom-integration)
 
 ## 3. Build your UI using Components
 Build your asset management UI using components for your preferred frontend framework.
 Similar to Radix UI, all the logic is pre-defined at the component level, allowing you to focus solely on styling.
 Check out how to build your file manager using Filenest components:
 
-- [React](/docs/components/react)
+- [React](/docs/frontend/react)
 
-You can learn more about individual components [here](/docs/components/about).
+You can learn more about individual components [here](/docs/frontend/components/about).

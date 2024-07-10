@@ -1,0 +1,9 @@
+[
+    {
+        "type": "dir",
+        "name": "components",
+        "label": "Components",
+        "collapsable": true,
+        "collapsed": true
+    }
+]

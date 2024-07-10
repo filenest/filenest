@@ -8,22 +8,15 @@
     },
     {
         "type": "dir",
-        "name": "providers",
-        "label": "Providers",
+        "name": "backend",
+        "label": "Backend Usage",
         "collapsable": true,
         "collapsed": false
     },
     {
         "type": "dir",
-        "name": "adapters",
-        "label": "Adapters",
-        "collapsable": true,
-        "collapsed": false
-    },
-    {
-        "type": "dir",
-        "name": "components",
-        "label": "Components",
+        "name": "frontend",
+        "label": "Frontend Usage",
         "collapsable": true,
         "collapsed": false
     }

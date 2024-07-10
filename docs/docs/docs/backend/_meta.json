@@ -1,0 +1,16 @@
+[
+    {
+        "type": "dir",
+        "name": "adapters",
+        "label": "Adapters",
+        "collapsable": true,
+        "collapsed": true
+    },
+    {
+        "type": "dir",
+        "name": "providers",
+        "label": "Providers",
+        "collapsable": true,
+        "collapsed": true
+    }
+]
