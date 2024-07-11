@@ -117,3 +117,7 @@ html, body {
 .footer-link {
     text-decoration: underline;
 }
+
+.rspress-doc a {
+    word-break: initial;
+}
