@@ -9,7 +9,7 @@ import {
     RenameAssetInput,
     RenameFolderInput,
     type Provider,
-} from ".."
+} from "@filenest/core"
 
 const t = initTRPC.create()
 

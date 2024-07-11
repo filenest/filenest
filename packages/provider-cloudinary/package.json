@@ -1,5 +1,5 @@
 {
-    "name": "@filenest/core",
+    "name": "@filenest/provider-cloudinary",
     "version": "0.1.0",
     "description": "",
     "keywords": [],
@@ -18,13 +18,15 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
+    "dependencies": {
+        "slugify": "1.6.6"
+    },
     "devDependencies": {
         "@internal/tsconfig": "workspace:*",
-        "esbuild": "0.23.0",
-        "typescript": "5.5.3"
+        "@types/node": "^20.14.1"
     },
     "peerDependencies": {
-        "zod": ">=3"
+        "@filenest/core": "file:../../packages/core"
     },
     "engines": {
         "node": ">=20",

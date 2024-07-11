@@ -1,5 +1,5 @@
 {
-    "name": "@filenest/core",
+    "name": "@filenest/adapter-nextjs",
     "version": "0.1.0",
     "description": "",
     "keywords": [],
@@ -20,11 +20,11 @@
     },
     "devDependencies": {
         "@internal/tsconfig": "workspace:*",
-        "esbuild": "0.23.0",
+        "next": "^14 || ^15",
         "typescript": "5.5.3"
     },
     "peerDependencies": {
-        "zod": ">=3"
+        "@filenest/core": "file:../../packages/core"
     },
     "engines": {
         "node": ">=20",

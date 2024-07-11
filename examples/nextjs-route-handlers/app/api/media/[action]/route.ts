@@ -1,4 +1,5 @@
-import { Cloudinary, initNextjsAdapter } from "@filenest/core"
+import { initNextjsAdapter } from "@filenest/adapter-nextjs"
+import { Cloudinary } from "@filenest/provider-cloudinary"
 
 const provider = new Cloudinary({
     API_KEY: process.env.CLOUDINARY_API_KEY!,

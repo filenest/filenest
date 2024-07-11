@@ -1,4 +1,4 @@
-import { type Provider } from ".."
+import { type Provider } from "@filenest/core"
 import { NextRequest, NextResponse } from "next/server"
 
 // TODO:

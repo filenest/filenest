@@ -1,5 +1,5 @@
 import crypto from "crypto"
-import { type Provider } from ".."
+import { type Provider } from "@filenest/core"
 
 import {
     DeleteAssetInput,
@@ -14,7 +14,7 @@ import {
     type GetResourcesByFolderInput,
     type RenameFolderInput,
     type UploadInput,
-} from "../types"
+} from "@filenest/core"
 import slugify from "slugify"
 
 type CloudinaryConfig = {
