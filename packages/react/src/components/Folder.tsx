@@ -55,7 +55,7 @@ export interface FolderActionTriggerProps extends React.ComponentPropsWithoutRef
 }
 
 const FolderActionTrigger = ({ action, asChild, ...props }: FolderActionTriggerProps) => {
-    const { remove, rename, navigateTo } = useFolderContext()
+    const { remove, rename, navigateTo, isLoading, isRenaming } = useFolderContext()
 
     const actions = {
         remove,
@@ -69,9 +69,11 @@ const FolderActionTrigger = ({ action, asChild, ...props }: FolderActionTriggerP
         actions[action]()
     }
 
+    const disabled = isLoading ||  isRenaming
+
     const Comp = asChild ? Slot : "button"
 
-    return <Comp {...props} onClick={onClick} />
+    return <Comp {...props} onClick={onClick} disabled={disabled}/>
 }
 
 export interface FolderCreateTriggerProps extends React.ComponentPropsWithoutRef<"button"> {

@@ -64,7 +64,7 @@ export interface AssetActionTriggerProps extends React.ComponentPropsWithoutRef<
 }
 
 export const AssetActionTrigger = ({ action, asChild, ...props }: AssetActionTriggerProps) => {
-    const { remove, rename, select, noRemove, noRename, noSelect } = useAssetContext()
+    const { remove, rename, select, noRemove, noRename, noSelect, isLoading, isRenaming } = useAssetContext()
 
     function shouldRender() {
         switch (action) {
@@ -91,7 +91,9 @@ export const AssetActionTrigger = ({ action, asChild, ...props }: AssetActionTri
         actions[action]()
     }
 
+    const disabled = isLoading || isRenaming
+
     const Comp = asChild ? Slot : "button"
 
-    return <Comp {...props} onClick={onClick} />
+    return <Comp {...props} onClick={onClick} disabled={disabled}/>
 }
