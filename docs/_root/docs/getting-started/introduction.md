@@ -1,6 +1,6 @@
 # Introduction
 
-## What is Filenest and Who is it For
+## What is Filenest and who is it for
 
 Filenest is a TypeScript library designed to seamlessly integrate a file manager into your app or admin dashboard. This library is ideal for developers who:
 - Need to connect a file hosting provider to their app
@@ -16,7 +16,7 @@ While it's possible to use a simple text field to paste an image link, having a 
 
 Filenest significantly reduces the effort required to build these features. By using providers and adapters for your backend and frontend components for your UI, you can easily integrate Filenest’s asset management capabilities into your existing project. This approach allows you to maintain full control over backend permissions and frontend styles.
 
-### The Story Behind It
+### The story behind it
 A personal project of mine ([@nordowl](https://github.com/nordowl)), with a custom backend, required a way to connect images to database entities. Let's just say they were blog articles. I needed some way to upload and manage images and be able to choose an image for each article. Cloudinary turned out to be my file hoster of choice because of its generous free tier, SDK and web interface (#NotSponsored). A text field holding an image link would be the simplest to implement and would suffice for my articles - but did I really want to open up Cloudinary everytime I wanted to copy an image URL? Nope.
 
 And so I built some API routes to get my data from Cloudinary, and built a beautiful custom file management component in React - tailored to my needs specifically. Everything worked well. I could fetch and display my remote images in my app and get all the file URLs. Some time passed and another project arose, which turned out to need a media library as well.
