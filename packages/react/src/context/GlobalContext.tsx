@@ -2,7 +2,7 @@
 
 import { useInfiniteQuery, type UseInfiniteQueryResult, type InfiniteData } from "@tanstack/react-query"
 import { createContext, useContext, useEffect, useState } from "react"
-import type { Asset, Folder, FolderWithResources, GetResourcesByFolderReturn } from "@filenest/core"
+import type { Asset, Folder, FolderWithResources, GetResourcesReturn } from "@filenest/core"
 import type { AssetExtraProps, SetState } from "../utils/types"
 import { createFetchers } from "../utils/fetchers"
 import { labels } from "../utils/labels"
@@ -21,7 +21,7 @@ export interface GlobalContext {
         shouldSort?: boolean
     ) => void
     removeFolderFromCurrDir: (id: string, shouldSort?: boolean) => void
-    resourcesQuery: UseInfiniteQueryResult<InfiniteData<GetResourcesByFolderReturn, unknown>>
+    resourcesQuery: UseInfiniteQueryResult<InfiniteData<GetResourcesReturn, unknown>>
     updateAsset: (assetId: string, data: Partial<Asset & AssetExtraProps>) => void
     removeAssetFromCurrDir: (id: string) => void
     _l: (label: keyof typeof labels) => string
@@ -75,11 +75,11 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         })
     }
 
-    const { getResourcesByFolder } = createFetchers({ endpoint, endpointIsTRPC })
+    const { getResources } = createFetchers({ endpoint, endpointIsTRPC })
 
     const resourcesQuery = useInfiniteQuery({
         queryKey: ["folderWithResources", currentFolder],
-        queryFn: ({ pageParam }) => getResourcesByFolder({ folder: currentFolder.path, nextCursor: pageParam }),
+        queryFn: ({ pageParam }) => getResources({ folder: currentFolder.path, nextCursor: pageParam }),
         initialPageParam: "",
         getNextPageParam: (lastPage) => lastPage.resources.assets.nextCursor,
     })

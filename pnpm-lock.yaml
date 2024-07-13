@@ -39,6 +39,9 @@ importers:
       '@filenest/provider-cloudinary':
         specifier: file:../../packages/provider-cloudinary
         version: link:../../packages/provider-cloudinary
+      '@filenest/react':
+        specifier: file:../../packages/react
+        version: link:../../packages/react
       '@tabler/icons-react':
         specifier: 3.7.0
         version: 3.7.0(react@18.3.1)

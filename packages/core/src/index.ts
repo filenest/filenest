@@ -1,9 +1,6 @@
 import {
-    GetAssetInput,
     type Asset,
-    GetAssetsInput,
-    type Paginated,
-    GetResourcesByFolderInput,
+    GetResourcesInput,
     type FolderWithResources,
     CreateFolderInput,
     type Folder,
@@ -17,8 +14,6 @@ import {
 } from "./types"
 
 export * from "./types"
-export * from "./providers"
-export * from "./adapters"
 
 /**
  * ### Base for all other providers
@@ -29,24 +24,11 @@ export * from "./adapters"
  */
 export interface Provider {
     /**
-     * #### Get a single asset by its ID
-     *
-     * Use this to get details on a specific image or any other file.
-     */
-    getAsset(input: GetAssetInput): Promise<Asset>
-
-    /**
-     * #### Get all assets, regardless of which folder they are in
-     */
-    getAssets(input?: GetAssetsInput): Promise<Paginated<Asset>>
-
-    /**
-     * #### Get all resources in a specific folder
+     * #### Get all resources (in a specific folder)
      *
      * Includes files and folders directly under the specified folder.\
-     * If no folder is specified, resources in the root folder are returned.
      */
-    getResourcesByFolder(input?: GetResourcesByFolderInput): Promise<FolderWithResources>
+    getResources(input?: GetResourcesInput): Promise<FolderWithResources>
 
     /**
      * #### Create an empty folder

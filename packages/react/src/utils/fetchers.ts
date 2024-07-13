@@ -5,8 +5,8 @@ import {
     type DeleteAssetReturn,
     type DeleteFolderInput,
     type DeleteFolderReturn,
-    type GetResourcesByFolderInput,
-    type GetResourcesByFolderReturn,
+    type GetResourcesInput,
+    type GetResourcesReturn,
     type RenameAssetInput,
     type RenameAssetReturn,
     type RenameFolderInput,
@@ -31,8 +31,8 @@ export function createFetchers({ endpoint, endpointIsTRPC }: CreateFetchersOpts)
         return fetch(url, { method: "POST", body: JSON.stringify(body) }).then((res) => res.json())
     }
 
-    async function getResourcesByFolder(input: GetResourcesByFolderInput) {
-        return (await handleFetch("getResourcesByFolder", input)) as GetResourcesByFolderReturn
+    async function getResources(input: GetResourcesInput) {
+        return (await handleFetch("getResources", input)) as GetResourcesReturn
     }
 
     async function renameFolder(input: RenameFolderInput) {
@@ -56,7 +56,7 @@ export function createFetchers({ endpoint, endpointIsTRPC }: CreateFetchersOpts)
     }
 
     return {
-        getResourcesByFolder,
+        getResources,
         renameFolder,
         deleteFolder,
         createFolder,

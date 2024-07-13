@@ -9,9 +9,7 @@ import {
     type AssetType,
     type CreateFolderInput,
     type DeleteFolderInput,
-    type GetAssetInput,
-    type GetAssetsInput,
-    type GetResourcesByFolderInput,
+    type GetResourcesInput,
     type RenameFolderInput,
     type UploadInput,
 } from "@filenest/core"
@@ -135,27 +133,7 @@ export class Cloudinary implements Provider {
         return asset
     }
 
-    public async getAsset(input: GetAssetInput) {
-        const url = new URL(this.URL.toString() + "/resources/" + input.id)
-        const asset: CloudinaryResource = await this.doFetch(url)
-        return this.mapResourceToSchema(asset)
-    }
-
-    public async getAssets(input?: GetAssetsInput) {
-        const url = new URL(this.URL.toString() + "/resources/search")
-        url.searchParams.append("expression", input?.searchQuery ?? "")
-        url.searchParams.append("with_field", "tags")
-        url.searchParams.append("max_results", this.MAX_RESULTS.toString())
-
-        const assets: CloudinarySearchResponse = await this.doFetch(url)
-
-        return {
-            data: this.mapResourcesToSchema(assets.resources),
-            count: assets.total_count,
-        }
-    }
-
-    public async getResourcesByFolder(input?: GetResourcesByFolderInput) {
+    public async getResources(input?: GetResourcesInput) {
         let url = new URL(this.URL.toString() + "/resources/search")
 
         const folder = input?.folder ? "folder:" + input.folder : 'folder=""'
@@ -216,7 +194,7 @@ export class Cloudinary implements Provider {
     }
 
     public async deleteFolder(input: DeleteFolderInput) {
-        const { resources } = await this.getResourcesByFolder({ folder: input.path })
+        const { resources } = await this.getResources({ folder: input.path })
         const config = await this.getConfig()
 
         if (resources.assets.count > 0 && !input.force) {

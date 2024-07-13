@@ -78,25 +78,11 @@ const Response = z.object({
 
 export type Response = z.infer<typeof Response>
 
-export const GetAssetInput = z.object({
-    id: z.string(),
-})
-export type GetAssetInput = z.infer<typeof GetAssetInput>
+export const GetResourcesInput = CommonInputOpts
+export type GetResourcesInput = z.infer<typeof GetResourcesInput>
 
-export const GetAssetReturn = Asset
-export type GetAssetReturn = z.infer<typeof GetAssetReturn>
-
-export const GetAssetsInput = CommonInputOpts.pick({ searchQuery: true })
-export type GetAssetsInput = z.infer<typeof GetAssetsInput>
-
-export const GetAssetsReturn = Paginated(Asset)
-export type GetAssetsReturn = z.infer<typeof GetAssetsReturn>
-
-export const GetResourcesByFolderInput = CommonInputOpts
-export type GetResourcesByFolderInput = z.infer<typeof GetResourcesByFolderInput>
-
-export const GetResourcesByFolderReturn = FolderWithResources
-export type GetResourcesByFolderReturn = z.infer<typeof GetResourcesByFolderReturn>
+export const GetResourcesReturn = FolderWithResources
+export type GetResourcesReturn = z.infer<typeof GetResourcesReturn>
 
 export const CreateFolderInput = z.object({
     path: z.string(),
