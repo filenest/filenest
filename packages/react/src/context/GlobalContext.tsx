@@ -6,6 +6,7 @@ import type { Asset, Folder, FolderWithResources, GetResourcesReturn } from "@fi
 import type { AssetExtraProps, SetState } from "../utils/types"
 import { createFetchers } from "../utils/fetchers"
 import { labels } from "../utils/labels"
+import { useDebouncedState } from "../utils/useDebouncedState"
 import type { RootProps } from "../components/Root"
 
 export interface GlobalContext {
@@ -38,6 +39,8 @@ export interface GlobalContext {
     detailledAsset: (Asset & AssetExtraProps) | null
     setDetailledAsset: SetState<(Asset & Partial<AssetExtraProps>) | null>
     fetchers: ReturnType<typeof createFetchers>
+    searchQuery: string
+    handleSearch: (query: string) => void
 }
 
 const GlobalContext = createContext<GlobalContext | null>(null)
@@ -75,11 +78,17 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         })
     }
 
+    const [searchQuery, setSearchQuery] = useDebouncedState("", 500)
+
+    function handleSearch(query: string) {
+        setSearchQuery(query)
+    }
+
     const { getResources } = createFetchers({ endpoint, endpointIsTRPC })
 
     const resourcesQuery = useInfiniteQuery({
-        queryKey: ["folderWithResources", currentFolder],
-        queryFn: ({ pageParam }) => getResources({ folder: currentFolder.path, nextCursor: pageParam }),
+        queryKey: ["folderWithResources", currentFolder, searchQuery],
+        queryFn: ({ pageParam }) => getResources({ folder: currentFolder.path, nextCursor: pageParam, searchQuery }),
         initialPageParam: "",
         getNextPageParam: (lastPage) => lastPage.resources.assets.nextCursor,
     })
@@ -224,6 +233,8 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         setDetailledAsset,
         endpointIsTRPC,
         fetchers,
+        searchQuery,
+        handleSearch,
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>

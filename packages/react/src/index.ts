@@ -17,6 +17,7 @@ import { LoadMore } from "./components/LoadMore"
 import { Navigation, NavigationItem } from "./components/Navigation"
 import { ResourceName } from "./components/ResourceName"
 import { Root } from "./components/Root"
+import { SearchBar } from "./components/SearchBar"
 import { Uploader } from "./components/Uploader"
 
 export type { RootProps } from "./components/Root"
@@ -43,5 +44,6 @@ export const Filenest = {
     NavigationItem,
     ResourceName,
     Root,
+    SearchBar,
     Uploader,
 }

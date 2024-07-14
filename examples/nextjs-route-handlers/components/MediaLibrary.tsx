@@ -13,7 +13,14 @@ function makeArray(length: number) {
 export const MediaLibrary = () => {
     return (
         <Filenest.Root endpoint="/api/media">
-            <h2>My Media</h2>
+            <div className="flex justify-between">
+                <h2>My Media</h2>
+                <Filenest.SearchBar
+                    placeholder="Search..."
+                    className="px-2 py-1 border border-gray-300 rounded hover:bg-gray-100"
+                    minLength={3}
+                />
+            </div>
 
             <Filenest.AlertDialog>
                 <Filenest.AlertDialogOverlay className="fixed z-10 bg-black bg-opacity-30 w-full h-full top-0 left-0" />

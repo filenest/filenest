@@ -137,7 +137,7 @@ export class Cloudinary implements Provider {
         let url = new URL(this.URL.toString() + "/resources/search")
 
         const folder = input?.folder ? "folder:" + input.folder : 'folder=""'
-        const searchQuery = input?.searchQuery ? `AND ${input.searchQuery}` : null
+        const searchQuery = input?.searchQuery ? `AND (public_id:${input.searchQuery}* OR display_name:${input.searchQuery}*)` : null
         const expression = [folder, searchQuery].join(" ")
 
         url.searchParams.append("expression", expression)
