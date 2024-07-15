@@ -1,13 +1,5 @@
 import { z } from "zod"
 
-const CommonInputOpts = z.object({
-    folder: z.string(),
-    searchQuery: z.string().optional(),
-    nextCursor: z.string().optional(),
-})
-
-type CommonInputOpts = z.infer<typeof CommonInputOpts>
-
 const Folder = z.object({
     id: z.string(),
     name: z.string(),
@@ -78,7 +70,12 @@ const Response = z.object({
 
 export type Response = z.infer<typeof Response>
 
-export const GetResourcesInput = CommonInputOpts
+export const GetResourcesInput = z.object({
+    folder: z.string().optional(),
+    global: z.boolean().optional(),
+    searchQuery: z.string().optional(),
+    nextCursor: z.string().optional(),
+})
 export type GetResourcesInput = z.infer<typeof GetResourcesInput>
 
 export const GetResourcesReturn = FolderWithResources

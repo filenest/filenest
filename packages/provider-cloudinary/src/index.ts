@@ -136,9 +136,16 @@ export class Cloudinary implements Provider {
     public async getResources(input?: GetResourcesInput) {
         let url = new URL(this.URL.toString() + "/resources/search")
 
-        const folder = input?.folder ? "folder:" + input.folder : 'folder=""'
-        const searchQuery = input?.searchQuery ? `AND (public_id:${input.searchQuery}* OR display_name:${input.searchQuery}*)` : null
-        const expression = [folder, searchQuery].join(" ")
+        const folder = () => {
+            if (input?.global) return
+            return input?.folder ? "folder:" + input.folder : 'folder=""'
+        }
+
+        const searchQuery = input?.searchQuery
+            ? `AND (public_id:${input.searchQuery}* OR display_name:${input.searchQuery}* OR filename:${input.searchQuery}*)`
+            : null
+
+        const expression = [folder(), searchQuery].join(" ")
 
         url.searchParams.append("expression", expression)
         url.searchParams.append("with_field", "tags")

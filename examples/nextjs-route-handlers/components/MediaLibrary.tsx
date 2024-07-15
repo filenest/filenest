@@ -16,6 +16,7 @@ export const MediaLibrary = () => {
             <div className="flex justify-between">
                 <h2>My Media</h2>
                 <Filenest.SearchBar
+                    location="global"
                     placeholder="Search..."
                     className="px-2 py-1 border border-gray-300 rounded hover:bg-gray-100"
                     minLength={3}

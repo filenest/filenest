@@ -40,7 +40,7 @@ export interface GlobalContext {
     setDetailledAsset: SetState<(Asset & Partial<AssetExtraProps>) | null>
     fetchers: ReturnType<typeof createFetchers>
     searchQuery: string
-    handleSearch: (query: string) => void
+    handleSearch: (query: string, location: "current" | "global") => void
 }
 
 const GlobalContext = createContext<GlobalContext | null>(null)
@@ -79,8 +79,16 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
     }
 
     const [searchQuery, setSearchQuery] = useDebouncedState("", 500)
+    const [doGlobalSearch, setDoGlobalSearch] = useState(false)
 
-    function handleSearch(query: string) {
+    function handleSearch(query: string, location: "current" | "global") {
+        if (location === "global" && query.length) {
+            setDoGlobalSearch(true)
+        } else if (location === "global" && query === "") {
+            setDoGlobalSearch(false)
+        } else if (location === "current") {
+            setDoGlobalSearch(false)
+        }
         setSearchQuery(query)
     }
 
@@ -88,7 +96,12 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
 
     const resourcesQuery = useInfiniteQuery({
         queryKey: ["folderWithResources", currentFolder, searchQuery],
-        queryFn: ({ pageParam }) => getResources({ folder: currentFolder.path, nextCursor: pageParam, searchQuery }),
+        queryFn: ({ pageParam }) => getResources({
+            folder: currentFolder.path,
+            nextCursor: pageParam,
+            searchQuery,
+            global: doGlobalSearch
+        }),
         initialPageParam: "",
         getNextPageParam: (lastPage) => lastPage.resources.assets.nextCursor,
     })
