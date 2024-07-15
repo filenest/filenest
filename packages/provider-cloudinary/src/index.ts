@@ -142,10 +142,10 @@ export class Cloudinary implements Provider {
         }
 
         const searchQuery = input?.searchQuery
-            ? `AND (public_id:${input.searchQuery}* OR display_name:${input.searchQuery}* OR filename:${input.searchQuery}*)`
-            : null
+            ? `(public_id:${input.searchQuery}* OR display_name:${input.searchQuery}* OR filename:${input.searchQuery}*)`
+            : undefined
 
-        const expression = [folder(), searchQuery].join(" ")
+        const expression = [folder(), searchQuery].filter(i => !!i).join(" AND ")
 
         url.searchParams.append("expression", expression)
         url.searchParams.append("with_field", "tags")
