@@ -13,7 +13,9 @@ export interface FolderListProps {
 }
 
 export const FolderList = ({ children }: FolderListProps) => {
-    const { resources, resourcesQuery } = useGlobalContext()
+    const { resources, resourcesQuery, isGlobalSearch } = useGlobalContext()
+
+    if (isGlobalSearch) return null
 
     const folders = resources?.resources.folders.data
     const isLoading = resourcesQuery.isLoading

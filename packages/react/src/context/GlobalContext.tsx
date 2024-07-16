@@ -41,6 +41,7 @@ export interface GlobalContext {
     fetchers: ReturnType<typeof createFetchers>
     searchQuery: string
     handleSearch: (query: string, location: "current" | "global") => void
+    isGlobalSearch: boolean
 }
 
 const GlobalContext = createContext<GlobalContext | null>(null)
@@ -79,15 +80,15 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
     }
 
     const [searchQuery, setSearchQuery] = useDebouncedState("", 500)
-    const [doGlobalSearch, setDoGlobalSearch] = useState(false)
+    const [isGlobalSearch, setGlobalSearch] = useDebouncedState(false, 500)
 
     function handleSearch(query: string, location: "current" | "global") {
         if (location === "global" && query.length) {
-            setDoGlobalSearch(true)
+            setGlobalSearch(true)
         } else if (location === "global" && query === "") {
-            setDoGlobalSearch(false)
+            setGlobalSearch(false)
         } else if (location === "current") {
-            setDoGlobalSearch(false)
+            setGlobalSearch(false)
         }
         setSearchQuery(query)
     }
@@ -100,7 +101,7 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
             folder: currentFolder.path,
             nextCursor: pageParam,
             searchQuery,
-            global: doGlobalSearch
+            global: isGlobalSearch
         }),
         initialPageParam: "",
         getNextPageParam: (lastPage) => lastPage.resources.assets.nextCursor,
@@ -248,6 +249,7 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         fetchers,
         searchQuery,
         handleSearch,
+        isGlobalSearch
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>

@@ -3,8 +3,13 @@
 import type { Folder } from "@filenest/core"
 import { NavigationProvider, useNavigationContext } from "../context/NavigationContext"
 import { Slot } from "@radix-ui/react-slot"
+import { useGlobalContext } from "../context/GlobalContext"
 
 const NavigationWrapper = (props: NavigationProps) => {
+    const { isGlobalSearch } = useGlobalContext()
+
+    if (isGlobalSearch) return null
+
     return (
         <NavigationProvider>
             <Navigation {...props} />
