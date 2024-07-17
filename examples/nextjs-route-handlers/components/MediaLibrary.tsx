@@ -175,9 +175,11 @@ export const MediaLibrary = () => {
                                         <div className="uppercase">{asset.format}</div>
                                         <div>{prettyFilesize(asset.bytes)}</div>
                                     </div>
-                                    <div className="text-sm">
-                                        {asset.width}x{asset.height}
-                                    </div>
+                                    {asset.type == "image" && (
+                                        <div className="text-sm">
+                                            {asset.width}x{asset.height}
+                                        </div>
+                                    )}
                                     <div className="flex gap-2 mt-4">
                                         <Filenest.AssetActionTrigger
                                             action="select"
