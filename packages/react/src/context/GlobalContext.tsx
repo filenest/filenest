@@ -1,6 +1,6 @@
 "use client"
 
-import { useInfiniteQuery, type UseInfiniteQueryResult, type InfiniteData, useQueryClient } from "@tanstack/react-query"
+import { useInfiniteQuery, type UseInfiniteQueryResult, useQueryClient } from "@tanstack/react-query"
 import { createContext, useContext, useState } from "react"
 import type { Asset, Folder, FolderWithResources, GetResourcesReturn } from "@filenest/core"
 import type { AssetExtraProps, SetState } from "../utils/types"
