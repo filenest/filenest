@@ -8,7 +8,7 @@ export type RootProps = {
     children: React.ReactNode
     endpoint: string
     endpointIsTRPC?: boolean
-    labels?: Partial<typeof labels>
+    labels?: Partial<Record<keyof typeof labels, string>>
 }
 
 const queryClient = new QueryClient({
