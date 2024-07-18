@@ -1,7 +1,7 @@
 "use client"
 
-import { useInfiniteQuery, type UseInfiniteQueryResult, useQueryClient } from "@tanstack/react-query"
-import { createContext, useContext, useState } from "react"
+import { useInfiniteQuery, type UseInfiniteQueryResult, type InfiniteData } from "@tanstack/react-query"
+import { createContext, useContext, useEffect, useState } from "react"
 import type { Asset, Folder, FolderWithResources, GetResourcesReturn } from "@filenest/core"
 import type { AssetExtraProps, SetState } from "../utils/types"
 import { createFetchers } from "../utils/fetchers"
@@ -22,7 +22,7 @@ export interface GlobalContext {
         shouldSort?: boolean
     ) => void
     removeFolderFromCurrDir: (id: string, shouldSort?: boolean) => void
-    resourcesQuery: UseInfiniteQueryResult<GetResourcesReturn, unknown>
+    resourcesQuery: UseInfiniteQueryResult<InfiniteData<GetResourcesReturn, unknown>>
     updateAsset: (assetId: string, data: Partial<Asset & AssetExtraProps>) => void
     removeAssetFromCurrDir: (id: string) => void
     _l: (label: keyof typeof labels) => string
@@ -95,10 +95,8 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
 
     const { getResources } = createFetchers({ endpoint, endpointIsTRPC })
 
-    const queryKey = ["folderWithResources", currentFolder, searchQuery]
-
     const resourcesQuery = useInfiniteQuery({
-        queryKey,
+        queryKey: ["folderWithResources", currentFolder, searchQuery],
         queryFn: ({ pageParam }) => getResources({
             folder: currentFolder.path,
             nextCursor: pageParam,
@@ -107,34 +105,37 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         }),
         initialPageParam: "",
         getNextPageParam: (lastPage) => lastPage.resources.assets.nextCursor,
-        select: (data) => {
-            const newestResult = data.pages.at(-1)!
-            return {
+    })
+
+    const [data, setData] = useState<FolderWithResources>()
+
+    useEffect(() => {
+        if (resourcesQuery.data?.pages) {
+            const newestResult = resourcesQuery.data.pages.at(-1)!
+            setData({
                 ...newestResult,
                 resources: {
                     ...newestResult.resources,
                     assets: {
                         ...newestResult.resources.assets,
-                        data: data.pages.flatMap((p) => p.resources.assets.data),
+                        data: resourcesQuery.data.pages.flatMap((p) => p.resources.assets.data),
                     },
                 },
-            }
-        },
-    })
-
-    const queryClient = useQueryClient()
+            })
+        }
+    }, [resourcesQuery.data])
 
     function updateAsset(assetId: string, data: Partial<Asset & AssetExtraProps>) {
-        queryClient.setQueryData(queryKey, (curr: FolderWithResources) => {
-            if (!curr) return curr
-            const currentAssets = curr.resources.assets.data
+        setData((prev) => {
+            if (!prev) return prev
+            const currentAssets = prev.resources.assets.data
             const newAssets = currentAssets.map((a) => (a.assetId === assetId ? { ...a, ...data } : a))
             return {
-                ...curr,
+                ...prev,
                 resources: {
-                    ...curr.resources,
+                    ...prev.resources,
                     assets: {
-                        ...curr.resources.assets,
+                        ...prev.resources.assets,
                         data: newAssets,
                     },
                 },
@@ -147,7 +148,7 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         initialState?: { isLoading?: boolean; isRenaming?: boolean },
         shouldSort?: boolean
     ) {
-        queryClient.setQueryData(queryKey, (curr: FolderWithResources) => {
+        setData((curr) => {
             if (!curr) return curr
             let folders = [...curr.resources.folders.data, { ...folder, ...initialState }]
             if (shouldSort) {
@@ -167,19 +168,19 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
     }
 
     function removeFolderFromCurrDir(id: string, shouldSort?: boolean) {
-        queryClient.setQueryData(queryKey, (curr: FolderWithResources) => {
-            if (!curr) return curr
-            const currentFolders = curr.resources.folders.data
+        setData((prev) => {
+            if (!prev) return prev
+            const currentFolders = prev.resources.folders.data
             let newFolders = currentFolders.filter((f) => f.id !== id)
             if (shouldSort) {
                 newFolders = newFolders.sort((a, b) => a.name.localeCompare(b.name))
             }
             return {
-                ...curr,
+                ...prev,
                 resources: {
-                    ...curr.resources,
+                    ...prev.resources,
                     folders: {
-                        ...curr.resources.folders,
+                        ...prev.resources.folders,
                         data: newFolders,
                     },
                 },
@@ -188,16 +189,16 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
     }
 
     function removeAssetFromCurrDir(id: string) {
-        queryClient.setQueryData(queryKey, (curr: FolderWithResources) => {
-            if (!curr) return curr
-            const currentAssets = curr.resources.assets.data
+        setData((prev) => {
+            if (!prev) return prev
+            const currentAssets = prev.resources.assets.data
             const newAssets = currentAssets.filter((a) => a.assetId !== id)
             return {
-                ...curr,
+                ...prev,
                 resources: {
-                    ...curr.resources,
+                    ...prev.resources,
                     assets: {
-                        ...curr.resources.assets,
+                        ...prev.resources.assets,
                         data: newAssets,
                     },
                 },
@@ -225,7 +226,7 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         endpoint,
         navigation,
         navigateTo,
-        resources: resourcesQuery.data,
+        resources: data,
         addFolderToCurrDir,
         removeFolderFromCurrDir,
         updateAsset,
