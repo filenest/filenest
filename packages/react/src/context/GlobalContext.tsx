@@ -42,6 +42,7 @@ export interface GlobalContext {
     searchQuery: string
     handleSearch: (query: string, location: "current" | "global") => void
     isGlobalSearch: boolean
+    onAssetSelect?: (asset: Asset) => void
 }
 
 const GlobalContext = createContext<GlobalContext | null>(null)
@@ -249,7 +250,8 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         fetchers,
         searchQuery,
         handleSearch,
-        isGlobalSearch
+        isGlobalSearch,
+        onAssetSelect: props.onAssetSelect,
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>

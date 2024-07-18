@@ -138,7 +138,7 @@ export const MediaLibrary = () => {
                                         </Filenest.Asset>
                                     ))}
                                 {(isLoading || isLoadingMore) &&
-                                    makeArray(5).map((_, i) => (
+                                    makeArray(8).map((_, i) => (
                                         <div
                                             key={i}
                                             className="h-[250px] border border-gray-300 bg-gray-100 animate-pulse rounded-lg"

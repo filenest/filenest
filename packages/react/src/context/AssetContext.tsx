@@ -41,7 +41,16 @@ export interface AssetProviderProps {
 }
 
 export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }: AssetProviderProps) => {
-    const { alertDialog, updateAsset, removeAssetFromCurrDir, _l, fetchers, detailledAsset, setDetailledAsset } = useGlobalContext()
+    const {
+        alertDialog,
+        updateAsset,
+        removeAssetFromCurrDir,
+        _l,
+        fetchers,
+        detailledAsset,
+        setDetailledAsset,
+        onAssetSelect,
+    } = useGlobalContext()
 
     const [assetName, setAssetName] = useState(asset.name)
 
@@ -149,7 +158,7 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
     }
 
     function public_selectAsset() {
-        alert("TODO: not implemented")
+        onAssetSelect?.(asset)
     }
 
     const _internal = {
@@ -163,7 +172,7 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
         rename: public_renameAsset,
         noRemove,
         remove: public_removeAsset,
-        noSelect,
+        noSelect: !onAssetSelect || noSelect,
         select: public_selectAsset,
         asset: {
             ...asset,
