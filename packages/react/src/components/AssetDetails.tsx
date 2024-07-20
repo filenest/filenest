@@ -13,10 +13,10 @@ export interface AssetDetailsProps {
 }
 
 export const AssetDetails = ({ children }: AssetDetailsProps) => {
-    const { detailledAsset } = useGlobalContext()
+    const { detailedAsset } = useGlobalContext()
 
     if (typeof children === "function") {
-        return children({ asset: detailledAsset as any })
+        return children({ asset: detailedAsset as any })
     }
 
     return children

@@ -32,13 +32,13 @@ export interface AssetProps extends WithoutChildren<React.ComponentPropsWithoutR
 }
 
 const Asset = ({ asset, asChild, children, ...props }: AssetProps) => {
-    const { setDetailledAsset } = useGlobalContext()
+    const { setDetailedAsset } = useGlobalContext()
     const { isLoading } = useAssetContext()
 
     const Comp = asChild ? Slot : "div"
 
     function onClick() {
-        setDetailledAsset(asset)
+        setDetailedAsset(asset)
     }
 
     const getChildren = () => {
@@ -95,5 +95,5 @@ export const AssetActionTrigger = ({ action, asChild, ...props }: AssetActionTri
 
     const Comp = asChild ? Slot : "button"
 
-    return <Comp {...props} onClick={onClick} disabled={disabled}/>
+    return <Comp {...props} onClick={onClick} disabled={disabled} />
 }

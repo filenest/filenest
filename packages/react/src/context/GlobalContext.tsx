@@ -37,8 +37,8 @@ export interface GlobalContext {
         cancel?: () => void
         setCancel: SetState<(() => void) | undefined>
     }
-    detailledAsset: (Asset & AssetExtraProps) | null
-    setDetailledAsset: SetState<(Asset & Partial<AssetExtraProps>) | null>
+    detailedAsset: (Asset & AssetExtraProps) | null
+    setDetailedAsset: SetState<(Asset & Partial<AssetExtraProps>) | null>
     fetchers: ReturnType<typeof createFetchers>
     searchQuery: string
     handleSearch: (query: string, location: "current" | "global") => void
@@ -102,7 +102,7 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
     const resourcesQuery = useInfiniteQuery({
         queryKey: ["folderWithResources", currentFolder, searchQuery],
         queryFn: ({ pageParam }) => {
-            setDetailledAsset(null)
+            setDetailedAsset(null)
             return getResources({
                 folder: currentFolder.path,
                 nextCursor: pageParam,
@@ -213,7 +213,7 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         })
     }
 
-    const [detailledAsset, setDetailledAsset] = useState<Asset | null>(null)
+    const [detailedAsset, setDetailedAsset] = useState<Asset | null>(null)
 
     const [alertDialogOpen, setAlertDialogOpen] = useState(false)
     const [alertDialogAction, setAlertDialogAction] = useState<() => void>(() => () => {})
@@ -280,8 +280,8 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
             cancel: alertDialogCancel,
             setCancel: setAlertDialogCancel,
         },
-        detailledAsset: detailledAsset as any,
-        setDetailledAsset,
+        detailedAsset: detailedAsset as any,
+        setDetailedAsset,
         endpointIsTRPC,
         fetchers,
         searchQuery,

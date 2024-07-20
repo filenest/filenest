@@ -47,8 +47,8 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
         removeAssetFromCurrDir,
         _l,
         fetchers,
-        detailledAsset,
-        setDetailledAsset,
+        detailedAsset,
+        setDetailedAsset,
         onAssetSelect,
     } = useGlobalContext()
 
@@ -68,10 +68,10 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
         setIsRenaming(false)
     }
 
-    function updateLoadingState(value: boolean, dontUpdateDetailledAsset?: boolean) {
+    function updateLoadingState(value: boolean, dontUpdateDetailedAsset?: boolean) {
         updateAsset(asset.assetId, { isLoading: value })
-        if (detailledAsset?.assetId === asset.assetId && !dontUpdateDetailledAsset) {
-            setDetailledAsset({ ...detailledAsset, isLoading: value })
+        if (detailedAsset?.assetId === asset.assetId && !dontUpdateDetailedAsset) {
+            setDetailedAsset({ ...detailedAsset, isLoading: value })
         }
     }
 
@@ -83,8 +83,8 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
             const result = await deleteAsset({ id: asset.assetId })
             if (result.success) {
                 removeAssetFromCurrDir(asset.assetId)
-                if (detailledAsset?.assetId == asset.assetId) {
-                    setDetailledAsset(null)
+                if (detailedAsset?.assetId == asset.assetId) {
+                    setDetailedAsset(null)
                 }
             } else {
                 throw new Error(result.message)
