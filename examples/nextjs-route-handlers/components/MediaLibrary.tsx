@@ -103,7 +103,12 @@ export const MediaLibrary = () => {
                     {({ assets, isLoading, isLoadingMore }) => (
                         <div className="relative">
                             <div className="my-4">{isLoading ? null : `Showing ${assets?.length} assets`}</div>
-                            <Filenest.Uploader noClick uploadOnDrop className="grid grid-cols-4 gap-6">
+                            <Filenest.Uploader
+                                noClick
+                                uploadOnDrop
+                                className="grid grid-cols-4 gap-6"
+                                name="drag-drop-uploader"
+                            >
                                 <Filenest.DropIndicator className="absolute w-full h-full bg-blue-100 flex items-center justify-center rounded-lg bg-opacity-50" />
                                 <Filenest.DropIndicator className="fixed z-10 p-4 rounded bg-blue-300 bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2">
                                     <IconFilePlus /> Drop files to upload
@@ -200,6 +205,25 @@ export const MediaLibrary = () => {
                         </div>
                     )}
                 </Filenest.AssetDetails>
+
+                <Filenest.Queue references="drag-drop-uploader" asChild>
+                    {({ assets }) => (
+                        <div className="fixed right-8 bottom-8 bg-white border border-gray-300 p-6 rounded-lg shadow-xl">
+                            <h4 className="mb-2">Files to upload ({assets.length})</h4>
+                            <div className="overflow-auto max-h-64 pr-2">
+                                {assets.map((file) => (
+                                    <div
+                                        key={file.name}
+                                        className="mt-2 p-2 bg-gray-100 rounded"
+                                    >
+                                        <div className="truncate">{file.name}</div>
+                                        <div>{prettyFilesize(file.size)}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </Filenest.Queue>
             </div>
         </Filenest.Root>
     )

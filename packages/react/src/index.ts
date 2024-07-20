@@ -19,6 +19,7 @@ import { ResourceName } from "./components/ResourceName"
 import { Root } from "./components/Root"
 import { SearchBar } from "./components/SearchBar"
 import { Uploader } from "./components/Uploader"
+import { Queue } from "./components/Queue"
 
 export type { RootProps } from "./components/Root"
 
@@ -45,5 +46,6 @@ export const Filenest = {
     ResourceName,
     Root,
     SearchBar,
+    Queue,
     Uploader,
 }

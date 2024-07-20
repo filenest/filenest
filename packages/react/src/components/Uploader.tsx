@@ -3,6 +3,8 @@
 import type { WithoutChildren } from "../utils/types"
 import { Slot } from "@radix-ui/react-slot"
 import { UploaderProvider, useUploaderContext, type UploaderProviderProps } from "../context/UploaderContext"
+import { useGlobalContext } from "../context/GlobalContext"
+import { useEffect } from "react"
 
 const UploaderWrapper = ({
     children,
@@ -45,16 +47,26 @@ const UploaderWrapper = ({
 export interface UploaderProps extends WithoutChildren<Omit<React.ComponentPropsWithoutRef<"div">, "onProgress" | "onError">> {
     asChild?: boolean
     children?: React.ReactNode
+    name?: string
 }
 
 const Uploader = ({ children, asChild, ...props }: UploaderProps) => {
+    const { uploaders, setUploader } = useGlobalContext()
     const { dropzone } = useUploaderContext()
+
+    const id = props.id || props.name || Math.random().toString()
+
+    useEffect(() => {
+        setUploader(id, dropzone)
+    }, [dropzone.acceptedFiles])
+
+    const dz = uploaders[id] || dropzone
 
     const Comp = asChild ? Slot : "div"
 
     return (
-        <Comp {...dropzone.getRootProps({...props})}>
-            <input {...dropzone.getInputProps()} />
+        <Comp {...dz.getRootProps({...props})}>
+            <input {...dz.getInputProps()} />
             {children}
         </Comp>
     )

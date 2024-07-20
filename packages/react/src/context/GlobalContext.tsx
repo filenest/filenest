@@ -8,6 +8,7 @@ import { createFetchers } from "../utils/fetchers"
 import { labels } from "../utils/labels"
 import { useDebouncedState } from "../utils/useDebouncedState"
 import type { RootProps } from "../components/Root"
+import type { DropzoneState } from "react-dropzone"
 
 export interface GlobalContext {
     currentFolder: Folder
@@ -43,6 +44,8 @@ export interface GlobalContext {
     handleSearch: (query: string, location: "current" | "global") => void
     isGlobalSearch: boolean
     onAssetSelect?: (asset: Asset) => void
+    uploaders: Record<string, DropzoneState>
+    setUploader: (id: string, data: DropzoneState) => void
 }
 
 const GlobalContext = createContext<GlobalContext | null>(null)
@@ -222,6 +225,15 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         _setAlertDialogContent((prev) => ({ ...prev, ...content }))
     }
 
+    const [uploaders, setUploaders] = useState<Record<string, DropzoneState>>({});
+
+    const setUploader = (id: string, data: DropzoneState) => {
+        setUploaders((prev) => ({
+            ...prev,
+            [id]: data,
+        }))
+    }
+
     const contextValue = {
         currentFolder,
         endpoint,
@@ -252,6 +264,8 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         handleSearch,
         isGlobalSearch,
         onAssetSelect: props.onAssetSelect,
+        uploaders,
+        setUploader,
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>
