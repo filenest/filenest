@@ -42,8 +42,15 @@ export class Cloudinary implements Provider {
     }
 
     // Stolen from https://github.com/cloudinary/cloudinary_npm/blob/master/lib/utils/index.js
-    private makeSignature(params: Record<string, any>) {
+    private async makeSignature(params: Record<string, any>) {
         const { API_SECRET } = this
+
+        const { settings } = await this.getConfig()
+
+        if (settings.folder_mode === "dynamic") {
+            params.asset_folder = params.folder || ""
+            delete params.folder
+        }
 
         function toArray(arg: any) {
             switch (true) {
@@ -250,7 +257,7 @@ export class Cloudinary implements Provider {
         const config = await this.getConfig()
 
         const uploadedFiles: Asset[] = await Promise.all(
-            input.files.map((file) => {
+            input.files.map(async (file) => {
                 const url = new URL(this.URL.toString() + "/auto/upload")
 
                 // const filename = file.name
@@ -273,7 +280,7 @@ export class Cloudinary implements Provider {
                     folder.folder = input.folder || ""
                 }
 
-                const signature = this.makeSignature({
+                const signature = await this.makeSignature({
                     timestamp,
                     use_filename: "true",
                     ...folder,
@@ -290,7 +297,7 @@ export class Cloudinary implements Provider {
         return uploadedFiles
     }
 
-    public getUploadUrl(input: GetUploadUrlInput) {
+    public async getUploadUrl(input: GetUploadUrlInput) {
         if (!input.folder) {
             input.folder = ""
         }
@@ -298,7 +305,7 @@ export class Cloudinary implements Provider {
         const timestamp = Math.floor(Date.now() / 1000)
         input.timestamp = timestamp.toString()
 
-        const signature = this.makeSignature(input)
+        const signature = await this.makeSignature(input)
 
         return {
             timestamp,
@@ -339,7 +346,7 @@ export class Cloudinary implements Provider {
             url.searchParams.append("api_key", this.API_KEY)
             url.searchParams.append("timestamp", timestamp)
 
-            const signature = this.makeSignature({
+            const signature = await this.makeSignature({
                 timestamp,
                 from_public_id: public_id,
                 to_public_id: slugify(name),
