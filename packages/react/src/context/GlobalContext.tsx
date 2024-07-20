@@ -101,13 +101,15 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
 
     const resourcesQuery = useInfiniteQuery({
         queryKey: ["folderWithResources", currentFolder, searchQuery],
-        queryFn: ({ pageParam }) =>
-            getResources({
+        queryFn: ({ pageParam }) => {
+            setDetailledAsset(null)
+            return getResources({
                 folder: currentFolder.path,
                 nextCursor: pageParam,
                 searchQuery,
                 global: isGlobalSearch,
-            }),
+            })
+        },
         initialPageParam: "",
         getNextPageParam: (lastPage) => lastPage.resources.assets.nextCursor,
     })
