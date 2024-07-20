@@ -18,6 +18,7 @@ export const SearchBar = ({ asChild, location, ...props }: SearchBarProps) => {
     return (
         <Comp
             {...props}
+            suppressHydrationWarning // Hide `extra attributes from the server` warning
             onChange={(e) => {
                 if (e.target.value.length >= minLength || e.target.value === "") {
                     handleSearch(e.target.value, location)

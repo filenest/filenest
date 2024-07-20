@@ -51,22 +51,21 @@ export interface UploaderProps extends WithoutChildren<Omit<React.ComponentProps
 }
 
 const Uploader = ({ children, asChild, ...props }: UploaderProps) => {
-    const { uploaders, setUploader } = useGlobalContext()
+    const { fileMappers, setFileMapper } = useGlobalContext()
     const { dropzone } = useUploaderContext()
 
     const id = props.id || props.name || Math.random().toString()
+    const files = fileMappers[id] || []
 
     useEffect(() => {
-        setUploader(id, dropzone)
+        setFileMapper(id, dropzone.acceptedFiles)
     }, [dropzone.acceptedFiles])
-
-    const dz = uploaders[id] || dropzone
 
     const Comp = asChild ? Slot : "div"
 
     return (
-        <Comp {...dz.getRootProps({...props})}>
-            <input {...dz.getInputProps()} />
+        <Comp {...dropzone.getRootProps({...props})}>
+            <input {...dropzone.getInputProps()} />
             {children}
         </Comp>
     )

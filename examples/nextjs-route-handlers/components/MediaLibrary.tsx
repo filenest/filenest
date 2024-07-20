@@ -217,7 +217,10 @@ export const MediaLibrary = () => {
                                         className="mt-2 p-2 bg-gray-100 rounded"
                                     >
                                         <div className="truncate">{file.name}</div>
-                                        <div>{prettyFilesize(file.size)}</div>
+                                        <div className="flex justify-between items-center">
+                                            <div>{prettyFilesize(file.size)}</div>
+                                            <IconTrash size={20} className="text-red-400 cursor-pointer"/>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
