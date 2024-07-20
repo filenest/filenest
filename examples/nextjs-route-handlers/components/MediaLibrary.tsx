@@ -3,7 +3,7 @@
 import { cn } from "@/lib/cn"
 import { prettyFilesize } from "@/lib/prettyFilesize"
 import { Filenest } from "@filenest/react"
-import { IconEdit, IconFilePlus, IconPlus, IconTrash } from "@tabler/icons-react"
+import { IconEdit, IconFilePlus, IconPlus, IconTrash, IconUpload } from "@tabler/icons-react"
 import { Fragment } from "react"
 
 function makeArray(length: number) {
@@ -105,7 +105,7 @@ export const MediaLibrary = () => {
                             <div className="my-4">{isLoading ? null : `Showing ${assets?.length} assets`}</div>
                             <Filenest.Uploader
                                 noClick
-                                uploadOnDrop
+                                //uploadOnDrop
                                 className="grid grid-cols-4 gap-6"
                                 name="drag-drop-uploader"
                             >
@@ -201,17 +201,22 @@ export const MediaLibrary = () => {
                                     </div>
                                 </Filenest.Asset>
                             )}
-                            {!asset && <div>No asset selected</div>}
+                            {!asset && (
+                                <div>
+                                    <span className="font-bold text-gray-800">No asset selected.</span><br/>
+                                    Click on a file to display detailed information here.
+                                </div>
+                            )}
                         </div>
                     )}
                 </Filenest.AssetDetails>
 
                 <Filenest.Queue references="drag-drop-uploader" asChild>
-                    {({ assets }) => (
+                    {({ files, clearQueue }) => (
                         <div className="fixed right-8 bottom-8 bg-white border border-gray-300 p-6 rounded-lg shadow-xl">
-                            <h4 className="mb-2">Files to upload ({assets.length})</h4>
+                            <h4 className="mb-2">Files to upload ({files.length})</h4>
                             <div className="overflow-auto max-h-64 pr-2">
-                                {assets.map((file) => (
+                                {files.map((file) => (
                                     <div
                                         key={file.name}
                                         className="mt-2 p-2 bg-gray-100 rounded"
@@ -223,6 +228,15 @@ export const MediaLibrary = () => {
                                         </div>
                                     </div>
                                 ))}
+                            </div>
+                            <div className="flex gap-4 items-center mt-4">
+                                <Filenest.UploadButton
+                                    references="drag-drop-uploader"
+                                    className="py-2 px-3 rounded bg-green-400 hover:bg-green-300 cursor-pointer flex gap-1"
+                                >
+                                    <IconUpload/>Upload
+                                </Filenest.UploadButton>
+                                <div onClick={clearQueue} className="hover:underline cursor-pointer">Clear queue</div>
                             </div>
                         </div>
                     )}

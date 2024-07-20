@@ -20,6 +20,7 @@ import { Root } from "./components/Root"
 import { SearchBar } from "./components/SearchBar"
 import { Uploader } from "./components/Uploader"
 import { Queue } from "./components/Queue"
+import { UploadButton } from "./components/UploadButton"
 
 export type { RootProps } from "./components/Root"
 
@@ -48,4 +49,5 @@ export const Filenest = {
     SearchBar,
     Queue,
     Uploader,
+    UploadButton,
 }

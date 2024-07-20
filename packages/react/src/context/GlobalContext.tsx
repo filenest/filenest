@@ -8,6 +8,7 @@ import { createFetchers } from "../utils/fetchers"
 import { labels } from "../utils/labels"
 import { useDebouncedState } from "../utils/useDebouncedState"
 import type { RootProps } from "../components/Root"
+import type { DropzoneState } from "react-dropzone"
 
 export interface GlobalContext {
     currentFolder: Folder
@@ -43,8 +44,8 @@ export interface GlobalContext {
     handleSearch: (query: string, location: "current" | "global") => void
     isGlobalSearch: boolean
     onAssetSelect?: (asset: Asset) => void
-    fileMappers: Record<string, File[]>
-    setFileMapper: (id: string, data: File[]) => void
+    queue: Queue
+    updateUploader: (id: string, dropzone: Queue["uploaders"][0]) => void
 }
 
 const GlobalContext = createContext<GlobalContext | null>(null)
@@ -100,12 +101,13 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
 
     const resourcesQuery = useInfiniteQuery({
         queryKey: ["folderWithResources", currentFolder, searchQuery],
-        queryFn: ({ pageParam }) => getResources({
-            folder: currentFolder.path,
-            nextCursor: pageParam,
-            searchQuery,
-            global: isGlobalSearch
-        }),
+        queryFn: ({ pageParam }) =>
+            getResources({
+                folder: currentFolder.path,
+                nextCursor: pageParam,
+                searchQuery,
+                global: isGlobalSearch,
+            }),
         initialPageParam: "",
         getNextPageParam: (lastPage) => lastPage.resources.assets.nextCursor,
     })
@@ -224,22 +226,32 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         _setAlertDialogContent((prev) => ({ ...prev, ...content }))
     }
 
-    const [fileMappers, setFileMappers] = useState<Record<string, File[]>>({});
+    const [queue, setQueue] = useState<Queue>({ totalProgress: 0, uploaders: {} })
 
-    const setFileMapper = (id: string, files: File[]) => {
-        setFileMappers((prev) => {
+    const updateUploader = (id: string, dropzone: Queue["uploaders"][0]) => {
+        setQueue((curr) => {
+            const files = dropzone.files
             // Use a map here to skip duplicates
             const newFiles = new Map<string, File>()
-            prev[id]?.forEach((file) => {
+            curr.uploaders[id]?.files.forEach((file) => {
                 newFiles.set(file.name, file)
             })
             files.forEach((file) => {
                 newFiles.set(file.name, file)
             })
-            const newFilesArray = Array.from(newFiles.values())
+            const newFilesArray = () => {
+                if (files.length === 0) return []
+                return Array.from(newFiles.values())
+            }
             return {
-                ...prev,
-                [id]: newFilesArray,
+                ...curr,
+                uploaders: {
+                    ...curr.uploaders,
+                    [id]: {
+                        ...dropzone,
+                        files: newFilesArray(),
+                    },
+                },
             }
         })
     }
@@ -274,11 +286,22 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         handleSearch,
         isGlobalSearch,
         onAssetSelect: props.onAssetSelect,
-        fileMappers,
-        setFileMapper,
+        queue,
+        updateUploader,
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>
 }
 
 type AlertDialogContent = { title: string; text: string; cancel: string; commit: string }
+
+interface Queue {
+    totalProgress: number
+    uploaders: {
+        [key: string]: {
+            files: File[]
+            progress?: number
+            isUploading?: boolean
+        }
+    }
+}
