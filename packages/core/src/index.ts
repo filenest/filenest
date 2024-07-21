@@ -1,12 +1,10 @@
 import {
-    type Asset,
     GetResourcesInput,
     type FolderWithResources,
     CreateFolderInput,
     type Folder,
     RenameFolderInput,
     DeleteFolderInput,
-    UploadInput,
     RenameAssetInput,
     DeleteAssetInput,
     type Response,
@@ -55,16 +53,7 @@ export interface Provider {
     deleteFolder(input: DeleteFolderInput): Promise<Response>
 
     /**
-     * #### Upload a file to the provider
-     *
-     * Can be a single or multiple files of any type, respectively.
-     *
-     * @returns The uploaded assets.
-     */
-    upload(input: UploadInput): Promise<Asset[]>
-
-    /**
-     * #### Get a signature for uploading files
+     * #### Get a signed upload URL for uploading files from the client
      */
     getUploadUrl(input: GetUploadUrlInput): Promise<string>
 

@@ -11,7 +11,6 @@ import {
     type DeleteFolderInput,
     type GetResourcesInput,
     type RenameFolderInput,
-    type UploadInput,
 } from "@filenest/core"
 import slugify from "slugify"
 
@@ -244,50 +243,6 @@ export class Cloudinary implements Provider {
         return {
             success: true,
         }
-    }
-
-    public async upload(input: UploadInput) {
-        const config = await this.getConfig()
-
-        const uploadedFiles: Asset[] = await Promise.all(
-            input.files.map(async (file) => {
-                const url = new URL(this.URL.toString() + "/auto/upload")
-
-                // const filename = file.name
-                // const publicId = input.folder ? `${input.folder}/${filename}` : filename
-                const timestamp = Math.floor(Date.now() / 1000)
-                const folder: Record<string, any> = {}
-
-                url.searchParams.append("api_key", this.API_KEY)
-                url.searchParams.append("file", file.arrayBuffer.toString())
-                url.searchParams.append("timestamp", timestamp.toString())
-                url.searchParams.append("use_filename", "true")
-
-                if (config.settings.folder_mode === "dynamic") {
-                    url.searchParams.append("asset_folder", input.folder || "")
-                    folder.asset_folder = input.folder || ""
-                }
-
-                if (config.settings.folder_mode === "fixed") {
-                    url.searchParams.append("folder", input.folder || "")
-                    folder.folder = input.folder || ""
-                }
-
-                const signature = await this.makeSignature({
-                    timestamp,
-                    use_filename: "true",
-                    ...folder,
-                })
-
-                url.searchParams.append("signature", signature)
-
-                url.searchParams.sort()
-
-                return this.doFetch(url, { method: "POST" })
-            })
-        )
-
-        return uploadedFiles
     }
 
     public async getUploadUrl(input: GetUploadUrlInput) {

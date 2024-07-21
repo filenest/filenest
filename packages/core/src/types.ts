@@ -107,12 +107,6 @@ export type DeleteFolderInput = z.infer<typeof DeleteFolderInput>
 export const DeleteFolderReturn = Response
 export type DeleteFolderReturn = z.infer<typeof DeleteFolderReturn>
 
-export const UploadInput = z.object({
-    files: z.array(z.instanceof(File)),
-    folder: z.string().optional(),
-})
-export type UploadInput = z.infer<typeof UploadInput>
-
 export const GetUploadUrlInput = z.object({
     params: z.record(z.string())
 })
