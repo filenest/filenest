@@ -1,6 +1,6 @@
 "use client"
 
-import { useInfiniteQuery, type UseInfiniteQueryResult, type InfiniteData } from "@tanstack/react-query"
+import { useInfiniteQuery, type UseInfiniteQueryResult, type InfiniteData, type QueryKey } from "@tanstack/react-query"
 import { createContext, useContext, useEffect, useState } from "react"
 import type { Asset, Folder, FolderWithResources, GetResourcesReturn } from "@filenest/core"
 import type { AssetExtraProps, SetState } from "../utils/types"
@@ -8,7 +8,6 @@ import { createFetchers } from "../utils/fetchers"
 import { labels } from "../utils/labels"
 import { useDebouncedState } from "../utils/useDebouncedState"
 import type { RootProps } from "../components/Root"
-import type { DropzoneState } from "react-dropzone"
 
 export interface GlobalContext {
     currentFolder: Folder
@@ -97,8 +96,10 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         setSearchQuery(query)
     }
 
+    const queryKey = ["folderWithResources", currentFolder, searchQuery]
+
     const resourcesQuery = useInfiniteQuery({
-        queryKey: ["folderWithResources", currentFolder, searchQuery],
+        queryKey,
         queryFn: ({ pageParam }) => {
             setDetailedAsset(null)
             return fetchers.getResources({
@@ -115,8 +116,10 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
     const [data, setData] = useState<FolderWithResources>()
 
     useEffect(() => {
+        console.log("data changed")
         if (resourcesQuery.data?.pages) {
             const newestResult = resourcesQuery.data.pages.at(-1)!
+            console.log(newestResult.resources.assets.data)
             setData({
                 ...newestResult,
                 resources: {
@@ -128,7 +131,7 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
                 },
             })
         }
-    }, [resourcesQuery.data])
+    }, [resourcesQuery.isFetching])
 
     function updateAsset(assetId: string, data: Partial<Asset & AssetExtraProps>) {
         setData((prev) => {
@@ -232,12 +235,13 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         setQueue((curr) => {
             const files = dropzone.files
             // Use a map here to skip duplicates
-            const newFiles = new Map<string, File>()
-            curr.uploaders[id]?.files.forEach((file) => {
-                newFiles.set(file.name, file)
+            const newFiles = new Map<string, QueueFile>()
+            const defaultOpts = { isUploading: false, isSuccess: false, progress: 0 }
+            curr.uploaders[id]?.files.forEach((item) => {
+                newFiles.set(item.file.name, { ...defaultOpts, ...item})
             })
-            files.forEach((file) => {
-                newFiles.set(file.name, file)
+            files.forEach((item) => {
+                newFiles.set(item.file.name, { ...defaultOpts, ...item})
             })
             const newFilesArray = () => {
                 if (files.length === 0) return []
@@ -287,7 +291,7 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         isGlobalSearch,
         onAssetSelect: props.onAssetSelect,
         queue,
-        updateUploader,
+        updateUploader
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>
@@ -299,9 +303,16 @@ interface Queue {
     totalProgress: number
     uploaders: {
         [key: string]: {
-            files: File[]
+            files: QueueFile[]
             progress?: number
             isUploading?: boolean
         }
     }
+}
+
+interface QueueFile {
+    file: File,
+    isUploading: boolean,
+    isSuccess: boolean,
+    progress: number
 }

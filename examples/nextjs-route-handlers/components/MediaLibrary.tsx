@@ -215,7 +215,7 @@ export const MediaLibrary = () => {
                     {({ files, clearQueue }) => (
                         <div className="fixed right-8 bottom-8 bg-white border border-gray-300 p-6 rounded-lg shadow-xl">
                             <h4 className="mb-2">Files to upload ({files.length})</h4>
-                            <div className="overflow-auto max-h-64 pr-2">
+                            <div className="overflow-auto max-h-64 max-w-[20rem] pr-2">
                                 {files.map((file) => (
                                     <div
                                         key={file.name}

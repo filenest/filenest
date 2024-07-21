@@ -19,7 +19,7 @@ export const Queue = ({ asChild, references, children, ...props }: QueueProps) =
     const { queue, updateUploader } = useGlobalContext()
 
     const uploader = queue.uploaders[references]
-    const files = uploader?.files || []
+    const files = uploader?.files.map(f => f.file) || []
 
     if (!files.length) return null
 

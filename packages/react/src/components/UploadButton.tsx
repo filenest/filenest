@@ -2,6 +2,7 @@
 
 import { Slot } from "@radix-ui/react-slot"
 import { useGlobalContext } from "../context/GlobalContext"
+import { useQueryClient } from "@tanstack/react-query"
 
 export interface UploadButtonProps extends React.ComponentPropsWithoutRef<"button"> {
     asChild?: boolean
@@ -9,7 +10,8 @@ export interface UploadButtonProps extends React.ComponentPropsWithoutRef<"butto
 }
 
 export const UploadButton = ({ asChild, references, ...props }: UploadButtonProps) => {
-    const { queue, fetchers, currentFolder } = useGlobalContext()
+    const { queue, fetchers, currentFolder, resourcesQuery } = useGlobalContext()
+    const queryClient = useQueryClient()
 
     const uploader = queue.uploaders[references]
     const files = uploader?.files || []
@@ -20,21 +22,26 @@ export const UploadButton = ({ asChild, references, ...props }: UploadButtonProp
     async function handleUpload() {
         if (disabled) return
 
-        const params = {
-            folder: currentFolder.path,
-        }
-
-        for (const file of files) {
+        for (const item of files) {
+            const params = {
+                folder: currentFolder.path,
+                use_filename: "true",
+                unique_filename: "true",
+            }    
             const _url = await fetchers.getUploadUrl({ params })
             const url = new URL(_url)
             const data = new FormData()
-            data.append("file", file)
+            data.append("file", item.file)
             url.searchParams.sort()
             await fetch(url.toString(), {
                 method: "POST",
                 body: data
             })
         }
+
+        setTimeout(() => {
+            resourcesQuery.refetch()
+        }, 2000)
     }
 
     return <Comp {...props} onClick={handleUpload} disabled={disabled} />
