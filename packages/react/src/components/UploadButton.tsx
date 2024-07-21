@@ -9,7 +9,7 @@ export interface UploadButtonProps extends React.ComponentPropsWithoutRef<"butto
 }
 
 export const UploadButton = ({ asChild, references, ...props }: UploadButtonProps) => {
-    const { queue } = useGlobalContext()
+    const { queue, fetchers, currentFolder } = useGlobalContext()
 
     const uploader = queue.uploaders[references]
     const files = uploader?.files || []
@@ -17,12 +17,25 @@ export const UploadButton = ({ asChild, references, ...props }: UploadButtonProp
 
     const Comp = asChild ? Slot : "button"
 
-    function handleUpload() {
+    async function handleUpload() {
         if (disabled) return
-        alert("Uploading files...")
+
+        const params = {
+            folder: currentFolder.path,
+        }
+
+        for (const file of files) {
+            const _url = await fetchers.getUploadUrl({ params })
+            const url = new URL(_url)
+            const data = new FormData()
+            data.append("file", file)
+            url.searchParams.sort()
+            await fetch(url.toString(), {
+                method: "POST",
+                body: data
+            })
+        }
     }
 
-    return (
-        <Comp {...props} onClick={handleUpload} disabled={disabled}/>
-    )
+    return <Comp {...props} onClick={handleUpload} disabled={disabled} />
 }

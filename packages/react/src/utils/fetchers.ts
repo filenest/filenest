@@ -1,4 +1,6 @@
 import {
+    GetUploadUrlInput,
+    GetUploadUrlReturn,
     type CreateFolderInput,
     type CreateFolderReturn,
     type DeleteAssetInput,
@@ -55,6 +57,10 @@ export function createFetchers({ endpoint, endpointIsTRPC }: CreateFetchersOpts)
         return (await handleFetch("deleteAsset", input)) as DeleteAssetReturn
     }
 
+    async function getUploadUrl(input: GetUploadUrlInput) {
+        return (await handleFetch("getUploadUrl", input)) as GetUploadUrlReturn
+    }
+
     return {
         getResources,
         renameFolder,
@@ -62,5 +68,6 @@ export function createFetchers({ endpoint, endpointIsTRPC }: CreateFetchersOpts)
         createFolder,
         renameAsset,
         deleteAsset,
+        getUploadUrl,
     }
 }

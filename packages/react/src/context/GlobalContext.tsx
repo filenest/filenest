@@ -97,13 +97,11 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         setSearchQuery(query)
     }
 
-    const { getResources } = createFetchers({ endpoint, endpointIsTRPC })
-
     const resourcesQuery = useInfiniteQuery({
         queryKey: ["folderWithResources", currentFolder, searchQuery],
         queryFn: ({ pageParam }) => {
             setDetailedAsset(null)
-            return getResources({
+            return fetchers.getResources({
                 folder: currentFolder.path,
                 nextCursor: pageParam,
                 searchQuery,

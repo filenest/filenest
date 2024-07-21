@@ -45,13 +45,6 @@ export class Cloudinary implements Provider {
     private async makeSignature(params: Record<string, any>) {
         const { API_SECRET } = this
 
-        const { settings } = await this.getConfig()
-
-        if (settings.folder_mode === "dynamic") {
-            params.asset_folder = params.folder || ""
-            delete params.folder
-        }
-
         function toArray(arg: any) {
             switch (true) {
                 case arg == null:
@@ -298,19 +291,29 @@ export class Cloudinary implements Provider {
     }
 
     public async getUploadUrl(input: GetUploadUrlInput) {
-        if (!input.folder) {
-            input.folder = ""
+        const { params } = input
+        
+        const { settings } = await this.getConfig()
+
+        if (settings.folder_mode === "dynamic") {
+            params.asset_folder = params.folder || params.asset_folder || ""
+            delete params.folder
         }
 
-        const timestamp = Math.floor(Date.now() / 1000)
-        input.timestamp = timestamp.toString()
+        const timestamp = Math.floor(Date.now() / 1000).toString()
+        params.timestamp = timestamp
 
-        const signature = await this.makeSignature(input)
+        const signature = await this.makeSignature(params)
 
-        return {
-            timestamp,
-            signature,
-        }
+        const url = new URL(this.URL.toString() + "/auto/upload")
+        url.searchParams.append("api_key", this.API_KEY)
+        url.searchParams.append("signature", signature)
+        Object.entries(params).forEach(([key, value]) => {
+            url.searchParams.append(key, value)
+        })
+        url.searchParams.sort()
+
+        return url.toString()
     }
 
     public async renameAsset(input: RenameAssetInput) {

@@ -66,7 +66,7 @@ export interface Provider {
     /**
      * #### Get a signature for uploading files
      */
-    getUploadUrl(input: GetUploadUrlInput): Promise<{ timestamp: number; signature: string }>
+    getUploadUrl(input: GetUploadUrlInput): Promise<string>
 
     /**
      * #### Rename an asset
