@@ -11,5 +11,4 @@ export const labels = {
     "alert.deliveryUrlRequired.text": "You are about to change the display name of this file. The URL of this file will not change. Do you want to update the URL aswell? Warning: All existing URLs to this file will break.",
     "alert.deliveryUrlRequired.cancel": "Change display name only",
     "alert.deliveryUrlRequired.commit": "Change name and URL",
-    "hint.clickToRename": "Click to rename",
 } as const

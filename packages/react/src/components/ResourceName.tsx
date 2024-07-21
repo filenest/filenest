@@ -9,7 +9,6 @@ export interface ResourceNameProps extends React.HTMLAttributes<HTMLElement> {
 
 export const ResourceName = ({ className, onClick }: ResourceNameProps) => {
     const { isRenaming, ref, handleKeyDown, newName, setNewName, name } = useResourceName()
-    const { _l } = useGlobalContext()
 
     if (isRenaming) {
         return (
@@ -28,5 +27,5 @@ export const ResourceName = ({ className, onClick }: ResourceNameProps) => {
         )
     }
 
-    return <div className={className} onClick={onClick} title={_l("hint.clickToRename")}>{name}</div>
+    return <div className={className} onClick={onClick}>{name}</div>
 }
