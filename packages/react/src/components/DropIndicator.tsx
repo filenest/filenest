@@ -1,7 +1,7 @@
 "use client"
 
 import { Slot } from "@radix-ui/react-slot"
-import { useUploaderContext } from "../context/UploaderContext"
+import { useUploaderContext } from "../context/local/UploaderContext"
 
 export interface DropIndicatorProps extends React.ComponentPropsWithoutRef<"div"> {
     asChild?: boolean

@@ -2,8 +2,8 @@
 
 import type { Asset } from "@filenest/core"
 import { createContext, useContext, useEffect, useState } from "react"
-import { useGlobalContext } from "./GlobalContext"
-import type { SetState } from "../utils/types"
+import { useGlobalContext } from "../global/GlobalContext"
+import type { SetState } from "../../utils/types"
 
 export interface AssetContext {
     asset: Asset

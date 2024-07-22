@@ -1,9 +1,9 @@
 "use client"
 
 import type { Folder } from "@filenest/core"
-import { NavigationProvider, useNavigationContext } from "../context/NavigationContext"
+import { NavigationProvider, useNavigationContext } from "../context/local/NavigationContext"
 import { Slot } from "@radix-ui/react-slot"
-import { useGlobalContext } from "../context/GlobalContext"
+import { useGlobalContext } from "../context/global/GlobalContext"
 
 const NavigationWrapper = (props: NavigationProps) => {
     const { isGlobalSearch } = useGlobalContext()

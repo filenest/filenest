@@ -2,6 +2,7 @@
 
 import { createContext, useContext } from "react"
 import { useDropzone } from "react-dropzone"
+import { useGlobalContext } from "../global/GlobalContext"
 
 export interface UploaderContext {
     dropzone: ReturnType<typeof useDropzone>
@@ -19,6 +20,7 @@ export const useUploaderContext = () => {
 
 export interface UploaderProviderProps {
     children: React.ReactNode
+    name: string
     noDrop?: boolean
     noClick?: boolean
     multiple?: boolean
@@ -45,20 +47,26 @@ export const UploaderProvider = ({
     onSuccess,
     onUpload,
     uploadOnDrop,
+    name
 }: UploaderProviderProps) => {
+    const { upload } = useGlobalContext()
+
     const dropzone = useDropzone({
         maxSize,
         maxFiles,
         multiple,
         noClick,
         noDrag: noDrop,
-        onDrop(acceptedFiles) {
+        onDrop: async (acceptedFiles) => {
             if (uploadOnDrop) {
                 onUpload?.(acceptedFiles)
-                // upload...
+                // Currently doesnt work, because upload function uses state from GlobalContext
+                // and at this point the state does not include the new acceptedFiles
+                
+                // await upload(name)
             }
         },
-        onError(err) {
+        onError: (err) => {
             onError?.(err)
         },
         disabled

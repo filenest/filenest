@@ -1,6 +1,6 @@
 "use client"
 
-import { useGlobalContext } from "../context/GlobalContext"
+import { useGlobalContext } from "../context/global/GlobalContext"
 import type { Folder as FolderType } from "@filenest/core"
 
 interface RenderProps {

@@ -2,8 +2,8 @@
 
 import type { Asset as AssetType } from "@filenest/core"
 import { Slot } from "@radix-ui/react-slot"
-import { useGlobalContext } from "../context/GlobalContext"
-import { AssetProvider, useAssetContext, type AssetProviderProps } from "../context/AssetContext"
+import { useGlobalContext } from "../context/global/GlobalContext"
+import { AssetProvider, useAssetContext, type AssetProviderProps } from "../context/local/AssetContext"
 import type { WithoutChildren } from "../utils/types"
 
 const AssetWrapper = ({ asset, noRemove, noRename, noSelect, ...props }: AssetProps & AssetProviderProps) => {

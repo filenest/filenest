@@ -1,7 +1,7 @@
 "use client"
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { GlobalProvider } from "../context/GlobalContext"
+import { GlobalProvider } from "../context/global/GlobalContext"
 import type { labels } from "../utils/labels"
 import type { Asset } from "@filenest/core"
 

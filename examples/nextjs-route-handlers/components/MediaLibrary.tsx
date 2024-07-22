@@ -113,7 +113,6 @@ export const MediaLibrary = () => {
                             </div>
                             <Filenest.Uploader
                                 noClick
-                                //uploadOnDrop
                                 className="grid grid-cols-4 gap-6"
                                 name="drag-drop-uploader"
                             >

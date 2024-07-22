@@ -1,6 +1,5 @@
 "use client"
 
-import { useGlobalContext } from "../context/GlobalContext"
 import { useResourceName } from "../utils/useResourceName"
 
 export interface ResourceNameProps extends React.HTMLAttributes<HTMLElement> {

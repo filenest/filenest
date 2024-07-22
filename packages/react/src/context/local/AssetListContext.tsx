@@ -1,9 +1,9 @@
 "use client"
 
 import { createContext, useContext } from "react"
-import { useGlobalContext } from "./GlobalContext"
+import { useGlobalContext } from "../global/GlobalContext"
 import type { Asset } from "@filenest/core"
-import type { AssetExtraProps } from "../utils/types"
+import type { AssetExtraProps } from "../../utils/types"
 
 export interface AssetListContext {
     assets?: Array<Asset & AssetExtraProps>

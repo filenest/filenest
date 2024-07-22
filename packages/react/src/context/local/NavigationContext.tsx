@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react"
 import type { Folder } from "@filenest/core"
-import { useGlobalContext } from "./GlobalContext"
+import { useGlobalContext } from "../global/GlobalContext"
 
 export interface NavigationContext {
     navigation: Folder[]

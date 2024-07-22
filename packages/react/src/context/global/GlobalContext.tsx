@@ -3,11 +3,11 @@
 import { useInfiniteQuery, type UseInfiniteQueryResult, type InfiniteData, type QueryKey } from "@tanstack/react-query"
 import { createContext, useContext, useEffect, useState } from "react"
 import type { Asset, Folder, FolderWithResources, GetResourcesReturn } from "@filenest/core"
-import type { AssetExtraProps, SetState } from "../utils/types"
-import { createFetchers } from "../utils/fetchers"
-import { labels } from "../utils/labels"
-import { useDebouncedState } from "../utils/useDebouncedState"
-import type { RootProps } from "../components/Root"
+import type { AssetExtraProps, SetState } from "../../utils/types"
+import { createFetchers } from "../../utils/fetchers"
+import { labels } from "../../utils/labels"
+import { useDebouncedState } from "../../utils/useDebouncedState"
+import type { RootProps } from "../../components/Root"
 
 export interface GlobalContext {
     currentFolder: Folder
@@ -46,6 +46,7 @@ export interface GlobalContext {
     queue: Queue
     updateUploader: (id: string, dropzone: Partial<Queue["uploaders"][0]>, shouldClearFiles?: boolean) => void
     clearQueue: (id: string) => void
+    upload: (uploaderName: string) => Promise<void>
 }
 
 const GlobalContext = createContext<GlobalContext | null>(null)
@@ -275,6 +276,45 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         updateUploader(id, { files: [], isUploading: false, progress: 0 }, true)
     }
 
+    // Use `overrideFiles` when using `uploadOnDrop` prop with a Filenest.Uploader
+    // because when dropping files, the queue state is not immedialety updated
+    // and the files wouldn't be available.
+    async function upload(uploaderName: string) {
+        const uploader = queue.uploaders[uploaderName]
+        if (!uploader) return
+
+        const files = uploader.files.map(f => f.file)
+        if (!files.length) return
+
+        updateUploader(uploaderName, { isUploading: true })
+
+        for (const file of files) {
+            const params = {
+                folder: currentFolder.path,
+                use_filename: "true",
+                unique_filename: "true",
+            }
+            const _url = await fetchers.getUploadUrl({ params })
+            const url = new URL(_url)
+            const data = new FormData()
+            data.append("file", file)
+            url.searchParams.sort()
+            await fetch(url.toString(), {
+                method: "POST",
+                body: data,
+            })
+        }
+
+        // For some reason only after some time we get new data from Cloudinary
+        // TODO: Find a better way to handle this
+        setTimeout(onSuccess, 2000)
+
+        async function onSuccess() {
+            await resourcesQuery.refetch() // TODO: Better: add assets to state directly
+            updateUploader(uploaderName, { isUploading: false }, true)
+        }
+    }
+
     const contextValue = {
         currentFolder,
         endpoint,
@@ -308,6 +348,7 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         queue,
         updateUploader,
         clearQueue,
+        upload,
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>

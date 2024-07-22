@@ -1,8 +1,8 @@
 "use client"
 
 import type { Folder as FolderType } from "@filenest/core"
-import { FolderProvider, useFolderContext, type FolderInternals } from "../context/FolderContext"
-import { useGlobalContext } from "../context/GlobalContext"
+import { FolderProvider, useFolderContext, type FolderInternals } from "../context/local/FolderContext"
+import { useGlobalContext } from "../context/global/GlobalContext"
 import { Slot } from "@radix-ui/react-slot"
 import type { WithoutChildren } from "../utils/types"
 

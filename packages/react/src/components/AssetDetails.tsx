@@ -1,7 +1,7 @@
 "use client"
 
 import type { Asset } from "@filenest/core"
-import { useGlobalContext } from "../context/GlobalContext"
+import { useGlobalContext } from "../context/global/GlobalContext"
 import type { AssetExtraProps } from "../utils/types"
 
 interface RenderProps {

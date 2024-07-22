@@ -2,8 +2,8 @@
 
 import type { Folder } from "@filenest/core"
 import { createContext, useContext, useState } from "react"
-import { useGlobalContext } from "./GlobalContext"
-import type { SetState } from "../utils/types"
+import { useGlobalContext } from "../global/GlobalContext"
+import type { SetState } from "../../utils/types"
 
 export interface FolderInternals {
     remove: () => void

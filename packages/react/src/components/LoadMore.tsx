@@ -1,7 +1,7 @@
 "use client"
 
 import { Slot } from "@radix-ui/react-slot"
-import { useGlobalContext } from "../context/GlobalContext"
+import { useGlobalContext } from "../context/global/GlobalContext"
 
 export interface LoadMoreProps extends React.ComponentPropsWithoutRef<"button"> {
     asChild?: boolean

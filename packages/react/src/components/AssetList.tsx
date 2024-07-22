@@ -1,7 +1,7 @@
 "use client"
 
 import { Slot } from "@radix-ui/react-slot"
-import { AssetListProvider, useAssetListContext } from "../context/AssetListContext"
+import { AssetListProvider, useAssetListContext } from "../context/local/AssetListContext"
 import type { WithoutChildren } from "../utils/types"
 
 const AssetListWrapper = (props: AssetListProps) => {

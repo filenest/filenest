@@ -1,9 +1,9 @@
 "use client"
 
 import { useContext, useEffect, useRef } from "react"
-import { useGlobalContext } from "../context/GlobalContext"
-import { FolderContext } from "../context/FolderContext"
-import { AssetContext } from "../context/AssetContext"
+import { useGlobalContext } from "../context/global/GlobalContext"
+import { FolderContext } from "../context/local/FolderContext"
+import { AssetContext } from "../context/local/AssetContext"
 import { useClickOutside } from "./useClickOutside"
 import { useMergedRef } from "./useMergedRef"
 import type { SetState } from "./types"

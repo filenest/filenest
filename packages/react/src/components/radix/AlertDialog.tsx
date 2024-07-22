@@ -1,7 +1,7 @@
 "use client"
 
 import * as Primitive from "@radix-ui/react-alert-dialog"
-import { useGlobalContext } from "../../context/GlobalContext"
+import { useGlobalContext } from "../../context/global/GlobalContext"
 
 export const AlertDialog = ({ children, ...props }: Primitive.AlertDialogProps) => {
     const { alertDialog } = useGlobalContext()

@@ -1,7 +1,7 @@
 "use client"
 
 import { Slot } from "@radix-ui/react-slot"
-import { useGlobalContext } from "../context/GlobalContext"
+import { useGlobalContext } from "../context/global/GlobalContext"
 import { type WithoutChildren } from "../utils/types"
 
 interface RenderProps {

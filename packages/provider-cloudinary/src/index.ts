@@ -5,7 +5,6 @@ import {
     DeleteAssetInput,
     GetUploadUrlInput,
     RenameAssetInput,
-    type Asset,
     type AssetType,
     type CreateFolderInput,
     type DeleteFolderInput,

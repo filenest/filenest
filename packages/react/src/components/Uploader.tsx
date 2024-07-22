@@ -2,8 +2,8 @@
 
 import type { WithoutChildren } from "../utils/types"
 import { Slot } from "@radix-ui/react-slot"
-import { UploaderProvider, useUploaderContext, type UploaderProviderProps } from "../context/UploaderContext"
-import { useGlobalContext } from "../context/GlobalContext"
+import { UploaderProvider, useUploaderContext, type UploaderProviderProps } from "../context/local/UploaderContext"
+import { useGlobalContext } from "../context/global/GlobalContext"
 import { useEffect } from "react"
 
 const UploaderWrapper = ({
@@ -33,6 +33,7 @@ const UploaderWrapper = ({
         onSuccess,
         onUpload,
         uploadOnDrop,
+        name: props.name
     }
 
     return (
@@ -46,14 +47,14 @@ export interface UploaderProps
     extends WithoutChildren<Omit<React.ComponentPropsWithoutRef<"div">, "onProgress" | "onError">> {
     asChild?: boolean
     children?: React.ReactNode
-    name?: string
+    name: string
 }
 
 const Uploader = ({ children, asChild, ...props }: UploaderProps) => {
-    const { updateUploader, queue } = useGlobalContext()
+    const { updateUploader } = useGlobalContext()
     const { dropzone } = useUploaderContext()
 
-    const id = props.id || props.name || "filenest-uploader"
+    const id = props.name || "filenest-uploader"
 
     useEffect(() => {
         const files = dropzone.acceptedFiles.map((item) => ({
