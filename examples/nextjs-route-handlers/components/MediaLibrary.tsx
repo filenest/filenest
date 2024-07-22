@@ -3,7 +3,7 @@
 import { cn } from "@/lib/cn"
 import { prettyFilesize } from "@/lib/prettyFilesize"
 import { Filenest } from "@filenest/react"
-import { IconEdit, IconFilePlus, IconLoader2, IconPlus, IconTrash, IconUpload } from "@tabler/icons-react"
+import { IconEdit, IconFilePlus, IconLoader2, IconPlus, IconReload, IconTrash, IconUpload } from "@tabler/icons-react"
 import { Fragment } from "react"
 
 function makeArray(length: number) {
@@ -105,7 +105,12 @@ export const MediaLibrary = () => {
                 <Filenest.AssetList>
                     {({ assets, isLoading, isLoadingMore }) => (
                         <div className="relative">
-                            <div className="my-4">{isLoading ? null : `Showing ${assets?.length} assets`}</div>
+                            <div className="flex gap-4 items-center">
+                                <div className="my-4">{isLoading ? "Loading..." : `Showing ${assets?.length} assets`}</div>
+                                <Filenest.ReloadButton>
+                                    <IconReload size={20}/>
+                                </Filenest.ReloadButton>
+                            </div>
                             <Filenest.Uploader
                                 noClick
                                 //uploadOnDrop

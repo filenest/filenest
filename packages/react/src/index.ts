@@ -15,12 +15,13 @@ import { Folder, FolderCreateTrigger, FolderActionTrigger } from "./components/F
 import { FolderList } from "./components/FolderList"
 import { LoadMore } from "./components/LoadMore"
 import { Navigation, NavigationItem } from "./components/Navigation"
+import { Queue } from "./components/Queue"
+import { ReloadButton } from "./components/ReloadButton"
 import { ResourceName } from "./components/ResourceName"
 import { Root } from "./components/Root"
 import { SearchBar } from "./components/SearchBar"
-import { Uploader } from "./components/Uploader"
-import { Queue } from "./components/Queue"
 import { UploadButton } from "./components/UploadButton"
+import { Uploader } from "./components/Uploader"
 
 export type { RootProps } from "./components/Root"
 
@@ -48,6 +49,7 @@ export const Filenest = {
     Root,
     SearchBar,
     Queue,
+    ReloadButton,
     Uploader,
     UploadButton,
 }
