@@ -3,8 +3,8 @@
 import type { WithoutChildren } from "../utils/types"
 import { Slot } from "@radix-ui/react-slot"
 import { UploaderProvider, useUploaderContext, type UploaderProviderProps } from "../context/local/UploaderContext"
-import { useGlobalContext } from "../context/global/GlobalContext"
 import { useEffect } from "react"
+import { useFileQueueContext } from "../context/global/FileQueueContext"
 
 const UploaderWrapper = ({
     children,
@@ -51,7 +51,7 @@ export interface UploaderProps
 }
 
 const Uploader = ({ children, asChild, ...props }: UploaderProps) => {
-    const { updateUploader } = useGlobalContext()
+    const { updateUploader } = useFileQueueContext()
     const { dropzone } = useUploaderContext()
 
     const id = props.name || "filenest-uploader"

@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react"
 import { useDropzone } from "react-dropzone"
-import { useGlobalContext } from "../global/GlobalContext"
+import { useFileQueueContext } from "../global/FileQueueContext"
 
 export interface UploaderContext {
     dropzone: ReturnType<typeof useDropzone>
@@ -49,7 +49,7 @@ export const UploaderProvider = ({
     uploadOnDrop,
     name
 }: UploaderProviderProps) => {
-    const { upload } = useGlobalContext()
+    const { upload } = useFileQueueContext()
 
     const dropzone = useDropzone({
         maxSize,

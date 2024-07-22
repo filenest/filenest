@@ -1,8 +1,8 @@
 "use client"
 
 import { Slot } from "@radix-ui/react-slot"
-import { useGlobalContext } from "../context/global/GlobalContext"
 import { type WithoutChildren } from "../utils/types"
+import { useFileQueueContext } from "../context/global/FileQueueContext"
 
 interface RenderProps {
     files: File[]
@@ -16,7 +16,7 @@ export interface QueueProps extends WithoutChildren<React.ComponentPropsWithoutR
 }
 
 export const Queue = ({ asChild, references, children, ...props }: QueueProps) => {
-    const { queue, clearQueue } = useGlobalContext()
+    const { queue, clearQueue } = useFileQueueContext()
 
     const uploader = queue.uploaders[references]
     const files = uploader?.files.map(f => f.file) || []
