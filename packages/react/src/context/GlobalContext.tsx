@@ -44,7 +44,8 @@ export interface GlobalContext {
     isGlobalSearch: boolean
     onAssetSelect?: (asset: Asset) => void
     queue: Queue
-    updateUploader: (id: string, dropzone: Queue["uploaders"][0]) => void
+    updateUploader: (id: string, dropzone: Partial<Queue["uploaders"][0]>, shouldClearFiles?: boolean) => void
+    clearQueue: (id: string) => void
 }
 
 const GlobalContext = createContext<GlobalContext | null>(null)
@@ -116,10 +117,8 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
     const [data, setData] = useState<FolderWithResources>()
 
     useEffect(() => {
-        console.log("data changed")
         if (resourcesQuery.data?.pages) {
             const newestResult = resourcesQuery.data.pages.at(-1)!
-            console.log(newestResult.resources.assets.data)
             setData({
                 ...newestResult,
                 resources: {
@@ -231,22 +230,32 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
 
     const [queue, setQueue] = useState<Queue>({ totalProgress: 0, uploaders: {} })
 
-    const updateUploader = (id: string, dropzone: Queue["uploaders"][0]) => {
+    function updateUploader(id: string, dropzone: Partial<Queue["uploaders"][0]>, shouldClearFiles = false) {
         setQueue((curr) => {
-            const files = dropzone.files
+            const currentFiles = curr.uploaders[id]?.files || []
+            const additionalFiles = dropzone.files ?? []
+            let files = [...currentFiles, ...additionalFiles]
+
+            if (shouldClearFiles) {
+                files = []
+            }
+
             // Use a map here to skip duplicates
             const newFiles = new Map<string, QueueFile>()
             const defaultOpts = { isUploading: false, isSuccess: false, progress: 0 }
             curr.uploaders[id]?.files.forEach((item) => {
-                newFiles.set(item.file.name, { ...defaultOpts, ...item})
+                newFiles.set(item.file.name, { ...defaultOpts, ...item })
             })
+
             files.forEach((item) => {
-                newFiles.set(item.file.name, { ...defaultOpts, ...item})
+                newFiles.set(item.file.name, { ...defaultOpts, ...item })
             })
+
             const newFilesArray = () => {
                 if (files.length === 0) return []
                 return Array.from(newFiles.values())
             }
+
             return {
                 ...curr,
                 uploaders: {
@@ -258,6 +267,12 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
                 },
             }
         })
+    }
+
+    function clearQueue(id: string) {
+        const uploader = queue.uploaders[id]
+        if (uploader.isUploading) return
+        updateUploader(id, { files: [], isUploading: false, progress: 0 }, true)
     }
 
     const contextValue = {
@@ -291,7 +306,8 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         isGlobalSearch,
         onAssetSelect: props.onAssetSelect,
         queue,
-        updateUploader
+        updateUploader,
+        clearQueue,
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>
@@ -311,8 +327,8 @@ interface Queue {
 }
 
 interface QueueFile {
-    file: File,
-    isUploading: boolean,
-    isSuccess: boolean,
+    file: File
+    isUploading: boolean
+    isSuccess: boolean
     progress: number
 }

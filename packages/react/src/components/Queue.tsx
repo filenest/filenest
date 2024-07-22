@@ -16,7 +16,7 @@ export interface QueueProps extends WithoutChildren<React.ComponentPropsWithoutR
 }
 
 export const Queue = ({ asChild, references, children, ...props }: QueueProps) => {
-    const { queue, updateUploader } = useGlobalContext()
+    const { queue, clearQueue } = useGlobalContext()
 
     const uploader = queue.uploaders[references]
     const files = uploader?.files.map(f => f.file) || []
@@ -25,14 +25,13 @@ export const Queue = ({ asChild, references, children, ...props }: QueueProps) =
 
     const Comp = asChild ? Slot : "div"
 
-    function clearQueue() {
-        if (uploader.isUploading) return
-        updateUploader(references, { files: [] })
+    function cq() {
+        clearQueue(references)
     }
 
     function getChildren() {
         if (typeof children === "function") {
-            return children({ files, clearQueue })
+            return children({ files, clearQueue: cq })
         }
 
         return children

@@ -13,3 +13,10 @@ h3 {
 h4 {
     @apply text-xl font-semibold;
 }
+
+button {
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+}

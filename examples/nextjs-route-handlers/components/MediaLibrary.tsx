@@ -3,7 +3,7 @@
 import { cn } from "@/lib/cn"
 import { prettyFilesize } from "@/lib/prettyFilesize"
 import { Filenest } from "@filenest/react"
-import { IconEdit, IconFilePlus, IconPlus, IconTrash, IconUpload } from "@tabler/icons-react"
+import { IconEdit, IconFilePlus, IconLoader2, IconPlus, IconTrash, IconUpload } from "@tabler/icons-react"
 import { Fragment } from "react"
 
 function makeArray(length: number) {
@@ -12,7 +12,7 @@ function makeArray(length: number) {
 
 export const MediaLibrary = () => {
     return (
-        <Filenest.Root endpoint="/api/media">
+        <Filenest.Root endpoint="/api/media" onAssetSelect={(asset) => alert("Asset URL: " + asset.url)}>
             <div className="flex justify-between">
                 <h2>My Media</h2>
                 <Filenest.SearchBar
@@ -40,7 +40,10 @@ export const MediaLibrary = () => {
                     <div className="flex gap-1 my-4 items-center">
                         {navigation.map((folder, index) => (
                             <Fragment key={folder.path}>
-                                <Filenest.NavigationItem folder={folder} className="py-1 px-2 hover:bg-gray-100 rounded cursor-pointer">
+                                <Filenest.NavigationItem
+                                    folder={folder}
+                                    className="py-1 px-2 hover:bg-gray-100 rounded cursor-pointer"
+                                >
                                     {folder.name}
                                 </Filenest.NavigationItem>
                                 {index < navigation.length - 1 && <span>/</span>}
@@ -162,10 +165,7 @@ export const MediaLibrary = () => {
                     {({ asset }) => (
                         <div className="mt-14 sticky top-8 pl-8 border-l border-gray-300">
                             {asset && (
-                                <Filenest.Asset
-                                    asset={asset}
-                                    className={cn(asset.isLoading && "animate-pulse")}
-                                >
+                                <Filenest.Asset asset={asset} className={cn(asset.isLoading && "animate-pulse")}>
                                     {asset.type == "image" ? (
                                         <img src={asset.url} alt={asset.name} className="rounded-md" />
                                     ) : (
@@ -203,7 +203,8 @@ export const MediaLibrary = () => {
                             )}
                             {!asset && (
                                 <div>
-                                    <span className="font-bold text-gray-800">No asset selected.</span><br/>
+                                    <span className="font-bold text-gray-800">No asset selected.</span>
+                                    <br />
                                     Click on a file to display detailed information here.
                                 </div>
                             )}
@@ -217,14 +218,11 @@ export const MediaLibrary = () => {
                             <h4 className="mb-2">Files to upload ({files.length})</h4>
                             <div className="overflow-auto max-h-64 max-w-[20rem] pr-2">
                                 {files.map((file) => (
-                                    <div
-                                        key={file.name}
-                                        className="mt-2 p-2 bg-gray-100 rounded"
-                                    >
+                                    <div key={file.name} className="mt-2 p-2 bg-gray-100 rounded">
                                         <div className="truncate">{file.name}</div>
                                         <div className="flex justify-between items-center">
                                             <div>{prettyFilesize(file.size)}</div>
-                                            <IconTrash size={20} className="text-red-400 cursor-pointer"/>
+                                            <IconTrash size={20} className="text-red-400 cursor-pointer" />
                                         </div>
                                     </div>
                                 ))}
@@ -234,9 +232,23 @@ export const MediaLibrary = () => {
                                     references="drag-drop-uploader"
                                     className="py-2 px-3 rounded bg-green-400 hover:bg-green-300 cursor-pointer flex gap-1"
                                 >
-                                    <IconUpload/>Upload
+                                    {({ isUploading }) =>
+                                        isUploading ? (
+                                            <>
+                                                <IconLoader2 className="animate-spin" />
+                                                Uploading...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <IconUpload />
+                                                Upload
+                                            </>
+                                        )
+                                    }
                                 </Filenest.UploadButton>
-                                <div onClick={clearQueue} className="hover:underline cursor-pointer">Clear queue</div>
+                                <div onClick={clearQueue} className="hover:underline cursor-pointer">
+                                    Clear queue
+                                </div>
                             </div>
                         </div>
                     )}
