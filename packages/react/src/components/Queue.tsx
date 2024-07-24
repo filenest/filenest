@@ -16,9 +16,9 @@ export interface QueueProps extends WithoutChildren<React.ComponentPropsWithoutR
 }
 
 export const Queue = ({ asChild, references, children, ...props }: QueueProps) => {
-    const { queue, clearQueue } = useFileQueueContext()
+    const { clearQueue, getUploader } = useFileQueueContext()
 
-    const uploader = queue.uploaders[references]
+    const uploader = getUploader(references)
     const files = uploader?.files.map(f => f.file) || []
 
     if (!files.length) return null

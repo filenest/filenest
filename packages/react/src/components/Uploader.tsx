@@ -51,7 +51,7 @@ export interface UploaderProps
 }
 
 const Uploader = ({ children, asChild, ...props }: UploaderProps) => {
-    const { updateUploader } = useFileQueueContext()
+    const { addToQueue } = useFileQueueContext()
     const { dropzone } = useUploaderContext()
 
     const id = props.name || "filenest-uploader"
@@ -63,7 +63,7 @@ const Uploader = ({ children, asChild, ...props }: UploaderProps) => {
             isSuccess: false,
             progress: 0,
         }))
-        updateUploader(id, { files })
+        addToQueue(id, files)
     }, [dropzone.acceptedFiles])
 
     const Comp = asChild ? Slot : "div"

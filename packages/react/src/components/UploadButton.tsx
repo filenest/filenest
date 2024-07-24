@@ -15,9 +15,9 @@ export interface UploadButtonProps extends WithoutChildren<React.ComponentPropsW
 }
 
 export const UploadButton = ({ asChild, references, children, ...props }: UploadButtonProps) => {
-    const { queue, upload } = useFileQueueContext()
+    const { upload, getUploader } = useFileQueueContext()
 
-    const uploader = queue.uploaders[references]
+    const uploader = getUploader(references)
     const files = uploader?.files || []
     const isUploading = uploader?.isUploading || false
     const disabled = isUploading || !files.length
