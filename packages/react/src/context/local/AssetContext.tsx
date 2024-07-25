@@ -1,7 +1,7 @@
 "use client"
 
 import type { Asset } from "@filenest/core"
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useMemo, useState } from "react"
 import { useGlobalContext } from "../global/GlobalContext"
 import type { SetState } from "../../utils/types"
 import { useAssetDeleteAction } from "../../utils/useAssetDeleteAction"
@@ -16,6 +16,7 @@ export interface AssetContext {
     select: () => void
     isLoading: boolean
     isRenaming: boolean
+    isSelected: boolean
     _internal: {
         _setNewName: SetState<string>
         _newName: string
@@ -42,7 +43,7 @@ export interface AssetProviderProps {
 }
 
 export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }: AssetProviderProps) => {
-    const { alertDialog, updateAsset, _l, fetchers, onAssetSelect } = useGlobalContext()
+    const { alertDialog, updateAsset, _l, fetchers, onAssetSelect, selectedFiles } = useGlobalContext()
 
     const [assetName, setAssetName] = useState(asset.name)
 
@@ -51,7 +52,7 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
     }, [asset])
 
     const [isLoading, setIsLoading] = useState(false)
-
+    const isSelected = useMemo(() => selectedFiles.some((a) => a.assetId === asset.assetId), [selectedFiles, asset])
     const [isRenaming, setIsRenaming] = useState(false)
     const [newName, setNewName] = useState("")
 
@@ -81,7 +82,7 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
                 updateDeliveryUrl,
             })
             if (result.success) {
-                updateAsset(asset.assetId, { name: newName })
+                updateAsset(asset.assetId, (curr) => ({ ...curr, name: newName }))
             } else {
                 if (result.message === "ERR_DELIVERY_URL_WILL_CHANGE") {
                     alertDialog.setContent({
@@ -132,6 +133,7 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
         remove: initDeleteAsset,
         noSelect: !onAssetSelect || noSelect,
         select: public_selectAsset,
+        isSelected,
         asset: {
             ...asset,
             name: assetName,

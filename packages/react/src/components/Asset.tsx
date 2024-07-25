@@ -23,6 +23,7 @@ const AssetWrapper = ({ asset, noRemove, noRename, noSelect, ...props }: AssetPr
 
 interface RenderProps {
     isLoading: boolean
+    isSelected: boolean
 }
 
 export interface AssetProps extends WithoutChildren<React.ComponentPropsWithoutRef<"div">> {
@@ -32,18 +33,33 @@ export interface AssetProps extends WithoutChildren<React.ComponentPropsWithoutR
 }
 
 const Asset = ({ asset, asChild, children, ...props }: AssetProps) => {
-    const { setDetailedAsset } = useGlobalContext()
-    const { isLoading } = useAssetContext()
+    const { setDetailedAsset, setSelectedFiles, updateAsset } = useGlobalContext()
+    const { isLoading, isSelected } = useAssetContext()
 
     const Comp = asChild ? Slot : "div"
 
-    function onClick() {
+    function toggleSelected() {
+        updateAsset(asset.assetId, (curr) => ({ isSelected: !curr.isSelected }))
+        setSelectedFiles((curr) => {
+            if (curr.some((a) => a.assetId === asset.assetId)) {
+                return curr.filter((a) => a.assetId !== asset.assetId)
+            }
+            return [...curr, asset]
+        })
+    }
+
+    function onClick(e: React.MouseEvent<HTMLDivElement>) {
+        if (e.ctrlKey || e.metaKey) {
+            toggleSelected()
+            return
+        }
+        // TODO: handle shift key
         setDetailedAsset(asset)
     }
 
     const getChildren = () => {
         if (typeof children === "function") {
-            return children({ isLoading })
+            return children({ isLoading, isSelected })
         }
 
         return children

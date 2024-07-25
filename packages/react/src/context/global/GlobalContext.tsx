@@ -23,7 +23,10 @@ export interface GlobalContext {
     ) => void
     removeFolderFromCurrDir: (id: string, shouldSort?: boolean) => void
     resourcesQuery: UseInfiniteQueryResult<InfiniteData<GetResourcesReturn, unknown>>
-    updateAsset: (assetId: string, data: Partial<Asset & AssetExtraProps>) => void
+    updateAsset: (
+        assetId: string,
+        updater: (current: Asset & AssetExtraProps) => Partial<Asset & AssetExtraProps>
+    ) => void
     removeAssetFromCurrDir: (id: string) => void
     _l: (label: keyof typeof labels) => string
     alertDialog: {
@@ -43,6 +46,8 @@ export interface GlobalContext {
     handleSearch: (query: string, location: "current" | "global") => void
     isGlobalSearch: boolean
     onAssetSelect?: (asset: Asset) => void
+    selectedFiles: Asset[]
+    setSelectedFiles: SetState<Asset[]>
 }
 
 const GlobalContext = createContext<GlobalContext | null>(null)
@@ -122,18 +127,30 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
                     ...newestResult.resources,
                     assets: {
                         ...newestResult.resources.assets,
-                        data: resourcesQuery.data.pages.flatMap((p) => p.resources.assets.data),
+                        data: resourcesQuery.data.pages.flatMap((p) =>
+                            p.resources.assets.data.map((a) => ({
+                                ...a,
+                                // Make sure assets are still selected when fetching more data
+                                isSelected: selectedFiles.some((sf) => sf.assetId === a.assetId),
+                            }))
+                        ),
                     },
                 },
             })
         }
     }, [resourcesQuery.isFetching])
 
-    function updateAsset(assetId: string, data: Partial<Asset & AssetExtraProps>) {
+    function updateAsset(
+        assetId: string,
+        updater: (current: Asset & AssetExtraProps) => Partial<Asset & AssetExtraProps>
+    ) {
         setData((prev) => {
             if (!prev) return prev
             const currentAssets = prev.resources.assets.data
-            const newAssets = currentAssets.map((a) => (a.assetId === assetId ? { ...a, ...data } : a))
+            const currentAsset = currentAssets.find((a) => a.assetId === assetId)
+            if (!currentAsset) return prev
+            const updatedData = updater(currentAsset as any /* fuck it */)
+            const newAssets = currentAssets.map((a) => (a.assetId === assetId ? { ...a, ...updatedData } : a))
             return {
                 ...prev,
                 resources: {
@@ -225,6 +242,12 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         _setAlertDialogContent((prev) => ({ ...prev, ...content }))
     }
 
+    const [selectedFiles, setSelectedFiles] = useState<Asset[]>([])
+
+    useEffect(() => {
+        setSelectedFiles([])
+    }, [currentFolder])
+
     const contextValue = {
         currentFolder,
         endpoint,
@@ -255,27 +278,11 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         handleSearch,
         isGlobalSearch,
         onAssetSelect: props.onAssetSelect,
+        selectedFiles,
+        setSelectedFiles,
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>
 }
 
 type AlertDialogContent = { title: string; text: string; cancel: string; commit: string }
-
-interface Queue {
-    totalProgress: number
-    uploaders: {
-        [key: string]: {
-            files: QueueFile[]
-            progress?: number
-            isUploading?: boolean
-        }
-    }
-}
-
-interface QueueFile {
-    file: File
-    isUploading: boolean
-    isSuccess: boolean
-    progress: number
-}

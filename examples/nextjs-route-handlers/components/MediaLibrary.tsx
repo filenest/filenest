@@ -111,6 +111,11 @@ export const MediaLibrary = () => {
                                     <IconReload size={20}/>
                                 </Filenest.ReloadButton>
                             </div>
+
+                            <Filenest.Toolbar>
+                                
+                            </Filenest.Toolbar>
+
                             <Filenest.Uploader
                                 noClick
                                 className="grid grid-cols-4 gap-6"
@@ -127,7 +132,8 @@ export const MediaLibrary = () => {
                                             asset={asset}
                                             className={cn(
                                                 "p-2 flex flex-col rounded-lg border border-gray-300 cursor-pointer hover:bg-gray-100",
-                                                asset.isLoading && "animate-pulse"
+                                                asset.isLoading && "animate-pulse",
+                                                asset.isSelected && "bg-blue-100 border-blue-500"
                                             )}
                                         >
                                             {asset.type == "image" ? (

@@ -20,6 +20,7 @@ import { ReloadButton } from "./components/ReloadButton"
 import { ResourceName } from "./components/ResourceName"
 import { Root } from "./components/Root"
 import { SearchBar } from "./components/SearchBar"
+import { Toolbar } from "./components/Toolbar"
 import { UploadButton } from "./components/UploadButton"
 import { Uploader } from "./components/Uploader"
 
@@ -48,6 +49,7 @@ export const Filenest = {
     ResourceName,
     Root,
     SearchBar,
+    Toolbar,
     Queue,
     ReloadButton,
     Uploader,
