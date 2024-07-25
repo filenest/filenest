@@ -4,6 +4,7 @@ import type { Asset } from "@filenest/core"
 import { createContext, useContext, useEffect, useState } from "react"
 import { useGlobalContext } from "../global/GlobalContext"
 import type { SetState } from "../../utils/types"
+import { useAssetDeleteAction } from "../../utils/useAssetDeleteAction"
 
 export interface AssetContext {
     asset: Asset
@@ -41,16 +42,7 @@ export interface AssetProviderProps {
 }
 
 export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }: AssetProviderProps) => {
-    const {
-        alertDialog,
-        updateAsset,
-        removeAssetFromCurrDir,
-        _l,
-        fetchers,
-        detailedAsset,
-        setDetailedAsset,
-        onAssetSelect,
-    } = useGlobalContext()
+    const { alertDialog, updateAsset, _l, fetchers, onAssetSelect } = useGlobalContext()
 
     const [assetName, setAssetName] = useState(asset.name)
 
@@ -68,43 +60,7 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
         setIsRenaming(false)
     }
 
-    function updateLoadingState(value: boolean, dontUpdateDetailedAsset?: boolean) {
-        updateAsset(asset.assetId, { isLoading: value })
-        if (detailedAsset?.assetId === asset.assetId && !dontUpdateDetailedAsset) {
-            setDetailedAsset({ ...detailedAsset, isLoading: value })
-        }
-    }
-
-    const { renameAsset, deleteAsset } = fetchers
-
-    async function deleteActually() {
-        try {
-            updateLoadingState(true)
-            const result = await deleteAsset({ id: asset.assetId })
-            if (result.success) {
-                removeAssetFromCurrDir(asset.assetId)
-                if (detailedAsset?.assetId == asset.assetId) {
-                    setDetailedAsset(null)
-                }
-            } else {
-                throw new Error(result.message)
-            }
-        } catch (error) {
-            console.error("[Filenest] Error deleting asset:", error)
-        }
-        updateLoadingState(false, true)
-    }
-
-    async function public_removeAsset() {
-        alertDialog.setContent({
-            title: "Are you sure?",
-            text: "Your file will be gone forever.",
-            commit: "Delete file",
-            cancel: "Keep file",
-        })
-        alertDialog.setAction(() => deleteActually)
-        alertDialog.setOpen(true)
-    }
+    const { renameAsset } = fetchers
 
     async function public_renameAsset(updateDeliveryUrl?: boolean) {
         alertDialog.setCancel(undefined)
@@ -161,6 +117,8 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
         onAssetSelect?.(asset)
     }
 
+    const { initDeleteAsset } = useAssetDeleteAction(asset.assetId)
+
     const _internal = {
         _newName: newName,
         _setNewName: setNewName,
@@ -171,7 +129,7 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
         noRename,
         rename: public_renameAsset,
         noRemove,
-        remove: public_removeAsset,
+        remove: initDeleteAsset,
         noSelect: !onAssetSelect || noSelect,
         select: public_selectAsset,
         asset: {

@@ -61,6 +61,7 @@ export const FileQueueProvider = ({ children, ...props }: FileQueueProviderProps
     function clearQueue(uploaderName: string) {
         const uploader = getUploader(uploaderName)
         if (!uploader) return
+        if (uploader.isUploading) return
         setQueue((curr) => {
             const { [uploaderName]: _, ...rest } = curr
             return rest
@@ -79,9 +80,6 @@ export const FileQueueProvider = ({ children, ...props }: FileQueueProviderProps
         })
     }
 
-    // Use `overrideFiles` when using `uploadOnDrop` prop with a Filenest.Uploader
-    // because when dropping files, the queue state is not immedialety updated
-    // and the files wouldn't be available.
     async function upload(uploaderName: string) {
         const uploader = getUploader(uploaderName)
         if (!uploader) return
