@@ -9,10 +9,10 @@ import { useAssetDeleteAction } from "../../utils/useAssetDeleteAction"
 export interface AssetContext {
     asset: Asset
     noRename?: boolean
-    rename: () => void
     noRemove?: boolean
-    remove: () => void
     noSelect?: boolean
+    rename: () => void
+    remove: () => void
     select: () => void
     isLoading: boolean
     isRenaming: boolean
@@ -61,9 +61,7 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
         setIsRenaming(false)
     }
 
-    const { renameAsset } = fetchers
-
-    async function public_renameAsset(updateDeliveryUrl?: boolean) {
+    async function renameAsset(updateDeliveryUrl?: boolean) {
         alertDialog.setCancel(undefined)
         if (newName.length < 1) {
             setIsRenaming(true)
@@ -76,7 +74,7 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
 
         try {
             setIsLoading(true)
-            const result = await renameAsset({
+            const result = await fetchers.renameAsset({
                 id: asset.assetId,
                 name: newName,
                 updateDeliveryUrl,
@@ -91,8 +89,8 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
                         commit: _l("alert.deliveryUrlChange.commit"),
                         cancel: _l("alert.deliveryUrlChange.cancel"),
                     })
-                    alertDialog.setAction(() => () => public_renameAsset(true))
-                    alertDialog.setCancel(() => () => public_renameAsset(false))
+                    alertDialog.setAction(() => () => renameAsset(true))
+                    alertDialog.setCancel(() => () => renameAsset(false))
                     alertDialog.setOpen(true)
                 }
                 if (result.message === "ERR_UPDATE_DELIVERY_URL_REQUIRED") {
@@ -102,8 +100,8 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
                         commit: _l("alert.deliveryUrlRequired.commit"),
                         cancel: _l("alert.deliveryUrlRequired.cancel"),
                     })
-                    alertDialog.setAction(() => () => public_renameAsset(true))
-                    alertDialog.setCancel(() => () => public_renameAsset(false))
+                    alertDialog.setAction(() => () => renameAsset(true))
+                    alertDialog.setCancel(() => () => renameAsset(false))
                     alertDialog.setOpen(true)
                 }
             }
@@ -114,7 +112,7 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
         setIsLoading(false)
     }
 
-    function public_selectAsset() {
+    function selectAsset() {
         onAssetSelect?.(asset)
     }
 
@@ -128,11 +126,11 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
 
     const contextValue = {
         noRename,
-        rename: public_renameAsset,
         noRemove,
-        remove: initDeleteAsset,
         noSelect: !onAssetSelect || noSelect,
-        select: public_selectAsset,
+        rename: renameAsset,
+        remove: initDeleteAsset,
+        select: selectAsset,
         isSelected,
         asset: {
             ...asset,

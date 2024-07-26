@@ -51,9 +51,7 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
     const _folder = folder as Folder & { isRenaming?: boolean; isLoading?: boolean }
 
     const [folderName, setFolderName] = useState(folder.name)
-
     const [isLoading, setIsLoading] = useState(_folder.isLoading || false)
-
     const [isRenaming, setIsRenaming] = useState(_folder.isRenaming || false)
     const [newName, setNewName] = useState("")
 
@@ -62,11 +60,10 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
         setIsRenaming(false)
     }
 
-    const { renameFolder, deleteFolder, createFolder } = fetchers
-    async function public_removeFolder(force?: boolean) {
+    async function removeFolder(force?: boolean) {
         try {
             setIsLoading(true)
-            const result = await deleteFolder({ path: folder.path, force })
+            const result = await fetchers.deleteFolder({ path: folder.path, force })
             if (result.success) {
                 removeFolderFromCurrDir(folder.id)
             } else {
@@ -75,7 +72,7 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
                         title: _l("alert.folderNestedContent.title"),
                         text: _l("alert.folderNestedContent.text"),
                     })
-                    alertDialog.setAction(() => () => public_removeFolder(true))
+                    alertDialog.setAction(() => () => removeFolder(true))
                     alertDialog.setOpen(true)
                 }
             }
@@ -85,7 +82,7 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
         setIsLoading(false)
     }
 
-    async function public_renameFolder() {
+    async function renameFolder() {
         if (newName.length < 1) {
             setIsRenaming(true)
             setNewName(folderName)
@@ -97,7 +94,7 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
 
         try {
             setIsLoading(true)
-            const result = await renameFolder({
+            const result = await fetchers.renameFolder({
                 path: folder.path,
                 newPath: folder.path.replace(folder.name, newName),
             })
@@ -111,13 +108,13 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
         setIsLoading(false)
     }
 
-    const public_navigateToFolder = () => navigateTo(folder)
+    const navigateToFolder = () => navigateTo(folder)
 
-    async function create() {
+    async function createFolder() {
         if (newName.trim().length < 1) return
         setIsLoading(true)
         try {
-            const newFolder = await createFolder({
+            const newFolder = await fetchers.createFolder({
                 path: currentFolder.path + "/" + newName,
             })
             removeFolderFromCurrDir(folder.id)
@@ -135,10 +132,10 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
     }
 
     const contextValue = {
-        navigateTo: public_navigateToFolder,
-        remove: public_removeFolder,
-        rename: public_renameFolder,
-        create,
+        navigateTo: navigateToFolder,
+        remove: removeFolder,
+        rename: renameFolder,
+        create: createFolder,
         folder: {
             ...folder,
             name: folderName,
