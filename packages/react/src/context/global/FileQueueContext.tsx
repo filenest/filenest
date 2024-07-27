@@ -82,6 +82,17 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
                 return f
             })
 
+            // Also update total progress of uploader
+            if (state.progress) {
+                const totalProgress = curr
+                    .filter((f) => f.uploaderName === uploaderName)
+                    .reduce((acc, curr) => {
+                        return acc + curr.progress
+                    }, 0)
+                const uploaderProgress = Number((totalProgress / curr.length).toFixed(2))
+                setUploader(uploaderName, { progress: uploaderProgress })
+            }
+
             return newFiles
         })
     }
@@ -136,15 +147,22 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
             url.searchParams.sort()
 
             try {
-                await fetch(url.toString(), {
-                    method: "POST",
-                    body: data,
+                await new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest()
+                    xhr.open("POST", url.toString(), true)
+                    xhr.upload.addEventListener("progress", (e) => {
+                        const percentage = (e.loaded / e.total) * 100
+                        setQueueFile(uploaderName, file.name, { progress: Number(percentage.toFixed(2))})
+                    
+                    })
+                    xhr.upload.addEventListener("load", resolve)
+                    xhr.upload.addEventListener("error", reject)
+                    xhr.send(data)
                 })
                 setQueueFile(uploaderName, file.name, { isUploading: false, isSuccess: true })
             } catch (error) {
                 setQueueFile(uploaderName, file.name, { isUploading: false, isSuccess: false })
             }
-            
         }
 
         // For some reason only after some time we get new data from Cloudinary

@@ -232,9 +232,10 @@ export const MediaLibrary = () => {
                 </Filenest.AssetDetails>
 
                 <Filenest.Queue references="drag-drop-uploader" asChild>
-                    {({ files, clearQueue }) => (
-                        <div className="fixed right-8 bottom-8 bg-white border border-gray-300 p-6 rounded-lg shadow-xl">
+                    {({ files, isUploading, progress, clearQueue }) => (
+                        <div className="fixed right-8 bottom-8 bg-white border border-gray-300 p-6 rounded-lg shadow-xl overflow-hidden">
                             <h4 className="mb-2">Files to upload ({files.length})</h4>
+                            {isUploading && <div className="absolute top-0 left-0 h-1 bg-green-400" style={{ width: progress + "%" }}/>}
                             <div className="overflow-auto max-h-64 max-w-[20rem] pr-2">
                                 {files.map((f) => (
                                     <div key={f.file.name} className="mt-2 p-2 bg-gray-100 rounded">
@@ -242,7 +243,12 @@ export const MediaLibrary = () => {
                                         <div className="flex justify-between items-center">
                                             <div className="flex gap-4 items-center">
                                                 <div>{prettyFilesize(f.file.size)}</div>
-                                                {f.isUploading && <IconLoader2 className="animate-spin" />}
+                                                {f.isUploading && (
+                                                    <div className="flex gap-2">
+                                                        <IconLoader2 className="animate-spin" />
+                                                        {f.progress}%
+                                                    </div>
+                                                )}
                                                 {!f.isUploading && f.isSuccess && <IconCheck className="text-green-400"/>}
                                             </div>
                                             <IconTrash size={20} className="text-red-400 cursor-pointer" />
