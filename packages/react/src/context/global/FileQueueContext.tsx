@@ -42,8 +42,6 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
         }
     }, [uploaders])
 
-    console.log(uploaders)
-
     const addToQueue = useCallback((files: QueueFile[]) => {
         setFiles((curr) => {
             const newFiles: QueueFile[] = []

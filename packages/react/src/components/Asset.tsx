@@ -33,7 +33,7 @@ export interface AssetProps extends WithoutChildren<React.ComponentPropsWithoutR
 }
 
 const Asset = ({ asset, asChild, children, ...props }: AssetProps) => {
-    const { setDetailedAsset, setSelectedFiles, updateAsset } = useGlobalContext()
+    const { setDetailedAsset, selectedFiles, setSelectedFiles, updateAsset, resources } = useGlobalContext()
     const { isLoading, isSelected } = useAssetContext()
 
     const Comp = asChild ? Slot : "div"
@@ -48,13 +48,43 @@ const Asset = ({ asset, asChild, children, ...props }: AssetProps) => {
         })
     }
 
+    function clearSelected() {
+        setSelectedFiles(curr => {
+            curr.forEach(file => {
+                updateAsset(file.assetId, () => ({ isSelected: false }))
+            })
+            return []
+        })
+    }
+
     function onClick(e: React.MouseEvent<HTMLDivElement>) {
         if (e.ctrlKey || e.metaKey) {
             toggleSelected()
             return
+        } else if (e.shiftKey) {
+            toggleSelected()
+            const firstSelectedFile = selectedFiles.at(0)
+            if (!firstSelectedFile || !resources) return
+            const data = resources.resources.assets.data
+            const firstSelectedIndex = data.findIndex((a) => a.assetId === firstSelectedFile.assetId)
+            const newlySelectedIndex = data.findIndex((a) => a.assetId === asset.assetId)
+            const min = Math.min(firstSelectedIndex, newlySelectedIndex)
+            const max = Math.max(firstSelectedIndex, newlySelectedIndex)
+            const assetsToSelect = data.slice(min, max + 1)
+
+            clearSelected()
+            setSelectedFiles(curr => {
+                const selected = assetsToSelect.map(file => {
+                    updateAsset(file.assetId, () => ({ isSelected: true }))
+                    return file
+                })
+                return [...curr, ...selected]
+            })
+            return
         }
-        // TODO: handle shift key
+
         setDetailedAsset(asset)
+        clearSelected()
     }
 
     const getChildren = () => {
