@@ -2,11 +2,20 @@
 
 import { useGlobalContext } from "../context/global/GlobalContext"
 
-export const useAssetDeleteAction = (assetId: string, useSelection = false) => {
+export const useAssetDeleteAction = (assetIds: string[], caller?: "toolbar") => {
+    const {
+        alertDialog,
+        updateAsset,
+        fetchers,
+        detailedAsset,
+        setDetailedAsset,
+        removeAssetFromCurrDir,
+        setIsToolbarBusy,
+        isToolbarBusy,
+        setSelectedFiles
+    } = useGlobalContext()
 
-    const { alertDialog, updateAsset, fetchers, detailedAsset, setDetailedAsset, removeAssetFromCurrDir } = useGlobalContext()
-
-    function updateLoadingState(value: boolean, dontUpdateDetailedAsset?: boolean) {
+    function updateLoadingState(assetId: string, value: boolean, dontUpdateDetailedAsset?: boolean) {
         updateAsset(assetId, () => ({ isLoading: value }))
         if (detailedAsset?.assetId === assetId && !dontUpdateDetailedAsset) {
             setDetailedAsset({ ...detailedAsset, isLoading: value })
@@ -16,26 +25,36 @@ export const useAssetDeleteAction = (assetId: string, useSelection = false) => {
     const { deleteAsset } = fetchers
 
     async function deleteActually() {
-        try {
-            updateLoadingState(true)
-            const result = await deleteAsset({ id: assetId })
-            if (result.success) {
-                removeAssetFromCurrDir(assetId)
-                if (detailedAsset?.assetId == assetId) {
-                    setDetailedAsset(null)
-                }
-            } else {
-                throw new Error(result.message)
-            }
-        } catch (error) {
-            console.error("[Filenest] Error deleting asset:", error)
+        if (caller === "toolbar") {
+            if (isToolbarBusy) return
+            setIsToolbarBusy(true)
         }
-        updateLoadingState(false, true)
+        for (const assetId of assetIds) {
+            try {
+                updateLoadingState(assetId, true)
+                const result = await deleteAsset({ id: assetId })
+                if (result.success) {
+                    removeAssetFromCurrDir(assetId)
+                    if (detailedAsset?.assetId == assetId) {
+                        setDetailedAsset(null)
+                    }
+                } else {
+                    throw new Error(result.message)
+                }
+            } catch (error) {
+                console.error("[Filenest] Error deleting asset(s):", error)
+            }
+            updateLoadingState(assetId, false, true)
+        }
+        if (caller === "toolbar") {
+            setIsToolbarBusy(false)
+            setSelectedFiles([])
+        }
     }
 
-    const fileWord = useSelection ? "files" : "file"
+    const fileWord = assetIds.length > 1 ? "files" : "file"
 
-    async function initDeleteAsset() {
+    function initDeleteAsset() {
         alertDialog.setContent({
             title: "Are you sure?",
             text: `Your ${fileWord} will be gone forever.`,

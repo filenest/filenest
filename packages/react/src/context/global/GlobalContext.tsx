@@ -1,6 +1,6 @@
 "use client"
 
-import { useInfiniteQuery, type UseInfiniteQueryResult, type InfiniteData, type QueryKey } from "@tanstack/react-query"
+import { useInfiniteQuery, type UseInfiniteQueryResult, type InfiniteData } from "@tanstack/react-query"
 import { createContext, useContext, useEffect, useState } from "react"
 import type { Asset, Folder, FolderWithResources, GetResourcesReturn } from "@filenest/core"
 import type { AssetExtraProps, SetState } from "../../utils/types"
@@ -48,6 +48,8 @@ export interface GlobalContext {
     onAssetSelect?: (asset: Asset) => void
     selectedFiles: Asset[]
     setSelectedFiles: SetState<Asset[]>
+    isToolbarBusy: boolean
+    setIsToolbarBusy: SetState<boolean>
 }
 
 const GlobalContext = createContext<GlobalContext | null>(null)
@@ -248,6 +250,8 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         setSelectedFiles([])
     }, [currentFolder])
 
+    const [isToolbarBusy, setIsToolbarBusy] = useState(false)
+
     const contextValue = {
         currentFolder,
         endpoint,
@@ -280,6 +284,8 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         onAssetSelect: props.onAssetSelect,
         selectedFiles,
         setSelectedFiles,
+        isToolbarBusy,
+        setIsToolbarBusy
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>

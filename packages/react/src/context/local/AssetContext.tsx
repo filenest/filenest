@@ -116,7 +116,7 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
         onAssetSelect?.(asset)
     }
 
-    const { initDeleteAsset } = useAssetDeleteAction(asset.assetId)
+    const { initDeleteAsset } = useAssetDeleteAction([asset.assetId])
 
     const _internal = {
         _newName: newName,

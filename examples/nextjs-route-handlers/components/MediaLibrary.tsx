@@ -113,7 +113,16 @@ export const MediaLibrary = () => {
                             </div>
 
                             <Filenest.Toolbar>
-                                
+                                {({ selectedFilesCount }) => (
+                                    <div className="flex mb-4 rounded gap-4 p-4 items-center bg-gray-100 border border-gray-300">
+                                        <div>
+                                            {selectedFilesCount} files selected
+                                        </div>
+                                        <Filenest.ToolbarDeleteButton className="p-1 rounded bg-gray-300 hover:bg-red-300 cursor-pointer">
+                                            <IconTrash />
+                                        </Filenest.ToolbarDeleteButton>
+                                    </div>
+                                )}
                             </Filenest.Toolbar>
 
                             <Filenest.Uploader
