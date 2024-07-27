@@ -7,7 +7,7 @@ export const useAssetDeleteAction = (assetId: string, useSelection = false) => {
     const { alertDialog, updateAsset, fetchers, detailedAsset, setDetailedAsset, removeAssetFromCurrDir } = useGlobalContext()
 
     function updateLoadingState(value: boolean, dontUpdateDetailedAsset?: boolean) {
-        updateAsset(assetId, { isLoading: value })
+        updateAsset(assetId, () => ({ isLoading: value }))
         if (detailedAsset?.assetId === assetId && !dontUpdateDetailedAsset) {
             setDetailedAsset({ ...detailedAsset, isLoading: value })
         }

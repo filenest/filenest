@@ -108,8 +108,6 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
         setIsLoading(false)
     }
 
-    const navigateToFolder = () => navigateTo(folder)
-
     async function createFolder() {
         if (newName.trim().length < 1) return
         setIsLoading(true)
@@ -132,7 +130,7 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
     }
 
     const contextValue = {
-        navigateTo: navigateToFolder,
+        navigateTo: () => navigateTo(folder),
         remove: removeFolder,
         rename: renameFolder,
         create: createFolder,
