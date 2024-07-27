@@ -1,15 +1,17 @@
 "use client"
 
-import { createContext, useContext, useState } from "react"
+import { createContext, useCallback, useContext, useState } from "react"
 import { useGlobalContext } from "./GlobalContext"
 
 export interface FileQueueContext {
-    queue: Queue
-    addToQueue: (uploaderName: string, files: QueueFile[]) => void
+    uploaders: UploaderState
+    files: QueueFile[]
+    addToQueue: (files: QueueFile[]) => void
     clearQueue: (id: string) => void
     upload: (uploaderName: string) => Promise<void>
-    setUploader: (uploaderName: string, state: Partial<Omit<Queue[string], "files">>) => void
-    getUploader: (id: string) => Queue[string] | undefined
+    setUploader: (uploaderName: string, state: Partial<UploaderState[string]>) => void
+    getUploader: (id: string) => UploaderState[string] | undefined
+    getUploaderFiles: (id: string) => QueueFile[]
 }
 
 const FileQueueContext = createContext<FileQueueContext | null>(null)
@@ -26,50 +28,81 @@ interface FileQueueProviderProps {
     children: React.ReactNode
 }
 
-export const FileQueueProvider = ({ children, ...props }: FileQueueProviderProps) => {
+export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
     const { currentFolder, fetchers, resourcesQuery } = useGlobalContext()
 
-    const [queue, setQueue] = useState<Queue>({})
+    const [uploaders, setUploaders] = useState<UploaderState>({})
+    const [files, setFiles] = useState<QueueFile[]>([])
 
-    function getUploader(id: string) {
-        if (queue[id]) {
-            return queue[id]
+    const getUploader = useCallback((id: string) => {
+        if (uploaders[id]) {
+            return uploaders[id]
         } else {
             return undefined
         }
+    }, [uploaders])
+
+    console.log(uploaders)
+
+    const addToQueue = useCallback((files: QueueFile[]) => {
+        setFiles((curr) => {
+            const newFiles: QueueFile[] = []
+
+            for (const file of files) {
+                const uploader = getUploader(file.uploaderName)
+                if (!uploader) {
+                    setUploaders((curr) => {
+                        return {
+                            ...curr,
+                            [file.uploaderName]: {
+                                progress: 0,
+                                isUploading: false,
+                            },
+                        }
+                    })
+                }
+                if (curr.find((f) => f.file.name === file.file.name && f.uploaderName === file.uploaderName)) continue
+                newFiles.push(file)
+            }
+
+            return [...curr, ...newFiles]
+        })
+    }, [files])
+
+    function setQueueFile(uploaderName: string, fileName: string, state: Partial<QueueFile>) {
+        setFiles((curr) => {
+            const uploader = getUploader(uploaderName)
+            if (!uploader) return curr
+
+            const newFiles = curr.map((f) => {
+                if (f.file.name === fileName && f.uploaderName === uploaderName) {
+                    return {
+                        ...f,
+                        ...state,
+                    }
+                }
+                return f
+            })
+
+            return newFiles
+        })
     }
 
-    function addToQueue(uploaderName: string, files: QueueFile[]) {
-        setQueue((curr) => {
-            const uploader = getUploader(uploaderName)
-            const currentFiles = uploader?.files || []
-            const combinedFiles = [...currentFiles, ...files]
-            const additionalFiles = new Map<string, QueueFile>(combinedFiles.map((f) => [f.file.name, f]))
-            const mergedFiles = Array.from(additionalFiles.values())
-
-            return {
-                ...curr,
-                [uploaderName]: {
-                    files: mergedFiles,
-                    progress: 0,
-                    isUploading: false,
-                },
-            }
-        })
+    function getUploaderFiles(uploaderName: string) {
+        return files.filter((f) => f.uploaderName === uploaderName)
     }
 
     function clearQueue(uploaderName: string) {
         const uploader = getUploader(uploaderName)
         if (!uploader) return
         if (uploader.isUploading) return
-        setQueue((curr) => {
-            const { [uploaderName]: _, ...rest } = curr
-            return rest
+        setFiles((curr) => {
+            return curr.filter((f) => f.uploaderName !== uploaderName)
         })
     }
 
-    function setUploader(uploaderName: string, state: Partial<Omit<Queue[string], "files">>) {
-        setQueue((curr) => {
+    function setUploader(uploaderName: string, state: Partial<UploaderState[string]>) {
+        setUploaders((curr) => {
             return {
                 ...curr,
                 [uploaderName]: {
@@ -80,30 +113,40 @@ export const FileQueueProvider = ({ children, ...props }: FileQueueProviderProps
         })
     }
 
-    async function upload(uploaderName: string) {
+    const upload = useCallback(async (uploaderName: string) => {
         const uploader = getUploader(uploaderName)
         if (!uploader) return
 
-        const files = uploader.files.map(f => f.file)
-        if (!files.length) return
+        const filesToUpload = files.filter(f => f.uploaderName === uploaderName).map(f => f.file)
+        if (!filesToUpload.length) return
 
         setUploader(uploaderName, { isUploading: true })
 
-        for (const file of files) {
+        for (const file of filesToUpload) {
+            setQueueFile(uploaderName, file.name, { isUploading: true })
+
             const params = {
                 folder: currentFolder.path,
                 use_filename: "true",
                 unique_filename: "true",
             }
+
             const _url = await fetchers.getUploadUrl({ params })
             const url = new URL(_url)
             const data = new FormData()
             data.append("file", file)
             url.searchParams.sort()
-            await fetch(url.toString(), {
-                method: "POST",
-                body: data,
-            })
+
+            try {
+                await fetch(url.toString(), {
+                    method: "POST",
+                    body: data,
+                })
+                setQueueFile(uploaderName, file.name, { isUploading: false, isSuccess: true })
+            } catch (error) {
+                setQueueFile(uploaderName, file.name, { isUploading: false, isSuccess: false })
+            }
+            
         }
 
         // For some reason only after some time we get new data from Cloudinary
@@ -115,29 +158,31 @@ export const FileQueueProvider = ({ children, ...props }: FileQueueProviderProps
             setUploader(uploaderName, { isUploading: false })
             clearQueue(uploaderName)
         }
-    }
+    }, [files, currentFolder])
 
     const contextValue = {
-        queue,
+        uploaders,
+        files,
         addToQueue,
         clearQueue,
         upload,
         setUploader,
         getUploader,
+        getUploaderFiles,
     }
 
     return <FileQueueContext.Provider value={contextValue}>{children}</FileQueueContext.Provider>
 }
 
-interface Queue {
+interface UploaderState {
     [key: string]: {
-        files: QueueFile[]
         progress: number
         isUploading: boolean
     }
 }
 
-interface QueueFile {
+export interface QueueFile {
+    uploaderName: string
     file: File
     isUploading: boolean
     isSuccess: boolean

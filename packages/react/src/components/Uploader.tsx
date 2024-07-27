@@ -58,12 +58,13 @@ const Uploader = ({ children, asChild, ...props }: UploaderProps) => {
 
     useEffect(() => {
         const files = dropzone.acceptedFiles.map((item) => ({
+            uploaderName: id,
             file: item,
             isUploading: false,
             isSuccess: false,
             progress: 0,
         }))
-        addToQueue(id, files)
+        addToQueue(files)
     }, [dropzone.acceptedFiles])
 
     const Comp = asChild ? Slot : "div"

@@ -2,10 +2,10 @@
 
 import { Slot } from "@radix-ui/react-slot"
 import { type WithoutChildren } from "../utils/types"
-import { useFileQueueContext } from "../context/global/FileQueueContext"
+import { useFileQueueContext, type QueueFile } from "../context/global/FileQueueContext"
 
 interface RenderProps {
-    files: File[]
+    files: QueueFile[]
     clearQueue: () => void
 }
 
@@ -16,10 +16,9 @@ export interface QueueProps extends WithoutChildren<React.ComponentPropsWithoutR
 }
 
 export const Queue = ({ asChild, references, children, ...props }: QueueProps) => {
-    const { clearQueue, getUploader } = useFileQueueContext()
+    const { clearQueue, getUploaderFiles } = useFileQueueContext()
 
-    const uploader = getUploader(references)
-    const files = uploader?.files.map(f => f.file) || []
+    const files = getUploaderFiles(references)
 
     if (!files.length) return null
 

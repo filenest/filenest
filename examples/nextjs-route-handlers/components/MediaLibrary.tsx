@@ -3,7 +3,7 @@
 import { cn } from "@/lib/cn"
 import { prettyFilesize } from "@/lib/prettyFilesize"
 import { Filenest } from "@filenest/react"
-import { IconEdit, IconFilePlus, IconLoader2, IconPlus, IconReload, IconTrash, IconUpload } from "@tabler/icons-react"
+import { IconCheck, IconEdit, IconFilePlus, IconLoader2, IconPlus, IconReload, IconTrash, IconUpload } from "@tabler/icons-react"
 import { Fragment } from "react"
 
 function makeArray(length: number) {
@@ -127,7 +127,7 @@ export const MediaLibrary = () => {
 
                             <Filenest.Uploader
                                 noClick
-                                className="grid grid-cols-4 gap-6"
+                                className="grid grid-cols-4 gap-6 min-h-16"
                                 name="drag-drop-uploader"
                             >
                                 <Filenest.DropIndicator className="absolute w-full h-full bg-blue-100 flex items-center justify-center rounded-lg bg-opacity-50" />
@@ -236,11 +236,15 @@ export const MediaLibrary = () => {
                         <div className="fixed right-8 bottom-8 bg-white border border-gray-300 p-6 rounded-lg shadow-xl">
                             <h4 className="mb-2">Files to upload ({files.length})</h4>
                             <div className="overflow-auto max-h-64 max-w-[20rem] pr-2">
-                                {files.map((file) => (
-                                    <div key={file.name} className="mt-2 p-2 bg-gray-100 rounded">
-                                        <div className="truncate">{file.name}</div>
+                                {files.map((f) => (
+                                    <div key={f.file.name} className="mt-2 p-2 bg-gray-100 rounded">
+                                        <div className="truncate">{f.file.name}</div>
                                         <div className="flex justify-between items-center">
-                                            <div>{prettyFilesize(file.size)}</div>
+                                            <div className="flex gap-4 items-center">
+                                                <div>{prettyFilesize(f.file.size)}</div>
+                                                {f.isUploading && <IconLoader2 className="animate-spin" />}
+                                                {!f.isUploading && f.isSuccess && <IconCheck className="text-green-400"/>}
+                                            </div>
                                             <IconTrash size={20} className="text-red-400 cursor-pointer" />
                                         </div>
                                     </div>
