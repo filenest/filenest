@@ -11,6 +11,7 @@
         "rspress": "^1.26.0"
     },
     "devDependencies": {
+        "@rspress/plugin-shiki": "^1.26.3",
         "@types/node": "^16",
         "@types/react": "latest",
         "@types/react-dom": "latest"

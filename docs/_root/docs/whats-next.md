@@ -10,7 +10,7 @@ However, I want to make sure Filenest can be used by a wider range of developers
 With help from the community, the following features will possibly be implemented into Filenest.
 
 :::tip{title="Contributing"}
-If you would like to support the project by contributing, you can read everything about it [here](https://github.com/filenest/filenest/blob/next/CONTRIBUTING.md). If you'd like to see a feature not listed here, please [create a new issue](https://github.com/filenest/filenest/issues) and let's talk about it.
+If you would like to support the project by contributing, you can read everything about it [here](/docs/contributing). If you'd like to see a feature not listed here, please [create a new issue](https://github.com/filenest/filenest/issues) and let's talk about it.
 :::
 
 ### Providers
@@ -19,11 +19,3 @@ If you would like to support the project by contributing, you can read everythin
 ### Adapters
 - Express adapter
 - Hono adapter
-
-### Frontend Support
-Filenest needs your help porting the React components to other popular frontend frameworks.
-
-Creating those components is a big task - if you would like to port Filenest's React components to another ecosystem, please [create a new issue](https://github.com/filenest/filenest/issues) and let's talk about it.
-
-- Vue
-- Svelte

@@ -18,10 +18,8 @@ An adapter creates API routes for your backend. You can use an adapter if your b
 - [Manual Integration](/docs/backend/adapters/custom-integration)
 
 ## 3. Build your UI using Components
-Build your asset management UI using components for your preferred frontend framework.
+Build your asset management UI using React components.
 Similar to Radix UI, all the logic is pre-defined at the component level, allowing you to focus solely on styling.
-Check out how to build your file manager using Filenest components:
-
-- [React](/docs/frontend/react)
+Check out [how to build your file manager using Filenest components](/docs/frontend/minimal-setup).
 
 You can learn more about individual components [here](/docs/frontend/components/about).

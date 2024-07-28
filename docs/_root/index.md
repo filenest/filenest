@@ -8,7 +8,7 @@ hero:
     text: |
         Build your own
         File Manager Component
-    tagline: Filenest provides everything you need to integrate your favorite CDN into your JS/TS app.
+    tagline: Filenest provides everything you need to connect a third party file storage to your JS/TS app.
     actions:
         - theme: brand
           text: Introduction

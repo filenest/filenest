@@ -5,7 +5,7 @@
 Filenest is a TypeScript library designed to seamlessly integrate a file manager into your app or admin dashboard. This library is ideal for developers who:
 - Need to connect a file hosting provider to their app
 - Require a way to select images for database entities (e.g., articles)
-- Want to manage files directly within their site
+- Want to manage externally hosted files directly within their site
 
 ## Background
 
@@ -28,6 +28,3 @@ Yup. I copied all the API routes but redid and improved the React components. Be
 _"Might aswell turn this into a library."_
 
 And this is why Filenest exist. It extends your existing API by adding a few endpoints, which the frontend components use to talk to your third party file hosting provider. Minimal backend setup required - and the components come unstyled, meaning you can style them to your needs, matching the rest of your UI.
-
-### Why is it called Filenest
-Because I ([@nordowl](https://github.com/nordowl)) like owls, if you couln't tell. And their nests can contain things. Genius, I know.

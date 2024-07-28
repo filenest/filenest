@@ -1,5 +1,6 @@
 import * as path from "path"
 import { defineConfig } from "rspress/config"
+import { pluginShiki } from "@rspress/plugin-shiki"
 
 export default defineConfig({
     root: path.join(__dirname, "_root"),
@@ -18,4 +19,8 @@ export default defineConfig({
         darkMode: false,
     },
     globalStyles: path.join(__dirname, "styles/index.css"),
+    markdown: {
+        showLineNumbers: true,
+    },
+    plugins: [pluginShiki() as any],
 })

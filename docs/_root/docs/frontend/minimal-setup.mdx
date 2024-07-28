@@ -1,0 +1,148 @@
+import { PackageManagerTabs } from "rspress/theme";
+
+# Minimal Setup
+
+Make sure you first install the necessary dependencies:
+
+<PackageManagerTabs command="install @filenest/core @filenest/react"/>
+
+The following code will scaffold a minimal, unstyled file manager component. Loading states are not considered in this example.
+It only should give you an idea of how to structure the components.
+
+If you're looking for a more detailed example, check out the [full example](https://github.com/filenest/filenest/blob/next/examples/nextjs-route-handlers/components/MediaLibrary.tsx).
+
+```tsx title="components/MediaLibrary.tsx"
+"use client"
+
+import { Filenest } from "@filenest/react"
+import { Fragment } from "react"
+
+export const MediaLibrary = () => {
+    return (
+        <Filenest.Root endpoint="/api/media" onAssetSelect={(asset) => alert(asset.url)}>
+            <Filenest.SearchBar location="global" />
+
+            <Filenest.AlertDialog>
+                <Filenest.AlertDialogOverlay />
+                <Filenest.AlertDialogContent>
+                    <Filenest.AlertDialogTitle />
+                    <Filenest.AlertDialogText />
+                    <Filenest.AlertDialogCancel />
+                    <Filenest.AlertDialogAction />
+                </Filenest.AlertDialogContent>
+            </Filenest.AlertDialog>
+
+            <Filenest.Navigation>
+                {({ navigation }) => (
+                    <div>
+                        {navigation.map((folder) => (
+                            <Filenest.NavigationItem key={folder.path} folder={folder}>
+                                {folder.name}
+                            </Filenest.NavigationItem>
+                        ))}
+                    </div>
+                )}
+            </Filenest.Navigation>
+
+            <Filenest.FolderList>
+                {({ folders }) => (
+                    <div>
+                        {folders?.map((folder) => (
+                            <Filenest.Folder key={folder.id} folder={folder}>
+                                <Filenest.ResourceName />
+                                <Filenest.FolderActionTrigger action="rename">
+                                    Rename Folder
+                                </Filenest.FolderActionTrigger>
+                                <Filenest.FolderActionTrigger action="remove">
+                                    Delete Folder
+                                </Filenest.FolderActionTrigger>
+                            </Filenest.Folder>
+                        ))}
+                        <Filenest.FolderCreateTrigger>
+                            Create Folder
+                        </Filenest.FolderCreateTrigger>
+                    </div>
+                )}
+            </Filenest.FolderList>
+
+            <Filenest.AssetList>
+                {({ assets }) => (
+                    <div>
+                        <Filenest.ReloadButton>
+                            Reload
+                        </Filenest.ReloadButton>
+
+                        <Filenest.Toolbar>
+                            {({ selectedFilesCount }) => (
+                                <div>
+                                    <div>{selectedFilesCount} files selected</div>
+                                    <Filenest.ToolbarDeleteButton>
+                                        Delete selected
+                                    </Filenest.ToolbarDeleteButton>
+                                </div>
+                            )}
+                        </Filenest.Toolbar>
+
+                        <Filenest.Uploader noClick name="drag-drop-uploader">
+                            <Filenest.DropIndicator>
+                                Drop files to upload
+                            </Filenest.DropIndicator>
+
+                            {assets?.map((asset) => (
+                                <Filenest.Asset key={asset.assetId} asset={asset}>
+                                    <Filenest.ResourceName />
+                                    <div>{asset.format}</div>
+                                </Filenest.Asset>
+                            ))}
+                        </Filenest.Uploader>
+                        <Filenest.LoadMoreButton>
+                            Load more
+                        </Filenest.LoadMoreButton>
+                    </div>
+                )}
+            </Filenest.AssetList>
+            <Filenest.AssetDetails>
+                {({ asset }) => (
+                    <div>
+                        {asset && (
+                            <Filenest.Asset asset={asset}>
+                                <Filenest.AssetActionTrigger action="rename" asChild>
+                                    <Filenest.ResourceName />
+                                </Filenest.AssetActionTrigger>
+                                <div>{asset.format}</div>
+                                <Filenest.AssetActionTrigger action="select">
+                                    Select
+                                </Filenest.AssetActionTrigger>
+                                <Filenest.AssetActionTrigger action="remove">
+                                    Delete
+                                </Filenest.AssetActionTrigger>
+                            </Filenest.Asset>
+                        )}
+                    </div>
+                )}
+            </Filenest.AssetDetails>
+
+            <Filenest.Queue references="drag-drop-uploader" asChild>
+                {({ files, clearQueue }) => (
+                    <div>
+                        {files.map((f) => (
+                            <div key={f.file.name}>
+                                <div>{f.file.name}</div>
+                                <Filenest.RemoveFromQueueButton file={f}>
+                                    Remove
+                                </Filenest.RemoveFromQueueButton>
+                            </div>
+                        ))}
+                        <Filenest.UploadButton references="drag-drop-uploader">
+                            Upload
+                        </Filenest.UploadButton>
+                        <div onClick={clearQueue}>
+                            Clear queue
+                        </div>
+                    </div>
+                )}
+            </Filenest.Queue>
+        </Filenest.Root>
+    )
+}
+```

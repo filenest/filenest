@@ -1,4 +1,5 @@
 [
+    "minimal-setup",
     {
         "type": "dir",
         "name": "components",
