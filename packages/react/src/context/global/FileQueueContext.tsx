@@ -7,6 +7,7 @@ export interface FileQueueContext {
     uploaders: UploaderState
     files: QueueFile[]
     addToQueue: (files: QueueFile[]) => void
+    removeFromQueue: (uploaderName: string, fileName: string) => void
     clearQueue: (id: string) => void
     upload: (uploaderName: string) => Promise<void>
     setUploader: (uploaderName: string, state: Partial<UploaderState[string]>) => void
@@ -110,6 +111,12 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
         })
     }
 
+    function removeFromQueue(uploaderName: string, fileName: string) {
+        setFiles((curr) => {
+            return curr.filter((f) => f.file.name !== fileName && f.uploaderName == uploaderName)
+        })
+    }
+
     function setUploader(uploaderName: string, state: Partial<UploaderState[string]>) {
         setUploaders((curr) => {
             return {
@@ -180,6 +187,7 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
         uploaders,
         files,
         addToQueue,
+        removeFromQueue,
         clearQueue,
         upload,
         setUploader,

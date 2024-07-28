@@ -3,7 +3,16 @@
 import { cn } from "@/lib/cn"
 import { prettyFilesize } from "@/lib/prettyFilesize"
 import { Filenest } from "@filenest/react"
-import { IconCheck, IconEdit, IconFilePlus, IconLoader2, IconPlus, IconReload, IconTrash, IconUpload } from "@tabler/icons-react"
+import {
+    IconCheck,
+    IconEdit,
+    IconFilePlus,
+    IconLoader2,
+    IconPlus,
+    IconReload,
+    IconTrash,
+    IconUpload,
+} from "@tabler/icons-react"
 import { Fragment } from "react"
 
 function makeArray(length: number) {
@@ -106,18 +115,18 @@ export const MediaLibrary = () => {
                     {({ assets, isLoading, isLoadingMore }) => (
                         <div className="relative">
                             <div className="flex gap-4 items-center">
-                                <div className="my-4">{isLoading ? "Loading..." : `Showing ${assets?.length} assets`}</div>
+                                <div className="my-4">
+                                    {isLoading ? "Loading..." : `Showing ${assets?.length} assets`}
+                                </div>
                                 <Filenest.ReloadButton>
-                                    <IconReload size={20}/>
+                                    <IconReload size={20} />
                                 </Filenest.ReloadButton>
                             </div>
 
                             <Filenest.Toolbar>
                                 {({ selectedFilesCount }) => (
                                     <div className="flex mb-4 rounded gap-4 p-4 items-center bg-gray-100 border border-gray-300">
-                                        <div>
-                                            {selectedFilesCount} files selected
-                                        </div>
+                                        <div>{selectedFilesCount} files selected</div>
                                         <Filenest.ToolbarDeleteButton className="p-1 rounded bg-gray-300 hover:bg-red-300 cursor-pointer">
                                             <IconTrash />
                                         </Filenest.ToolbarDeleteButton>
@@ -127,13 +136,19 @@ export const MediaLibrary = () => {
 
                             <Filenest.Uploader
                                 noClick
-                                className="grid grid-cols-4 gap-6 min-h-16"
+                                className="relative grid grid-cols-4 gap-6"
                                 name="drag-drop-uploader"
                             >
                                 <Filenest.DropIndicator className="absolute w-full h-full bg-blue-100 flex items-center justify-center rounded-lg bg-opacity-50" />
                                 <Filenest.DropIndicator className="fixed z-10 p-4 rounded bg-blue-300 bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2">
                                     <IconFilePlus /> Drop files to upload
                                 </Filenest.DropIndicator>
+                                {!isLoading && !assets?.length && (
+                                    <div className="grid place-items-center [grid-column:span_10] py-8">
+                                        <div className="text-2xl font-bold text-gray-400">So much emptiness</div>
+                                        <div className="text-gray-600">Drop your files here to upload</div>
+                                    </div>
+                                )}
                                 {!isLoading &&
                                     assets?.map((asset) => (
                                         <Filenest.Asset
@@ -173,9 +188,9 @@ export const MediaLibrary = () => {
                                     ))}
                             </Filenest.Uploader>
                             <div className="flex justify-center mt-8">
-                                <Filenest.LoadMore className="py-2 px-3 rounded bg-gray-300 hover:bg-gray-200 cursor-pointer">
+                                <Filenest.LoadMoreButton className="py-2 px-3 rounded bg-gray-300 hover:bg-gray-200 cursor-pointer">
                                     Load more
-                                </Filenest.LoadMore>
+                                </Filenest.LoadMoreButton>
                             </div>
                         </div>
                     )}
@@ -222,9 +237,9 @@ export const MediaLibrary = () => {
                             )}
                             {!asset && (
                                 <div>
-                                    <span className="font-bold text-gray-800">No asset selected.</span>
+                                    <span className="font-bold text-gray-800">No asset selected</span>
                                     <br />
-                                    Click on a file to display detailed information here.
+                                    Click on a file to display detailed information here
                                 </div>
                             )}
                         </div>
@@ -235,7 +250,12 @@ export const MediaLibrary = () => {
                     {({ files, isUploading, progress, clearQueue }) => (
                         <div className="fixed right-8 bottom-8 bg-white border border-gray-300 p-6 rounded-lg shadow-xl overflow-hidden">
                             <h4 className="mb-2">Files to upload ({files.length})</h4>
-                            {isUploading && <div className="absolute top-0 left-0 h-1 bg-green-400" style={{ width: progress + "%" }}/>}
+                            {isUploading && (
+                                <div
+                                    className="absolute top-0 left-0 h-1 bg-green-400"
+                                    style={{ width: progress + "%" }}
+                                />
+                            )}
                             <div className="overflow-auto max-h-64 max-w-[20rem] pr-2">
                                 {files.map((f) => (
                                     <div key={f.file.name} className="mt-2 p-2 bg-gray-100 rounded">
@@ -249,9 +269,13 @@ export const MediaLibrary = () => {
                                                         {f.progress}%
                                                     </div>
                                                 )}
-                                                {!f.isUploading && f.isSuccess && <IconCheck className="text-green-400"/>}
+                                                {!f.isUploading && f.isSuccess && (
+                                                    <IconCheck className="text-green-400" />
+                                                )}
                                             </div>
-                                            <IconTrash size={20} className="text-red-400 cursor-pointer" />
+                                            <Filenest.RemoveFromQueueButton file={f} asChild>
+                                                <IconTrash size={20} className="text-red-400 cursor-pointer" />
+                                            </Filenest.RemoveFromQueueButton>
                                         </div>
                                     </div>
                                 ))}

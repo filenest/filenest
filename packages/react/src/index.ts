@@ -13,10 +13,11 @@ import { AssetList } from "./components/AssetList"
 import { DropIndicator } from "./components/DropIndicator"
 import { Folder, FolderCreateTrigger, FolderActionTrigger } from "./components/Folder"
 import { FolderList } from "./components/FolderList"
-import { LoadMore } from "./components/LoadMore"
+import { LoadMoreButton } from "./components/LoadMoreButton"
 import { Navigation, NavigationItem } from "./components/Navigation"
 import { Queue } from "./components/Queue"
 import { ReloadButton } from "./components/ReloadButton"
+import { RemoveFromQueueButton } from "./components/RemoveFromQueueButton"
 import { ResourceName } from "./components/ResourceName"
 import { Root } from "./components/Root"
 import { SearchBar } from "./components/SearchBar"
@@ -44,16 +45,17 @@ export const Filenest = {
     FolderActionTrigger,
     FolderCreateTrigger,
     FolderList,
-    LoadMore,
+    LoadMoreButton,
     Navigation,
     NavigationItem,
+    Queue,
+    ReloadButton,
+    RemoveFromQueueButton,
     ResourceName,
     Root,
     SearchBar,
     Toolbar,
     ToolbarDeleteButton,
-    Queue,
-    ReloadButton,
-    Uploader,
     UploadButton,
+    Uploader,
 }
