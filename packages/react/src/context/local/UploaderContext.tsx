@@ -13,7 +13,7 @@ const UploaderContext = createContext<UploaderContext | null>(null)
 export const useUploaderContext = () => {
     const context = useContext(UploaderContext)
     if (!context) {
-        throw new Error("useUploaderContext must be used within a Filenest.Uploader component")
+        throw new Error("useUploaderContext must be used within a Filenest.Uploader component.")
     }
     return context
 }

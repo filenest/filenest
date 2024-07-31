@@ -16,7 +16,7 @@ const AssetListContext = createContext<AssetListContext | null>(null)
 export const useAssetListContext = () => {
     const context = useContext(AssetListContext)
     if (!context) {
-        throw new Error("A Filenest.Asset* must be used within a Filenest.AssetList component.")
+        throw new Error("useAssetListContext must be used within a Filenest.AssetList component.")
     }
     return context
 }

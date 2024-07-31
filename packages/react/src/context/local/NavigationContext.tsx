@@ -14,7 +14,7 @@ const NavigationContext = createContext<NavigationContext | null>(null)
 export const useNavigationContext = () => {
     const context = useContext(NavigationContext)
     if (!context) {
-        throw new Error("A Filenest.Navigation must be used within a Filenest.Bundle component.")
+        throw new Error("useNavigationContext must be used within a Filenest.Navigation component.")
     }
     return context
 }

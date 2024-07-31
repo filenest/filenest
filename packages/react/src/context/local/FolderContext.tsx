@@ -28,7 +28,7 @@ export const FolderContext = createContext<FolderContext | null>(null)
 export const useFolderContext = () => {
     const context = useContext(FolderContext)
     if (!context) {
-        throw new Error("A Filenest.Folder* must be used within a Filenest.Folder component.")
+        throw new Error("useFolderContext must be used within a Filenest.Folder component.")
     }
     return context
 }
