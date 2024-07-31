@@ -299,9 +299,9 @@ export const MediaLibrary = () => {
                                         )
                                     }
                                 </Filenest.UploadButton>
-                                <div onClick={clearQueue} className="hover:underline cursor-pointer">
+                                <Filenest.ClearQueueButton className="hover:underline cursor-pointer">
                                     Clear queue
-                                </div>
+                                </Filenest.ClearQueueButton>
                             </div>
                         </div>
                     )}

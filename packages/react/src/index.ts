@@ -10,6 +10,7 @@ import {
 import { Asset, AssetActionTrigger } from "./components/Asset"
 import { AssetDetails } from "./components/AssetDetails"
 import { AssetList } from "./components/AssetList"
+import { ClearQueueButton } from "./components/ClearQueueButton"
 import { DropIndicator } from "./components/DropIndicator"
 import { Folder, FolderCreateTrigger, FolderActionTrigger } from "./components/Folder"
 import { FolderList } from "./components/FolderList"
@@ -40,6 +41,7 @@ export const Filenest = {
     AssetActionTrigger,
     AssetDetails,
     AssetList,
+    ClearQueueButton,
     DropIndicator,
     Folder,
     FolderActionTrigger,
