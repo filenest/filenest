@@ -247,7 +247,7 @@ export const MediaLibrary = () => {
                 </Filenest.AssetDetails>
 
                 <Filenest.Queue references="drag-drop-uploader" asChild>
-                    {({ files, isUploading, progress, clearQueue }) => (
+                    {({ files, isUploading, progress }) => (
                         <div className="fixed right-8 bottom-8 bg-white border border-gray-300 p-6 rounded-lg shadow-xl overflow-hidden">
                             <h4 className="mb-2">Files to upload ({files.length})</h4>
                             {isUploading && (

@@ -123,7 +123,7 @@ export const MediaLibrary = () => {
             </Filenest.AssetDetails>
 
             <Filenest.Queue references="drag-drop-uploader" asChild>
-                {({ files, clearQueue }) => (
+                {({ files }) => (
                     <div>
                         {files.map((f) => (
                             <div key={f.file.name}>
@@ -136,9 +136,9 @@ export const MediaLibrary = () => {
                         <Filenest.UploadButton references="drag-drop-uploader">
                             Upload
                         </Filenest.UploadButton>
-                        <div onClick={clearQueue}>
+                        <Filenest.ClearQueueButton>
                             Clear queue
-                        </div>
+                        </Filenest.ClearQueueButton>
                     </div>
                 )}
             </Filenest.Queue>
