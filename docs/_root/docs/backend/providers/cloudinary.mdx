@@ -1,0 +1,31 @@
+---
+title: Cloudinary
+---
+
+import { PackageManagerTabs } from "rspress/theme"
+
+# Cloudinary Provider
+
+How to set up Cloudinary as a data source.
+
+## 1. Install dependencies
+
+<PackageManagerTabs command="install @filenest/core @filenest/provider-cloudinary"/>
+
+## 2. Initialize the provider
+
+Only create and use a provider server-side. Never expose your API keys to the frontend.
+
+You can find your Cloudinary credentials in the [Cloudinary Console](https://console.cloudinary.com/users/login).
+
+```ts title="some/backend/path/filenest.ts"
+import { Cloudinary } from "@filenest/provider-cloudinary"
+
+export const provider = new Cloudinary({
+    API_KEY: "YourAPIKey",
+    API_SECRET: "YourAPISecret",
+    CLOUD_NAME: "YourCloudName",
+})
+```
+
+Next, you'll need to [set up an adapter](/docs/getting-started/quick-start.html#2-configure-an-adapter) to connect the provider to your API.

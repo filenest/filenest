@@ -1,0 +1,40 @@
+---
+title: Next.js
+---
+
+import { PackageManagerTabs } from "rspress/theme"
+
+# Next.js Adapter
+
+How to set up API routes for Filenest in a Next.js app.
+
+## 1. Install dependencies
+
+<PackageManagerTabs command="install @filenest/core @filenest/adapter-nextjs"/>
+
+## 2. Create a route handler
+
+The Next.js adapter only works with route handlers inside the app directory.
+
+Create the following file structure:
+
+```
+app
+└── api
+    └── media
+        └── [action]
+            └── route.ts
+```
+
+Then just initialize the adapter inside the `route.ts` file and pass it a provider.
+
+```ts title="app/api/media/[action]/route.ts"
+import { initNextjsAdapter } from "@filenest/adapter-nextjs"
+import { Cloudinary } from "@filenest/provider-cloudinary"
+
+const provider = new Cloudinary({...})
+
+export const { POST } = initNextjsAdapter({ provider })
+```
+
+Now you're all set to build your UI. Check out the [minimal setup](/docs/frontend/minimal-setup) to get started.
