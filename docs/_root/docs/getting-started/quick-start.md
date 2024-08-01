@@ -1,7 +1,10 @@
 # Quick Start
 
 :::warning{title="Heads-Up"}
-Filenest is currently in its early development stage. The list of supported frameworks will expand in the future. If your preferred provider or adapter is not available, a contribution to Filenest would be highly appreciated.
+Filenest is currently in its early development stage.
+The list of supported frameworks will expand in the future.
+If your preferred provider or adapter is not available,
+a contribution to Filenest would be highly appreciated.
 :::
 
 ## 1. Set up a Provider
@@ -11,7 +14,9 @@ Find your provider in the list below and learn how to set it up in your backend:
 - [Cloudinary](/docs/backend/providers/cloudinary)
 
 ## 2. Configure an Adapter
-An adapter creates API routes for your backend. You can use an adapter if your backend framework is supported, or manually integrate the required API routes if your framework is not supported. This may require a bit more effort.
+An adapter creates API routes for your backend. You can use an adapter if your
+backend framework is supported, or manually integrate the required
+API routes if your framework is not supported. This may require a bit more effort.
 
 - [Next.js Route Handlers](/docs/backend/adapters/nextjs-route-handlers)
 - [tRPC](/docs/backend/adapters/trpc)
