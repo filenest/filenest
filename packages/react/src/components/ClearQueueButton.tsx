@@ -1,7 +1,7 @@
 "use client"
 
 import { Slot } from "@radix-ui/react-slot"
-import { type QueueFile, useFileQueueContext } from "../context/global/FileQueueContext"
+import { useFileQueueContext } from "../context/global/FileQueueContext"
 import { useQueueContext } from "../context/local/QueueContext"
 
 export interface ClearQueueButtonProps extends React.ComponentPropsWithoutRef<"button"> {
