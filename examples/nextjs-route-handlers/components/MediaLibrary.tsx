@@ -195,9 +195,9 @@ export const MediaLibrary = () => {
                         </div>
                     )}
                 </Filenest.AssetList>
-                <Filenest.AssetDetails>
+                <Filenest.AssetDetails className="mt-14 sticky top-8 pl-8 border-l border-gray-300" asChild>
                     {({ asset }) => (
-                        <div className="mt-14 sticky top-8 pl-8 border-l border-gray-300">
+                        <div>
                             {asset && (
                                 <Filenest.Asset asset={asset} className={cn(asset.isLoading && "animate-pulse")}>
                                     {asset.type == "image" ? (
