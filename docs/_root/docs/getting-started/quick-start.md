@@ -27,4 +27,4 @@ Build your asset management UI using React components.
 Similar to Radix UI, all the logic is pre-defined at the component level, allowing you to focus solely on styling.
 Check out [how to build your file manager using Filenest components](/docs/frontend/minimal-setup).
 
-You can learn more about individual components [here](/docs/frontend/components/about).
+You can learn more about individual components [here](/docs/frontend/about-components).
