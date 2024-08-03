@@ -88,6 +88,8 @@
     --rp-home-feature-hover-bg: var(--rp-home-feature-bg);
     --rp-code-block-bg: #fffaf4;
     --rp-code-title-bg: var(--rp-c-bg-mute);
+    --rp-c-text-code: var(--rp-c-text-1);
+    --rp-c-text-code-bg: var(--rp-c-bg-mute);
 
     --rp-radius-small: 0.25rem;
     --rp-radius: 0.5rem;
