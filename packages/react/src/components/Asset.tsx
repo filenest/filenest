@@ -26,7 +26,7 @@ export interface AssetProps extends React.ComponentPropsWithoutRef<"div"> {
 }
 
 const Asset = ({ asset, asChild, children, ...props }: AssetProps) => {
-    const { setDetailedAsset, selectedFiles, setSelectedFiles, updateAsset, resources } = useGlobalContext()
+    const { detailedAsset, setDetailedAsset, selectedFiles, setSelectedFiles, updateAsset, resources } = useGlobalContext()
 
     const Comp = asChild ? Slot : "div"
 
@@ -75,8 +75,13 @@ const Asset = ({ asset, asChild, children, ...props }: AssetProps) => {
             return
         }
 
-        setDetailedAsset(asset)
-        clearSelected()
+        if (asset.assetId !== detailedAsset?.assetId) {
+            setDetailedAsset(asset)
+        }
+
+        if (selectedFiles.length > 0) {
+            clearSelected()
+        }
     }
 
     return (
