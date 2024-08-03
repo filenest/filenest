@@ -3,7 +3,7 @@
 import type { Asset } from "@filenest/core"
 import { createContext, useContext, useEffect, useMemo, useState } from "react"
 import { useGlobalContext } from "../global/GlobalContext"
-import type { SetState } from "../../utils/types"
+import type { AssetExtraProps, SetState } from "../../utils/types"
 import { useAssetDeleteAction } from "../../utils/useAssetDeleteAction"
 
 export interface AssetContext {
@@ -35,7 +35,7 @@ export const useAssetContext = () => {
 }
 
 export interface AssetProviderProps {
-    asset: Asset
+    asset: Asset & AssetExtraProps
     children: React.ReactNode
     noRename?: boolean
     noRemove?: boolean
@@ -49,9 +49,13 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
 
     useEffect(() => {
         setAssetName(asset.name)
+
+        if (asset.isLoading !== isLoading) {
+            setIsLoading(asset.isLoading)
+        }
     }, [asset])
 
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(asset.isLoading)
     const isSelected = useMemo(() => selectedFiles.some((a) => a.assetId === asset.assetId), [selectedFiles, asset])
     const [isRenaming, setIsRenaming] = useState(false)
     const [newName, setNewName] = useState("")
@@ -73,14 +77,14 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
         resetRename()
 
         try {
-            setIsLoading(true)
+            updateAsset(asset.assetId, (curr) => ({ ...curr, isLoading: true }))
             const result = await fetchers.renameAsset({
                 id: asset.assetId,
                 name: newName,
                 updateDeliveryUrl,
             })
             if (result.success) {
-                updateAsset(asset.assetId, (curr) => ({ ...curr, name: newName }))
+                updateAsset(asset.assetId, (curr) => ({ ...curr, name: newName, isLoading: false }))
             } else {
                 if (result.message === "ERR_DELIVERY_URL_WILL_CHANGE") {
                     alertDialog.setContent({
@@ -109,7 +113,7 @@ export const AssetProvider = ({ asset, children, noRemove, noRename, noSelect }:
             console.error("[Filenest] Error renaming asset:", error)
         }
 
-        setIsLoading(false)
+        updateAsset(asset.assetId, (curr) => ({ ...curr, isLoading: false }))
     }
 
     function selectAsset() {

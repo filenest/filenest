@@ -4,7 +4,6 @@ import type { Asset as AssetType } from "@filenest/core"
 import { Slot } from "@radix-ui/react-slot"
 import { useGlobalContext } from "../context/global/GlobalContext"
 import { AssetProvider, useAssetContext, type AssetProviderProps } from "../context/local/AssetContext"
-import type { WithoutChildren } from "../utils/types"
 
 const AssetWrapper = ({ asset, noRemove, noRename, noSelect, ...props }: AssetProps & AssetProviderProps) => {
     const assetConfig = {
@@ -21,20 +20,13 @@ const AssetWrapper = ({ asset, noRemove, noRename, noSelect, ...props }: AssetPr
     )
 }
 
-interface RenderProps {
-    isLoading: boolean
-    isSelected: boolean
-}
-
-export interface AssetProps extends WithoutChildren<React.ComponentPropsWithoutRef<"div">> {
+export interface AssetProps extends React.ComponentPropsWithoutRef<"div"> {
     asset: AssetType
     asChild?: boolean
-    children: ((props: RenderProps) => React.ReactNode) | React.ReactNode
 }
 
 const Asset = ({ asset, asChild, children, ...props }: AssetProps) => {
     const { setDetailedAsset, selectedFiles, setSelectedFiles, updateAsset, resources } = useGlobalContext()
-    const { isLoading, isSelected } = useAssetContext()
 
     const Comp = asChild ? Slot : "div"
 
@@ -87,17 +79,9 @@ const Asset = ({ asset, asChild, children, ...props }: AssetProps) => {
         clearSelected()
     }
 
-    const getChildren = () => {
-        if (typeof children === "function") {
-            return children({ isLoading, isSelected })
-        }
-
-        return children
-    }
-
     return (
         <Comp {...props} onClick={onClick}>
-            {getChildren()}
+            {children}
         </Comp>
     )
 }
