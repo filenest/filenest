@@ -11,7 +11,7 @@ The `Root` component must wrap all other Filenest components.
 
 ### `endpoint`
 The main API endpoint Filenest will use to fetch data.  
-For example: `/api/media` or `https://localhost:3000/api/media`
+For example: `/api/media` or `http://localhost:3000/api/media`
 
 **Type:** `string`  
 **Required**
