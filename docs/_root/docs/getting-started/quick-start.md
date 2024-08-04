@@ -2,9 +2,10 @@
 
 :::warning{title="Heads-Up"}
 Filenest is currently in its early development stage.
+**The API may change without warning until the first major release.**  
 The list of supported frameworks will expand in the future.
 If your preferred provider or adapter is not available,
-a contribution to Filenest would be highly appreciated.
+consider contributing to Filenest.
 :::
 
 ## 1. Set up a Provider
