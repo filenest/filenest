@@ -6,7 +6,9 @@ import { useGlobalContext } from "../context/global/GlobalContext"
 import { Slot } from "@radix-ui/react-slot"
 import type { WithoutChildren } from "../utils/types"
 
-interface RenderProps extends Omit<FolderInternals, "_internal" | "navigateTo"> {
+interface RenderProps {
+    isLoading: boolean
+    isRenaming: boolean
     stopPropagate: {
         onClick: (e: React.MouseEvent) => void
     }
@@ -27,7 +29,7 @@ const FolderWrapper = ({ children, folder, ...props }: FolderProps) => {
 }
 
 const Folder = ({ children, asChild, ...props }: Omit<FolderProps, "folder">) => {
-    const { remove, rename, navigateTo, isLoading, isRenaming } = useFolderContext()
+    const { navigateTo, isLoading, isRenaming } = useFolderContext()
 
     const stopPropagate = {
         onClick: (e: React.MouseEvent) => {
@@ -40,7 +42,7 @@ const Folder = ({ children, asChild, ...props }: Omit<FolderProps, "folder">) =>
 
     function getChildren() {
         if (typeof children === "function") {
-            return children({ remove, rename, isLoading, isRenaming, stopPropagate })
+            return children({ isLoading, isRenaming, stopPropagate })
         }
 
         return children
