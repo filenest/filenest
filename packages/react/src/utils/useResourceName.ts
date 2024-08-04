@@ -67,7 +67,7 @@ export const useResourceName = () => {
     })
 
     function removeIfTemporary() {
-        if (isTemporary  && contextType === "folder") {
+        if (isTemporary && contextType === "folder") {
             removeFolderFromCurrDir(folderCtx!.folder.id)
         }
     }
