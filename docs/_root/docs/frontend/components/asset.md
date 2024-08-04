@@ -20,6 +20,10 @@ For data handling purposes, an asset must be passed in as a prop.
 
 `Asset` must be used inside an `AssetList` or `AssetDetails` component, respectively.
 
+:::info Important to know
+Use the `ResourceName` component to display the asset's name, instead of accessing `{asset.name}` directly. See [ResourceName](/docs/frontend/components/resource-name).
+:::
+
 ```tsx
 import { Filenest } from "@filenest/react"
 
