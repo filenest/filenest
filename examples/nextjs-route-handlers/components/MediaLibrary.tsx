@@ -44,22 +44,20 @@ export const MediaLibrary = () => {
                 </Filenest.AlertDialogContent>
             </Filenest.AlertDialog>
 
-            <Filenest.Navigation>
-                {({ navigation }) => (
-                    <div className="flex gap-1 my-4 items-center">
-                        {navigation.map((folder, index) => (
-                            <Fragment key={folder.path}>
-                                <Filenest.NavigationItem
-                                    folder={folder}
-                                    className="py-1 px-2 hover:bg-gray-100 rounded cursor-pointer"
-                                >
-                                    {folder.name}
-                                </Filenest.NavigationItem>
-                                {index < navigation.length - 1 && <span>/</span>}
-                            </Fragment>
-                        ))}
-                    </div>
-                )}
+            <Filenest.Navigation className="flex gap-1 my-4 items-center">
+                {({ navigation }) =>
+                    navigation.map((folder, index) => (
+                        <Fragment key={folder.path}>
+                            <Filenest.NavigationItem
+                                folder={folder}
+                                className="py-1 px-2 hover:bg-gray-100 rounded cursor-pointer"
+                            >
+                                {folder.name}
+                            </Filenest.NavigationItem>
+                            {index < navigation.length - 1 && <span>/</span>}
+                        </Fragment>
+                    ))
+                }
             </Filenest.Navigation>
 
             <Filenest.FolderList>
