@@ -20,6 +20,7 @@ For more details on component usage, props and relations, check out the respecti
 - [FolderList](/docs/frontend/components/folder-list)
 - [LoadMoreButton](/docs/frontend/components/load-more-button)
 - [Navigation](/docs/frontend/components/navigation)
+- [Queue](/docs/frontend/components/queue)
 - [NavigationItem](/docs/frontend/components/navigation-item)
 - [ReloadButton](/docs/frontend/components/reload-button)
 - [RemoveFromQueueButton](/docs/frontend/components/remove-from-queue-button)

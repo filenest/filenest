@@ -2,6 +2,8 @@
 
 The `AssetList` component displays all of the assets (files) from a folder of your remote source.
 
+You can select multiple assets by holding `shift` or `ctrl`. Perform actions on selected assets using the `Toolbar` component.
+
 ## Props
 
 This component extends `React.ComponentPropsWithoutRef<"div">`, meaning it accepts all native `div` element props.
