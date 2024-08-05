@@ -38,6 +38,7 @@ export const useAssetDeleteAction = (assetIds: string[], caller?: "toolbar") => 
                     if (detailedAsset?.assetId == assetId) {
                         setDetailedAsset(null)
                     }
+                    setSelectedFiles((prev) => prev.filter((a) => a.assetId !== assetId))
                 } else {
                     throw new Error(result.message)
                 }
