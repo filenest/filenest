@@ -5,7 +5,7 @@ import {
     DeleteAssetInput,
     DeleteFolderInput,
     GetResourcesInput,
-    GetResourcesReturn,
+    GetUploadUrlInput,
     RenameAssetInput,
     RenameFolderInput,
     type Provider,
@@ -14,12 +14,12 @@ import {
 const t = initTRPC.create()
 
 const inputSchemas = {
-    GetResourcesInput,
-    GetResourcesReturn,
-    DeleteAssetInput,
-    RenameAssetInput,
     CreateFolderInput,
+    DeleteAssetInput,
     DeleteFolderInput,
+    GetResourcesInput,
+    GetUploadUrlInput,
+    RenameAssetInput,
     RenameFolderInput,
 } as const
 
@@ -31,7 +31,7 @@ class ProcedureWithMiddleware {
     provider: any
     middlewares: Middleware[]
 
-    constructor(middlewares: Middleware[]) {
+    constructor(middlewares: Middleware[] = []) {
         this.middlewares = middlewares
     }
 
@@ -45,9 +45,7 @@ class ProcedureWithMiddleware {
             return procWithMw.use(mw)
         }, t.procedure)
 
-        return procedure
-            .input(this.inputSchema)
-            .mutation(async ({ input }) => await action(input as any))
+        return procedure.input(this.inputSchema).mutation(async ({ input }) => await action(input as any))
     }
 }
 
@@ -67,36 +65,34 @@ class FilenestTRPCRouter {
     }
 
     public create() {
-        const router = t.router
+        const methodNames = Object.keys(this.provider).filter((name) => !name.startsWith("_"))
 
         const routes = Object.fromEntries(
-            Object.keys(this.provider).map((k) => {
+            methodNames.map((k) => {
                 const key = k as keyof Provider
                 const schemaName = (key.charAt(0).toUpperCase() + key.slice(1) + "Input") as keyof typeof inputSchemas
-                const mw = this.routeMiddleware[key] || []
-                const proc = new ProcedureWithMiddleware(mw)
-                    .input(inputSchemas[schemaName])
-                    .execute(this.provider[key])
+                const mw = this.routeMiddleware[key]
+                const proc = new ProcedureWithMiddleware(mw).input(inputSchemas[schemaName]).execute(this.provider[key])
                 return [key, proc]
             })
         )
 
-        return router(routes)
+        return t.router(routes)
     }
 }
 
 /**
  * Initializes and returns a FilenestTRPCRouter instance
- * 
+ *
  * @example
  * const provider = new Cloudinary({ ... });
- * 
+ *
  * const mediaRouter = initTRPCAdapter(provider).create();
- * 
+ *
  * const appRouter = t.router({
  *   media: mediaRouter,
  * });
- * 
+ *
  * export type AppRouter = typeof appRouter;
  */
 export function initTRPCAdapter(provider: Provider) {
