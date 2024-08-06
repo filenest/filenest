@@ -20,28 +20,29 @@ type CloudinaryConfig = {
 }
 
 export class Cloudinary implements Provider {
-    private URL: string
-    private MAX_RESULTS = 50
-    private API_SECRET: string
-    private API_KEY: string
-    private HEADERS: Headers
-    private async doFetch(url: string | URL, init?: RequestInit) {
-        return fetch(url, { headers: this.HEADERS, ...init }).then((res) => res.json())
+    private _URL: string
+    private _MAX_RESULTS = 50
+    private _API_SECRET: string
+    private _API_KEY: string
+    private _HEADERS: Headers
+
+    private async _doFetch(url: string | URL, init?: RequestInit) {
+        return fetch(url, { headers: this._HEADERS, ...init }).then((res) => res.json())
     }
 
     constructor(config: CloudinaryConfig) {
         const { API_KEY, API_SECRET, CLOUD_NAME } = config
-        this.API_SECRET = API_SECRET
-        this.API_KEY = API_KEY
-        this.URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}`
-        this.HEADERS = new Headers({
+        this._API_SECRET = API_SECRET
+        this._API_KEY = API_KEY
+        this._URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}`
+        this._HEADERS = new Headers({
             Authorization: `Basic ${btoa(`${API_KEY}:${API_SECRET}`)}`,
         })
     }
 
     // Stolen from https://github.com/cloudinary/cloudinary_npm/blob/master/lib/utils/index.js
-    private async makeSignature(params: Record<string, any>) {
-        const { API_SECRET } = this
+    private async _makeSignature(params: Record<string, any>) {
+        const { _API_SECRET: API_SECRET } = this
 
         function toArray(arg: any) {
             switch (true) {
@@ -72,13 +73,13 @@ export class Cloudinary implements Provider {
         return Buffer.from(hash).toString("hex")
     }
 
-    private async getConfig() {
-        const url = new URL(this.URL.toString() + "/config")
+    private async _getConfig() {
+        const url = new URL(this._URL.toString() + "/config")
         url.searchParams.append("settings", "true")
-        return (await this.doFetch(url)) as CloudinaryEnvironment
+        return (await this._doFetch(url)) as CloudinaryEnvironment
     }
 
-    private mapResourceType(type: string, format: string) {
+    private _mapResourceType(type: string, format: string) {
         switch (type) {
             case "image":
                 if (format == "pdf") return "document"
@@ -92,11 +93,11 @@ export class Cloudinary implements Provider {
         }
     }
 
-    private mapResourceToSchema(resource: CloudinaryResource) {
+    private _mapResourceToSchema(resource: CloudinaryResource) {
         return {
             assetId: resource.asset_id,
             publicId: resource.public_id,
-            type: this.mapResourceType(resource.resource_type, resource.format) as AssetType,
+            type: this._mapResourceType(resource.resource_type, resource.format) as AssetType,
             format: resource.format,
             url: resource.url,
             folder: resource.folder,
@@ -109,11 +110,11 @@ export class Cloudinary implements Provider {
         }
     }
 
-    private mapResourcesToSchema(resource: CloudinaryResource[]) {
-        return resource.map((asset) => this.mapResourceToSchema(asset))
+    private _mapResourcesToSchema(resource: CloudinaryResource[]) {
+        return resource.map((asset) => this._mapResourceToSchema(asset))
     }
 
-    private mapFolderToSchema(folder: CloudinaryFolder) {
+    private _mapFolderToSchema(folder: CloudinaryFolder) {
         return {
             id: folder.path,
             name: folder.name,
@@ -121,18 +122,18 @@ export class Cloudinary implements Provider {
         }
     }
 
-    private mapFoldersToSchema(data: CloudinaryFolder[]) {
-        return data.map((folder) => this.mapFolderToSchema(folder))
+    private _mapFoldersToSchema(data: CloudinaryFolder[]) {
+        return data.map((folder) => this._mapFolderToSchema(folder))
     }
 
-    public async getRawAssetByAssetId(id: string) {
-        const url = new URL(this.URL.toString() + "/resources/" + id)
-        const asset: CloudinaryResource = await this.doFetch(url)
+    private async _getRawAssetByAssetId(id: string) {
+        const url = new URL(this._URL.toString() + "/resources/" + id)
+        const asset: CloudinaryResource = await this._doFetch(url)
         return asset
     }
 
-    public async getResources(input?: GetResourcesInput) {
-        let url = new URL(this.URL.toString() + "/resources/search")
+    public getResources = async (input?: GetResourcesInput) => {
+        let url = new URL(this._URL.toString() + "/resources/search")
 
         const folder = () => {
             if (input?.global) return
@@ -147,27 +148,27 @@ export class Cloudinary implements Provider {
 
         url.searchParams.append("expression", expression)
         url.searchParams.append("with_field", "tags")
-        url.searchParams.append("max_results", this.MAX_RESULTS.toString())
+        url.searchParams.append("max_results", this._MAX_RESULTS.toString())
 
         if (input?.nextCursor) {
             url.searchParams.append("next_cursor", input.nextCursor)
         }
 
-        const assets: CloudinarySearchResponse = await this.doFetch(url)
+        const assets: CloudinarySearchResponse = await this._doFetch(url)
 
-        url = new URL([this.URL.toString(), "/folders/", input?.folder].join(""))
+        url = new URL([this._URL.toString(), "/folders/", input?.folder].join(""))
 
-        const folders: CloudinaryFolderResponse = await this.doFetch(url)
+        const folders: CloudinaryFolderResponse = await this._doFetch(url)
 
         return {
             folder: assets.resources[0]?.folder || input?.folder || "",
             resources: {
                 folders: {
-                    data: this.mapFoldersToSchema(folders.folders),
+                    data: this._mapFoldersToSchema(folders.folders),
                     count: folders.total_count,
                 },
                 assets: {
-                    data: this.mapResourcesToSchema(assets.resources),
+                    data: this._mapResourcesToSchema(assets.resources),
                     count: assets.total_count,
                     nextCursor: assets.next_cursor,
                 },
@@ -175,32 +176,32 @@ export class Cloudinary implements Provider {
         }
     }
 
-    public async createFolder(input: CreateFolderInput) {
-        const url = new URL(this.URL.toString() + "/folders/" + input.path)
-        const folder: CloudinaryFolder = await this.doFetch(url, { method: "POST" })
-        return this.mapFolderToSchema(folder)
+    public createFolder = async (input: CreateFolderInput) => {
+        const url = new URL(this._URL.toString() + "/folders/" + input.path)
+        const folder: CloudinaryFolder = await this._doFetch(url, { method: "POST" })
+        return this._mapFolderToSchema(folder)
     }
 
-    public async renameFolder(input: RenameFolderInput) {
+    public renameFolder = async (input: RenameFolderInput) => {
         // We need to check if environment uses fixed or dynamic folder mode.
         // Only dynamic folder mode supports renaming folders.
-        const config = await this.getConfig()
+        const config = await this._getConfig()
 
         if (config.settings.folder_mode === "fixed") {
             throw new Error("Renaming folders is not supported in fixed folder mode.")
         }
 
-        const url = new URL(this.URL.toString() + "/folders/" + input.path)
+        const url = new URL(this._URL.toString() + "/folders/" + input.path)
         url.searchParams.append("to_folder", input.newPath)
 
-        const folder: { from: CloudinaryFolder; to: CloudinaryFolder } = await this.doFetch(url, { method: "PUT" })
+        const folder: { from: CloudinaryFolder; to: CloudinaryFolder } = await this._doFetch(url, { method: "PUT" })
 
-        return this.mapFolderToSchema(folder.to)
+        return this._mapFolderToSchema(folder.to)
     }
 
-    public async deleteFolder(input: DeleteFolderInput) {
+    public deleteFolder = async (input: DeleteFolderInput) => {
         const { resources } = await this.getResources({ folder: input.path })
-        const config = await this.getConfig()
+        const config = await this._getConfig()
 
         if (resources.assets.count > 0 && !input.force) {
             throw new Error("ERR_FOLDER_NOT_EMPTY")
@@ -213,41 +214,41 @@ export class Cloudinary implements Provider {
             if (config.settings.folder_mode === "fixed") {
                 await Promise.all(
                     resource_types.map(async (type) => {
-                        const url = new URL(this.URL.toString() + `/resources/${type}/upload`)
+                        const url = new URL(this._URL.toString() + `/resources/${type}/upload`)
                         url.searchParams.set("prefix", input.path + "/")
-                        return this.doFetch(url, { method: "DELETE" })
+                        return this._doFetch(url, { method: "DELETE" })
                     })
                 )
             }
 
             if (config.settings.folder_mode === "dynamic") {
-                let url = new URL(this.URL.toString() + "/resources/by_asset_folder")
+                let url = new URL(this._URL.toString() + "/resources/by_asset_folder")
                 url.searchParams.set("asset_folder", input.path)
-                const assets: CloudinarySearchResponse = await this.doFetch(url)
+                const assets: CloudinarySearchResponse = await this._doFetch(url)
                 const public_ids = assets.resources.map((asset) => asset.public_id)
                 await Promise.all(
                     resource_types.map(async (type) => {
-                        const url = new URL(this.URL.toString() + `/resources/${type}/upload`)
+                        const url = new URL(this._URL.toString() + `/resources/${type}/upload`)
                         url.searchParams.set("public_ids", public_ids.join(","))
-                        return this.doFetch(url, { method: "DELETE" })
+                        return this._doFetch(url, { method: "DELETE" })
                     })
                 )
             }
         }
 
         // ...Finally delete folder
-        const url = new URL(this.URL.toString() + "/folders/" + input.path)
-        await this.doFetch(url, { method: "DELETE" })
+        const url = new URL(this._URL.toString() + "/folders/" + input.path)
+        await this._doFetch(url, { method: "DELETE" })
 
         return {
             success: true,
         }
     }
 
-    public async getUploadUrl(input: GetUploadUrlInput) {
+    public getUploadUrl = async (input: GetUploadUrlInput) => {
         const { params } = input
         
-        const { settings } = await this.getConfig()
+        const { settings } = await this._getConfig()
 
         if (settings.folder_mode === "dynamic") {
             params.asset_folder = params.folder || params.asset_folder || ""
@@ -257,10 +258,10 @@ export class Cloudinary implements Provider {
         const timestamp = Math.floor(Date.now() / 1000).toString()
         params.timestamp = timestamp
 
-        const signature = await this.makeSignature(params)
+        const signature = await this._makeSignature(params)
 
-        const url = new URL(this.URL.toString() + "/auto/upload")
-        url.searchParams.append("api_key", this.API_KEY)
+        const url = new URL(this._URL.toString() + "/auto/upload")
+        url.searchParams.append("api_key", this._API_KEY)
         url.searchParams.append("signature", signature)
         Object.entries(params).forEach(([key, value]) => {
             url.searchParams.append(key, value)
@@ -270,10 +271,10 @@ export class Cloudinary implements Provider {
         return url.toString()
     }
 
-    public async renameAsset(input: RenameAssetInput) {
+    public renameAsset = async (input: RenameAssetInput) => {
         const { id, name, updateDeliveryUrl } = input
 
-        const { settings } = await this.getConfig()
+        const { settings } = await this._getConfig()
 
         if (settings.folder_mode === "fixed" && !updateDeliveryUrl) {
             throw new Error("ERR_DELIVERY_URL_WILL_CHANGE")
@@ -283,12 +284,12 @@ export class Cloudinary implements Provider {
             throw new Error("ERR_UPDATE_DELIVERY_URL_REQUIRED")
         }
 
-        const { resource_type, type, public_id } = await this.getRawAssetByAssetId(id)
+        const { resource_type, type, public_id } = await this._getRawAssetByAssetId(id)
 
         if (settings.folder_mode === "dynamic") {
-            const url = new URL(this.URL.toString() + `/resources/${resource_type}/${type}/` + public_id)
+            const url = new URL(this._URL.toString() + `/resources/${resource_type}/${type}/` + public_id)
             url.searchParams.append("display_name", name.replace("/", "-"))
-            await this.doFetch(url, { method: "POST" })
+            await this._doFetch(url, { method: "POST" })
         }
 
         if (
@@ -297,13 +298,13 @@ export class Cloudinary implements Provider {
         ) {
             const timestamp = Math.floor(Date.now() / 1000).toString()
 
-            const url = new URL(this.URL.toString() + `/${resource_type}/rename`)
+            const url = new URL(this._URL.toString() + `/${resource_type}/rename`)
             url.searchParams.append("from_public_id", public_id)
             url.searchParams.append("to_public_id", slugify(name))
-            url.searchParams.append("api_key", this.API_KEY)
+            url.searchParams.append("api_key", this._API_KEY)
             url.searchParams.append("timestamp", timestamp)
 
-            const signature = await this.makeSignature({
+            const signature = await this._makeSignature({
                 timestamp,
                 from_public_id: public_id,
                 to_public_id: slugify(name),
@@ -312,7 +313,7 @@ export class Cloudinary implements Provider {
             url.searchParams.append("signature", signature)
             url.searchParams.sort()
 
-            await this.doFetch(url, { method: "POST" })
+            await this._doFetch(url, { method: "POST" })
         }
 
         return {
@@ -320,13 +321,13 @@ export class Cloudinary implements Provider {
         }
     }
 
-    public async deleteAsset(input: DeleteAssetInput) {
-        const { resource_type, type, public_id } = await this.getRawAssetByAssetId(input.id)
+    public deleteAsset = async (input: DeleteAssetInput) => {
+        const { resource_type, type, public_id } = await this._getRawAssetByAssetId(input.id)
 
-        const url = new URL(this.URL.toString() + `/resources/${resource_type}/${type}`)
+        const url = new URL(this._URL.toString() + `/resources/${resource_type}/${type}`)
         url.searchParams.append("public_ids", [public_id].toString())
 
-        await this.doFetch(url, { method: "DELETE" })
+        await this._doFetch(url, { method: "DELETE" })
 
         return {
             success: true,
