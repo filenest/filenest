@@ -30,7 +30,27 @@ export function createFetchers({ endpoint, endpointIsTRPC }: CreateFetchersOpts)
 
     async function handleFetch(path: string, body?: any) {
         const url = makeUrl(endpoint, path, endpointIsTRPC)
-        return fetch(url, { method: "POST", body: JSON.stringify(body) }).then((res) => res.json())
+
+        const result = await fetch(url, {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }).then((res) => res.json())
+        
+        if (endpointIsTRPC) {
+            if (result.error) {
+                return {
+                    success: false,
+                    message: result.error.message,
+                }
+            }
+
+            return result.result.data
+        }
+        
+        return result
     }
 
     async function getResources(input: GetResourcesInput) {
