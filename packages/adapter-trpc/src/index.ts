@@ -4,8 +4,8 @@ import {
     CreateFolderInput,
     DeleteAssetInput,
     DeleteFolderInput,
-    GetAssetInput,
-    GetAssetsInput,
+    GetResourcesInput,
+    GetResourcesReturn,
     RenameAssetInput,
     RenameFolderInput,
     type Provider,
@@ -14,8 +14,8 @@ import {
 const t = initTRPC.create()
 
 const inputSchemas = {
-    GetAssetInput,
-    GetAssetsInput,
+    GetResourcesInput,
+    GetResourcesReturn,
     DeleteAssetInput,
     RenameAssetInput,
     CreateFolderInput,
