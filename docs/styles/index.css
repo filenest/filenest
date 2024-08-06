@@ -82,7 +82,9 @@
     --rp-c-brand-light: #b4966b;
     --rp-c-brand-dark: #92754c;
     --rp-c-brand-tint: var(--rp-c-bg-mute);
+    --rp-c-bg-soft: #f9f5f0;
     --rp-c-gray: #75726c;
+    --rp-c-gray-light-3: #cccccc;
     --rp-home-hero-name-background: #b4966b;
     --rp-home-feature-bg: var(--rp-c-bg-mute);
     --rp-home-feature-hover-bg: var(--rp-home-feature-bg);
