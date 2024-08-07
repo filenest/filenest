@@ -28,7 +28,6 @@ type RouteMiddleware = Record<keyof Provider, Middleware[]>
 
 class ProcedureWithMiddleware {
     inputSchema: z.ZodType<unknown> = z.object({}).optional()
-    provider: any
     middlewares: Middleware[]
 
     constructor(middlewares: Middleware[] = []) {
@@ -75,7 +74,7 @@ class FilenestTRPCRouter {
                 const proc = new ProcedureWithMiddleware(mw).input(inputSchemas[schemaName]).execute(this.provider[key])
                 return [key, proc]
             })
-        )
+        ) as Record<string, any>
 
         return t.router(routes)
     }
