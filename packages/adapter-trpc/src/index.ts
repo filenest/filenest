@@ -74,7 +74,7 @@ class FilenestTRPCRouter {
                 const proc = new ProcedureWithMiddleware(mw).input(inputSchemas[schemaName]).execute(this.provider[key])
                 return [key, proc]
             })
-        ) as Record<string, any>
+        ) as Record<string, any> // TODO: Improve type safety. Just putting this here to remove errors
 
         return t.router(routes)
     }
