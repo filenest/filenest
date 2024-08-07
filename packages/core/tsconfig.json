@@ -1,4 +1,8 @@
 {
     "extends": "@internal/tsconfig/base.tsconfig.json",
-    "include": ["src/**/*"]
+    "compilerOptions": {
+        "outDir": "dist",
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", "dist"]
 }
