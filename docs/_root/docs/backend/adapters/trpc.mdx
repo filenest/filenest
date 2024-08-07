@@ -1,0 +1,40 @@
+---
+title: tRPC
+---
+
+import { PackageManagerTabs } from "rspress/theme"
+
+# tRPC Adapter
+
+How to set up API routes for Filenest in a tRPC router.
+
+## 1. Install dependencies
+
+<PackageManagerTabs command="install @filenest/core @filenest/adapter-trpc @trpc/server"/>
+
+## 2. Create a router
+
+Just initialize the adapter and add it to your base tRPC router.
+
+```ts
+import { initTRPC } from "@trpc/server"
+import { initTRPCAdapter } from "@filenest/adapter-trpc"
+import { Cloudinary } from "@filenest/provider-cloudinary"
+
+const provider = new Cloudinary({...})
+const mediaRouter = initTRPCAdapter(provider).create()
+
+const t = initTRPC.create()
+
+const trpcRouter = t.router({
+    media: mediaRouter,
+})
+```
+
+:::warning Needs improvement
+Currently, the Filenest tRPC router is not very type-safe.  
+Although not necessary, you might not be able to access the procedures
+using `@trpc/react-query` or the vanilla client, if you tried to.
+:::
+
+Now you're all set to build your UI. Check out the [minimal setup](/docs/frontend/minimal-setup) to get started.
