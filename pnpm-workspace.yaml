@@ -1,5 +1,3 @@
 packages:
-  - "docs"
-  - "examples/*"
   - "internal/*"
   - "packages/*"
