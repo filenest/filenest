@@ -1,6 +1,6 @@
 import {
-    GetUploadUrlInput,
-    GetUploadUrlReturn,
+    type GetUploadUrlInput,
+    type GetUploadUrlReturn,
     type CreateFolderInput,
     type CreateFolderReturn,
     type DeleteAssetInput,
