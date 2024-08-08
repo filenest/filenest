@@ -20,6 +20,7 @@
     },
     "devDependencies": {
         "@internal/tsconfig": "workspace:*",
+        "tsup": "^8.2.4",
         "typescript": "5.5.3"
     },
     "peerDependencies": {
@@ -28,10 +29,6 @@
         "zod": ">= 3.20.0"
     },
     "engines": {
-        "node": ">=20",
-        "pnpm": "*"
-    },
-    "dependencies": {
-        "tsup": "^8.2.4"
+        "pnpm": ">=9.3.0"
     }
 }
