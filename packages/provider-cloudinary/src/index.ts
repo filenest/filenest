@@ -204,7 +204,10 @@ export class Cloudinary implements Provider {
         const config = await this._getConfig()
 
         if (resources.assets.count > 0 && !input.force) {
-            throw new Error("ERR_FOLDER_NOT_EMPTY")
+            return {
+                success: false,
+                message: "ERR_FOLDER_NOT_EMPTY",
+            }
         }
 
         const resource_types = ["image", "raw", "video"]
@@ -277,11 +280,17 @@ export class Cloudinary implements Provider {
         const { settings } = await this._getConfig()
 
         if (settings.folder_mode === "fixed" && !updateDeliveryUrl) {
-            throw new Error("ERR_DELIVERY_URL_WILL_CHANGE")
+            return {
+                success: false,
+                message: "ERR_DELIVERY_URL_WILL_CHANGE",
+            }
         }
 
         if (settings.folder_mode === "dynamic" && updateDeliveryUrl === undefined) {
-            throw new Error("ERR_UPDATE_DELIVERY_URL_REQUIRED")
+            return {
+                success: false,
+                message: "ERR_UPDATE_DELIVERY_URL_REQUIRED",
+            }
         }
 
         const { resource_type, type, public_id } = await this._getRawAssetByAssetId(id)
