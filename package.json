@@ -1,17 +1,12 @@
 {
-  "name": "filenest",
-  "private": true,
-  "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
-  },
-  "devDependencies": {
-    "turbo": "^2.0.6"
-  },
-  "packageManager": "pnpm@9.1.0",
-  "engines": {
-    "node": ">=18"
-  }
+    "name": "filenest",
+    "private": true,
+    "scripts": {
+        "docs:dev": "pnpm --filter \"docs\" run dev",
+        "dev": "pnpm --filter \"@filenest/*\" run dev",
+        "build": "pnpm --filter \"@filenest/*\" run build"
+    },
+    "engines": {
+        "pnpm": ">=9.3.0"
+    }
 }
