@@ -27,8 +27,6 @@ importers:
         specifier: latest
         version: 18.3.0
 
-  examples/nextjs-trpc: {}
-
   internal/tsconfig: {}
 
   packages/adapter-nextjs:
@@ -43,6 +41,9 @@ importers:
       next:
         specifier: ^14 || ^15
         version: 14.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.5)
+      tsup:
+        specifier: ^8.2.4
+        version: 8.2.4(jiti@1.21.0)(postcss@8.4.41)(typescript@5.5.3)(yaml@2.4.3)
       typescript:
         specifier: 5.5.3
         version: 5.5.3
@@ -78,9 +79,9 @@ importers:
       '@internal/tsconfig':
         specifier: workspace:*
         version: link:../../internal/tsconfig
-      esbuild:
-        specifier: 0.23.0
-        version: 0.23.0
+      tsup:
+        specifier: ^8.2.4
+        version: 8.2.4(jiti@1.21.0)(postcss@8.4.41)(typescript@5.5.3)(yaml@2.4.3)
       typescript:
         specifier: 5.5.3
         version: 5.5.3
@@ -143,15 +144,15 @@ importers:
       '@types/react-dom':
         specifier: ^18
         version: 18.3.0
-      esbuild:
-        specifier: 0.23.0
-        version: 0.23.0
       react:
         specifier: ^18
         version: 18.3.1
       react-dom:
         specifier: ^18
         version: 18.3.1(react@18.3.1)
+      tsup:
+        specifier: ^8.2.4
+        version: 8.2.4(jiti@1.21.0)(postcss@8.4.41)(typescript@5.5.3)(yaml@2.4.3)
       typescript:
         specifier: 5.5.3
         version: 5.5.3

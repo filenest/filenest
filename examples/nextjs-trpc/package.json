@@ -9,6 +9,10 @@
         "lint": "next lint"
     },
     "dependencies": {
+        "@filenest/adapter-trpc": "file:../../packages/adapter-trpc",
+        "@filenest/core": "file:../../packages/core",
+        "@filenest/provider-cloudinary": "file:../../packages/provider-cloudinary",
+        "@filenest/react": "file:../../packages/react",
         "@tabler/icons-react": "3.7.0",
         "@trpc/client": "11.0.0-rc.477",
         "@trpc/server": "11.0.0-rc.477",
