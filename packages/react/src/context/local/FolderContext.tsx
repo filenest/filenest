@@ -71,6 +71,8 @@ export const FolderProvider = ({ children, folder }: FolderProviderProps) => {
                     alertDialog.setContent({
                         title: _l("alert.folderNestedContent.title"),
                         text: _l("alert.folderNestedContent.text"),
+                        cancel: _l("alert.folderNestedContent.cancel"),
+                        commit: _l("alert.folderNestedContent.commit"),
                     })
                     alertDialog.setAction(() => () => removeFolder(true))
                     alertDialog.setOpen(true)
