@@ -8,11 +8,13 @@ import { PackageManagerTabs } from "rspress/theme"
 
 How to set up API routes for Filenest in a tRPC router.
 
-## 1. Install dependencies
+## Setup
+
+### 1. Install dependencies
 
 <PackageManagerTabs command="install @filenest/core @filenest/adapter-trpc @trpc/server"/>
 
-## 2. Create a router
+### 2. Create a router
 
 Just initialize the adapter and add it to your base tRPC router.
 
@@ -38,3 +40,66 @@ using `@trpc/react-query` or the vanilla client, if you tried to.
 :::
 
 Now you're all set to build your UI. Check out the [minimal setup](/docs/frontend/minimal-setup) to get started.
+
+## Middleware
+
+You can add middleware to the procedures to handle authorization, logging, etc.
+
+When creating the router, you can call the `use` method before `create` to add middleware.
+
+`use` takes in two arguments: An array of middlewares that will be applied to all procedures,
+and an object with arrays of middlewares that will be applied to specific procedures.
+
+### Global middleware
+
+In this first example, a single middleware is added to all procedures.
+
+```ts
+const helloMiddleware = t.middleware(({ ctx, next }) => {
+    console.log("hello from middleware. this runs on each request")
+    return next()
+})
+
+const mediaRouter = initTRPCAdapter(provider)
+    .use([helloMiddleware])
+    .create()
+```
+
+### Scoped middleware
+
+But if you want a middleware to run only on a specific procedure,
+just pass in a second argument and define your middleware(s) for that procedure.
+
+```ts
+const folderMiddleware = t.middleware(({ ctx, next }) => {
+    console.log("this middleware runs when a folder is created")
+    return next()
+})
+
+// Pass an empty array, if you don't want any global middleware,
+// but only scoped middleware.
+const mediaRouter = initTRPCAdapter(provider)
+    .use([], { createFolder: [folderMiddleware] })
+    .create()
+```
+
+### Chaining middleware
+
+You can chain multiple middlewares together by calling `use` multiple times.
+
+```ts
+const helloMiddleware = t.middleware(({ ctx, next }) => {
+    console.log("hello from middleware. this runs on each request")
+    return next()
+})
+
+const owlMiddleware = t.middleware(({ ctx, next }) => {
+    console.log("hoo-ray, you've chained middleware!")
+    return next()
+})
+
+const mediaRouter = initTRPCAdapter(provider)
+    .use([helloMiddleware])
+    .use([owlMiddleware])
+    .create()
+```

@@ -7,7 +7,7 @@ title: Custom Integration
 This guide explains how to add Filenest endpoints to your existing JS/TS API,
 if there is no fitting adapter for your framework.
 
-## Create endpoints without an adapter
+## Setup
 
 At its core, an adapter is a wrapper around a provider
 and returns the providers class methods in a specific way
