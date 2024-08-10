@@ -9,9 +9,26 @@ const provider = new Cloudinary({
     CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME!,
 })
 
-const mediaRouter = initTRPCAdapter(provider).create()
-
 const t = initTRPC.create()
+
+const helloMiddleware = t.middleware(({ ctx, next }) => {
+    console.log("hello from middleware. this runs on each request")
+    return next()
+})
+
+const folderMiddleware = t.middleware(({ ctx, next }) => {
+    console.log("this middleware runs when a folder is created")
+    return next()
+})
+
+const mediaRouter = initTRPCAdapter(provider)
+    .use(
+        [helloMiddleware],
+        {
+            createFolder: [folderMiddleware],
+        }
+    )
+    .create()
 
 const trpcRouter = t.router({
     media: mediaRouter,
@@ -24,16 +41,3 @@ const handler = (req: Request) =>
         router: trpcRouter,
     })
 export { handler as GET, handler as POST }
-
-
-/* (property) media: BuiltRouter<{
-    ctx: object;
-    meta: object;
-    errorShape: DefaultErrorShape;
-    transformer: false;
-}, {
-    getResources: MutationProcedure<{
-        input: void;
-        output: string;
-    }>;
-}> */
