@@ -5,7 +5,7 @@
   "fixed": [["@filenest/*"]],
   "linked": [],
   "access": "public",
-  "baseBranch": "origin/main",
+  "baseBranch": "next",
   "updateInternalDependencies": "patch",
   "ignore": []
 }
