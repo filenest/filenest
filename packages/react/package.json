@@ -3,19 +3,24 @@
     "version": "0.1.0",
     "description": "",
     "keywords": [],
-    "author": "",
+    "author": "nordowl",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/filenest/filenest"
+    },
     "license": "MIT",
     "main": "dist/index.js",
     "exports": {
         ".": {
             "import": "./dist/index.js",
             "types": "./dist/index.d.ts",
-            "module": "./dist/index.js"
+            "module": "./dist/index.js",
+            "require": "./dist/index.js"
         }
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "tsup src/index.ts --dts --sourcemap",
+        "build": "tsup src/index.ts --dts --format cjs,esm --sourcemap",
         "dev": "tsup src/index.ts --dts --sourcemap --watch"
     },
     "dependencies": {

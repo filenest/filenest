@@ -23,9 +23,6 @@ coverage
 
 # Build Outputs
 .next/
-out/
-build
-dist
 
 # Debug
 npm-debug.log*
@@ -35,3 +32,6 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# Source
+src
