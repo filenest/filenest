@@ -36,5 +36,8 @@
     },
     "engines": {
         "pnpm": ">=9.3.0"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }
