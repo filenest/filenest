@@ -37,16 +37,16 @@ importers:
   examples/nextjs-route-handlers:
     dependencies:
       '@filenest/adapter-nextjs':
-        specifier: file:../../packages/adapter-nextjs
+        specifier: 0.1.0
         version: link:../../packages/adapter-nextjs
       '@filenest/core':
-        specifier: file:../../packages/core
+        specifier: 0.1.0
         version: link:../../packages/core
       '@filenest/provider-cloudinary':
-        specifier: file:../../packages/provider-cloudinary
+        specifier: 0.1.0
         version: link:../../packages/provider-cloudinary
       '@filenest/react':
-        specifier: file:../../packages/react
+        specifier: 0.1.0
         version: link:../../packages/react
       '@tabler/icons-react':
         specifier: 3.7.0
@@ -92,16 +92,16 @@ importers:
   examples/nextjs-trpc:
     dependencies:
       '@filenest/adapter-trpc':
-        specifier: file:../../packages/adapter-trpc
+        specifier: 0.1.0
         version: link:../../packages/adapter-trpc
       '@filenest/core':
-        specifier: file:../../packages/core
+        specifier: 0.1.0
         version: link:../../packages/core
       '@filenest/provider-cloudinary':
-        specifier: file:../../packages/provider-cloudinary
+        specifier: 0.1.0
         version: link:../../packages/provider-cloudinary
       '@filenest/react':
-        specifier: file:../../packages/react
+        specifier: 0.1.0
         version: link:../../packages/react
       '@tabler/icons-react':
         specifier: 3.7.0
@@ -155,7 +155,7 @@ importers:
   packages/adapter-nextjs:
     dependencies:
       '@filenest/core':
-        specifier: file:../../packages/core
+        specifier: 0.1.0
         version: link:../core
     devDependencies:
       '@internal/tsconfig':
@@ -174,7 +174,7 @@ importers:
   packages/adapter-trpc:
     dependencies:
       '@filenest/core':
-        specifier: file:../../packages/core
+        specifier: 0.1.0
         version: link:../core
       '@trpc/server':
         specifier: '>= 10'
@@ -212,7 +212,7 @@ importers:
   packages/provider-cloudinary:
     dependencies:
       '@filenest/core':
-        specifier: file:../../packages/core
+        specifier: 0.1.0
         version: link:../core
       slugify:
         specifier: 1.6.6
@@ -231,7 +231,7 @@ importers:
   packages/react:
     dependencies:
       '@filenest/core':
-        specifier: file:../../packages/core
+        specifier: 0.1.0
         version: link:../core
       '@radix-ui/react-alert-dialog':
         specifier: ^1.1.1
