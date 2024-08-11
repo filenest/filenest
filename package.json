@@ -3,6 +3,7 @@
     "private": true,
     "scripts": {
         "docs:dev": "pnpm --filter \"docs\" run dev",
+        "docs:build": "pnpm --filter \"docs\" run build",
         "dev": "pnpm --filter \"@filenest/*\" run dev",
         "build": "pnpm --filter \"@filenest/*\" run build"
     },
