@@ -120,6 +120,10 @@ in a way to conform to a framework's API.
 
 If you want to add a new adapter, please also add an example app to test it.
 
+#### Gotchas
+- An adapter should only accept POST requests.
+This is because the React client uses POST requests to send input via the body.
+
 #### Middleware
 
 If possible, an adapter should accept global or per-route middleware,
