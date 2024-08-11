@@ -137,7 +137,7 @@ export class Cloudinary implements Provider {
 
         const folder = () => {
             if (input?.global) return
-            return input?.folder ? "folder:" + input.folder : 'folder=""'
+            return input?.folder ? `folder:\"${input.folder}\"` : 'folder=""'
         }
 
         const searchQuery = input?.searchQuery
