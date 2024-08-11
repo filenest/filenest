@@ -22,3 +22,7 @@ and build your custom UI using unstyled components.
 - **Form Fields**: Easily get file URLs for form submissions to store them in your DB.
 - **Custom UI**: Build your own file manager with your own design.
 - **All in one**: No more switching tabs between your app and cloud storage provider.
+
+## Contributing
+
+[Contributing Guide](https://github.com/filenest/filenest/blob/next/docs/_root/docs/contributing.md)
