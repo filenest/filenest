@@ -58,7 +58,7 @@ pnpm docs:build
 Filenest was initially created without any tests,
 because it was first designed for personal use.
 When I decided to turn it into an open-source project,
-I wanted to move quickly and publish it as fast as possible.
+I wanted to move quickly and publish it as fast as possible to focus on my main project.
 
 Tests will be added incrementally, while the library is in beta.
 
