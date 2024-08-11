@@ -14,7 +14,7 @@ This project uses [pnpm](https://pnpm.io/) as the package manager. Make sure to 
 ### Initial installation
 
 ```sh
-git@github.com:filenest/filenest.git
+git clone git@github.com:filenest/filenest.git
 cd filenest
 pnpm install
 pnpm build
