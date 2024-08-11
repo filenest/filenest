@@ -32,7 +32,7 @@
         "tsup": "^8.2.4"
     },
     "peerDependencies": {
-        "@filenest/core": "file:../../packages/core"
+        "@filenest/core": "0.1.0"
     },
     "engines": {
         "pnpm": ">=9.3.0"

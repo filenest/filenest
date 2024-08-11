@@ -9,10 +9,10 @@
         "lint": "next lint"
     },
     "dependencies": {
-        "@filenest/adapter-nextjs": "file:../../packages/adapter-nextjs",
-        "@filenest/core": "file:../../packages/core",
-        "@filenest/provider-cloudinary": "file:../../packages/provider-cloudinary",
-        "@filenest/react": "file:../../packages/react",
+        "@filenest/adapter-nextjs": "0.1.0",
+        "@filenest/core": "0.1.0",
+        "@filenest/provider-cloudinary": "0.1.0",
+        "@filenest/react": "0.1.0",
         "@tabler/icons-react": "3.7.0",
         "clsx": "2.1.1",
         "next": "14.2.5",

@@ -30,7 +30,7 @@
         "typescript": "5.5.3"
     },
     "peerDependencies": {
-        "@filenest/core": "file:../../packages/core"
+        "@filenest/core": "0.1.0"
     },
     "engines": {
         "pnpm": ">=9.3.0"

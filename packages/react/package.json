@@ -34,7 +34,7 @@
         "tailwind-merge": "2.3.0"
     },
     "peerDependencies": {
-        "@filenest/core": "file:../../packages/core",
+        "@filenest/core": "0.1.0",
         "react": ">=18",
         "react-dom": ">=18"
     },

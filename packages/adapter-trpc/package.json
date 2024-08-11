@@ -29,7 +29,7 @@
         "typescript": "5.5.3"
     },
     "peerDependencies": {
-        "@filenest/core": "file:../../packages/core",
+        "@filenest/core": "0.1.0",
         "@trpc/server": ">= 10",
         "zod": ">= 3.20.0"
     },
