@@ -2,12 +2,16 @@
     "name": "filenest",
     "private": true,
     "scripts": {
-        "docs:dev": "pnpm --filter \"docs\" run dev",
-        "docs:build": "pnpm --filter \"docs\" run build",
-        "dev": "pnpm --filter \"@filenest/*\" run dev",
-        "build": "pnpm --filter \"@filenest/*\" run build"
+        "docs:dev": "turbo dev --filter=\"./docs\"",
+        "docs:build": "turbo build --filter=\"./docs\"",
+        "dev": "turbo dev --filter=\"@filenest/*\"",
+        "build": "turbo build --filter=\"@filenest/*\""
     },
+    "packageManager": "pnpm@9.3.0",
     "engines": {
         "pnpm": ">=9.3.0"
+    },
+    "dependencies": {
+        "turbo": "^2.0.12"
     }
 }
