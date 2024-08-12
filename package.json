@@ -5,6 +5,7 @@
         "docs:dev": "turbo dev --filter=\"./docs\"",
         "docs:build": "turbo build --filter=\"./docs\"",
         "dev": "turbo dev --filter=\"@filenest/*\"",
+        "prebuild": "turbo build --filter=\"@filenest/core\"",
         "build": "turbo build --filter=\"@filenest/*\"",
         "lint": "pnpm --filter=\"@filenest/*\" run lint"
     },
