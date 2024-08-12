@@ -7,6 +7,10 @@ on:
 
 jobs:
     main:
+        permissions:
+            contents: write
+            issues: write
+            pull-requests: write
         runs-on: ubuntu-latest
 
         steps:
@@ -33,5 +37,5 @@ jobs:
               with:
                 publish: pnpm build
               env:
-                GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                 NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
