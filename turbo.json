@@ -15,6 +15,7 @@
         "dev": {
             "persistent": true,
             "cache": false
-        }
+        },
+        "lint": {}
     }
 }

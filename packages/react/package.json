@@ -26,7 +26,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "tsup src/index.ts --dts --format cjs,esm --sourcemap",
-        "dev": "tsup src/index.ts --dts --sourcemap --watch"
+        "dev": "tsup src/index.ts --dts --sourcemap --watch",
+        "lint": "eslint ."
     },
     "dependencies": {
         "@radix-ui/react-alert-dialog": "^1.1.1",
@@ -44,9 +45,11 @@
         "react-dom": ">=18"
     },
     "devDependencies": {
+        "@internal/eslint": "workspace:*",
         "@internal/tsconfig": "workspace:*",
         "@types/react": "^18",
         "@types/react-dom": "^18",
+        "eslint": "9.9.0",
         "react": "^18",
         "react-dom": "^18",
         "tsup": "^8.2.4",

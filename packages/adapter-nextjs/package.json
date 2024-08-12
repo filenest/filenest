@@ -26,10 +26,13 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "tsup src/index.ts --dts --format cjs,esm --sourcemap",
-        "dev": "tsup src/index.ts --dts --sourcemap --watch"
+        "dev": "tsup src/index.ts --dts --sourcemap --watch",
+        "lint": "eslint ."
     },
     "devDependencies": {
+        "@internal/eslint": "workspace:*",
         "@internal/tsconfig": "workspace:*",
+        "eslint": "9.9.0",
         "next": "^14 || ^15",
         "tsup": "^8.2.4",
         "typescript": "5.5.3"

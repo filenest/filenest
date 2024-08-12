@@ -22,8 +22,11 @@ jobs:
                   node-version: "22.x"
                   cache: "pnpm"
           
-            - name: 'Install dependencies'
+            - name: "Install dependencies"
               run: pnpm install
+
+            - name: "Lint code"
+              run: "pnpm lint"
           
             - name: Create Release PR or publish
               uses: changesets/action@v1

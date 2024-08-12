@@ -5,7 +5,8 @@
         "docs:dev": "turbo dev --filter=\"./docs\"",
         "docs:build": "turbo build --filter=\"./docs\"",
         "dev": "turbo dev --filter=\"@filenest/*\"",
-        "build": "turbo build --filter=\"@filenest/*\""
+        "build": "turbo build --filter=\"@filenest/*\"",
+        "lint": "turbo lint --filter=\"@filenest/*\""
     },
     "packageManager": "pnpm@9.7.0",
     "engines": {

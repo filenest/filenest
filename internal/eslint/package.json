@@ -1,0 +1,10 @@
+{
+    "name": "@internal/eslint",
+    "version": "0.0.0",
+    "files": ["base.mjs"],
+    "main": "base.mjs",
+    "devDependencies": {
+        "@eslint/js": "9.9.0",
+        "typescript-eslint": "8.0.1"
+    }
+}
