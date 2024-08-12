@@ -69,7 +69,7 @@ class FilenestTRPCRouter {
         const routes = Object.fromEntries(
             methodNames.map((k) => {
                 const key = k as keyof Provider
-                const schemaName = (key.charAt(0).toUpperCase() + key.slice(1) + "Input") as keyof typeof inputSchemas
+                const schemaName = ((key as string).charAt(0).toUpperCase() + (key as string).slice(1) + "Input") as keyof typeof inputSchemas
                 const mw = [...this.middleware, ...(this.routeMiddleware[key] || [])]
                 const proc = new ProcedureWithMiddleware(mw).input(inputSchemas[schemaName]).execute(this.provider[key])
                 return [key, proc]
