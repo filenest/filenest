@@ -1,6 +1,6 @@
 {
     "name": "@filenest/react",
-    "version": "0.1.0",
+    "version": "0.0.1",
     "description": "",
     "keywords": [],
     "author": "nordowl",
@@ -40,7 +40,7 @@
         "tailwind-merge": "2.3.0"
     },
     "peerDependencies": {
-        "@filenest/core": "0.1.0",
+        "@filenest/core": "workspace:*",
         "react": ">=18",
         "react-dom": ">=18"
     },

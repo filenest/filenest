@@ -9,10 +9,10 @@
         "lint": "next lint"
     },
     "dependencies": {
-        "@filenest/adapter-trpc": "0.1.0",
-        "@filenest/core": "0.1.0",
-        "@filenest/provider-cloudinary": "0.1.0",
-        "@filenest/react": "0.1.0",
+        "@filenest/adapter-trpc": "workspace:*",
+        "@filenest/core": "workspace:*",
+        "@filenest/provider-cloudinary": "workspace:*",
+        "@filenest/react": "workspace:*",
         "@tabler/icons-react": "3.7.0",
         "@trpc/client": "10",
         "@trpc/server": "10",
