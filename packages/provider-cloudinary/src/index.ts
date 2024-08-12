@@ -1,6 +1,5 @@
 import crypto from "crypto"
-import { type Provider } from "@filenest/core"
-
+import slugify from "slugify"
 import {
     DeleteAssetInput,
     GetUploadUrlInput,
@@ -10,8 +9,8 @@ import {
     type DeleteFolderInput,
     type GetResourcesInput,
     type RenameFolderInput,
+    type Provider,
 } from "@filenest/core"
-import slugify from "slugify"
 
 type CloudinaryConfig = {
     API_KEY: string
