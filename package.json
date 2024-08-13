@@ -8,7 +8,7 @@
         "prebuild": "turbo build --filter=\"@filenest/core\"",
         "build": "turbo build --filter=\"@filenest/*\"",
         "lint": "pnpm --filter=\"@filenest/*\" run lint",
-        "handle-with-care-ci": "tsx ./scripts/ci.js"
+        "handle-with-care-ci": "tsx ./scripts/ci.ts"
     },
     "packageManager": "pnpm@9.7.0",
     "engines": {

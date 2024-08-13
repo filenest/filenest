@@ -52,7 +52,16 @@ function setFilenestDependenciesVersion(packagePath: string, newVersion: string)
 }
 
 //================================================================/
-// Prepare for publish, bump versions and update dependencies
+// Build packages first
+//================================================================/
+console.log(chalk.cyanBright("\nLinting packages..."))
+execSync("pnpm lint", { stdio: "inherit" })
+
+console.log(chalk.cyanBright("\nBuilding packages..."))
+execSync("pnpm build", { stdio: "inherit" })
+
+//================================================================/
+// Prepare for publish: Bump versions and update dependencies
 //================================================================/
 
 // Filter for @filenest packages and get their paths
@@ -77,7 +86,7 @@ filenestPackages.forEach((packagePath) => {
 })
 
 console.log(chalk.cyanBright(`Highest current version found: ${highestVersion}`))
-console.log(chalk.cyanBright(`Applying ${versionBump} version bump...`))
+console.log(chalk.cyanBright(`Applying ${versionBump} version bump...\n`))
 
 // Calculate the new version based on the highest current version
 const newVersion = calculateNewVersion(highestVersion, versionBump)
@@ -100,17 +109,19 @@ exampleFiles.forEach((packagePath) => {
     setFilenestDependenciesVersion(packagePath, newVersion)
 })
 
-console.log(chalk.greenBright("================================================================"))
+console.log(chalk.greenBright("\n================================================================"))
 console.log(chalk.greenBright(`All @filenest/* packages have been updated to version ${newVersion}`))
-console.log(chalk.greenBright("================================================================"))
+console.log(chalk.greenBright("================================================================\n"))
 
 //================================================================/
-// Prepare for publish, bump versions and update dependencies
+// Publish all packages to npm
 //================================================================/
 
-console.log(chalk.greenBright("================================================================"))
+// TODO
+
+console.log(chalk.greenBright("\n================================================================"))
 console.log(chalk.greenBright(`Published all @filenest/* packages to npm (version ${newVersion})`))
-console.log(chalk.greenBright("================================================================"))
+console.log(chalk.greenBright("================================================================\n"))
 
 //================================================================/
 // Clean up, commit, create GitHub release
@@ -122,4 +133,9 @@ filesToReset.forEach((packagePath) => {
     setFilenestDependenciesVersion(packagePath, "workspace:*")
 })
 
-console.log(chalk.cyanBright("Workspace was reset"))
+console.log(chalk.cyanBright("\nWorkspace was reset"))
+console.log(chalk.cyanBright("\nCommitting changes..."))
+
+// TODO commit
+
+// TODO create GitHub release
