@@ -17,7 +17,6 @@ function calculateNewVersion(currentVersion, bumpType) {
     }
 }
 
-
 function updatePackageVersion(packagePath, newVersion) {
     const packageJson = JSON.parse(fs.readFileSync(packagePath, "utf8"))
     packageJson.version = newVersion
@@ -60,6 +59,7 @@ filenestPackages.forEach((packagePath) => {
 })
 
 console.log(`Highest current version found: ${highestVersion}`)
+console.log(`Applying ${versionBump} version bump...`)
 
 // Calculate the new version based on the highest current version
 const newVersion = calculateNewVersion(highestVersion, versionBump)

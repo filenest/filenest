@@ -7,7 +7,8 @@
         "dev": "turbo dev --filter=\"@filenest/*\"",
         "prebuild": "turbo build --filter=\"@filenest/core\"",
         "build": "turbo build --filter=\"@filenest/*\"",
-        "lint": "pnpm --filter=\"@filenest/*\" run lint"
+        "lint": "pnpm --filter=\"@filenest/*\" run lint",
+        "bump-version": "node ./scripts/bump-version.js"
     },
     "packageManager": "pnpm@9.7.0",
     "engines": {
