@@ -1,6 +1,6 @@
 {
     "name": "@filenest/adapter-nextjs",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "",
     "keywords": [],
     "author": "nordowl",
@@ -38,7 +38,7 @@
         "typescript": "5.5.3"
     },
     "peerDependencies": {
-        "@filenest/core": "workspace:*"
+        "@filenest/core": "0.1.0"
     },
     "engines": {
         "pnpm": ">=9.3.0"
