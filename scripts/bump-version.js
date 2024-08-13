@@ -1,6 +1,7 @@
 const fs = require("fs")
 const glob = require("glob")
 const semver = require("semver")
+const yaml = require("yaml")
 
 const versionBump = process.argv[2] || "patch"
 
@@ -22,23 +23,23 @@ function updatePackageVersion(packagePath, newVersion) {
     packageJson.version = newVersion
 
     // Update dependencies
-    const dependencyTypes = ['dependencies', 'devDependencies', 'peerDependencies']
+    const dependencyTypes = ["dependencies", "devDependencies", "peerDependencies"]
     dependencyTypes.forEach(depType => {
         if (packageJson[depType]) {
             Object.keys(packageJson[depType]).forEach(dep => {
-                if (dep.startsWith('@filenest/')) {
-                    packageJson[depType][dep] = newVersion
+                if (dep.startsWith("@filenest/")) {
+                    packageJson[depType][dep] = "^" + newVersion
                 }
             })
         }
     })
 
     fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2))
-    console.log(`Updated ${packagePath} to version ${newVersion}`)
+    console.log(`Updated ${packageJson.name} to version ${newVersion}`)
 }
 
 // Filter for @filenest packages and get their paths
-const packageFiles = glob.sync('packages/*/package.json');
+const packageFiles = glob.sync("packages/*/package.json");
 const filenestPackages = packageFiles.filter((packagePath) => {
     const packageJson = JSON.parse(fs.readFileSync(packagePath, "utf8"))
     return packageJson.name.startsWith("@filenest/")
@@ -69,4 +70,15 @@ filenestPackages.forEach((packagePath) => {
     updatePackageVersion(packagePath, newVersion)
 })
 
+// Update examples dependencies
+const exampleFiles = glob.sync("examples/*/package.json");
+console.log("Updating examples dependencies...")
+exampleFiles.forEach((packagePath) => {
+    updatePackageVersion(packagePath, newVersion)
+})
+
 console.log(`All @filenest/* packages have been updated to version ${newVersion}`)
+
+// Update root pnpm-lock.yaml
+const lockfile = yaml.parse(fs.readFileSync("pnpm-lock.yaml", "utf8"))
+console.log(lockfile)

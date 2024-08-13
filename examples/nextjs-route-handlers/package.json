@@ -1,6 +1,5 @@
 {
     "name": "examples-nextjs-route-handlers",
-    "version": "0.1.0",
     "private": true,
     "scripts": {
         "dev": "next dev",
@@ -9,10 +8,10 @@
         "lint": "next lint"
     },
     "dependencies": {
-        "@filenest/adapter-nextjs": "0.1.0",
-        "@filenest/core": "0.1.0",
-        "@filenest/provider-cloudinary": "0.1.0",
-        "@filenest/react": "0.1.0",
+        "@filenest/adapter-nextjs": "workspace:*",
+        "@filenest/core": "workspace:*",
+        "@filenest/provider-cloudinary": "workspace:*",
+        "@filenest/react": "workspace:*",
         "@tabler/icons-react": "3.7.0",
         "clsx": "2.1.1",
         "next": "14.2.5",
