@@ -11,15 +11,25 @@ importers:
       '@changesets/cli':
         specifier: ^2.27.7
         version: 2.27.7
+      turbo:
+        specifier: ^2.0.12
+        version: 2.0.12
+    devDependencies:
+      '@types/semver':
+        specifier: ^7.5.8
+        version: 7.5.8
+      chalk:
+        specifier: ^5.3.0
+        version: 5.3.0
       glob:
         specifier: ^11.0.0
         version: 11.0.0
       semver:
         specifier: ^7.6.3
         version: 7.6.3
-      turbo:
-        specifier: ^2.0.12
-        version: 2.0.12
+      tsx:
+        specifier: ^4.17.0
+        version: 4.17.0
 
   docs:
     dependencies:
@@ -184,7 +194,7 @@ importers:
         version: 14.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.5)
       tsup:
         specifier: ^8.2.4
-        version: 8.2.4(jiti@1.21.0)(postcss@8.4.41)(typescript@5.5.3)(yaml@2.4.3)
+        version: 8.2.4(jiti@1.21.0)(postcss@8.4.41)(tsx@4.17.0)(typescript@5.5.3)(yaml@2.4.3)
       typescript:
         specifier: 5.5.3
         version: 5.5.3
@@ -212,7 +222,7 @@ importers:
         version: 9.9.0(jiti@1.21.0)
       tsup:
         specifier: ^8.2.4
-        version: 8.2.4(jiti@1.21.0)(postcss@8.4.41)(typescript@5.5.3)(yaml@2.4.3)
+        version: 8.2.4(jiti@1.21.0)(postcss@8.4.41)(tsx@4.17.0)(typescript@5.5.3)(yaml@2.4.3)
       typescript:
         specifier: 5.5.3
         version: 5.5.3
@@ -234,7 +244,7 @@ importers:
         version: 9.9.0(jiti@1.21.0)
       tsup:
         specifier: ^8.2.4
-        version: 8.2.4(jiti@1.21.0)(postcss@8.4.41)(typescript@5.5.3)(yaml@2.4.3)
+        version: 8.2.4(jiti@1.21.0)(postcss@8.4.41)(tsx@4.17.0)(typescript@5.5.3)(yaml@2.4.3)
       typescript:
         specifier: 5.5.3
         version: 5.5.3
@@ -262,7 +272,7 @@ importers:
         version: 9.9.0(jiti@1.21.0)
       tsup:
         specifier: ^8.2.4
-        version: 8.2.4(jiti@1.21.0)(postcss@8.4.41)(typescript@5.5.3)(yaml@2.4.3)
+        version: 8.2.4(jiti@1.21.0)(postcss@8.4.41)(tsx@4.17.0)(typescript@5.5.3)(yaml@2.4.3)
 
   packages/react:
     dependencies:
@@ -317,7 +327,7 @@ importers:
         version: 18.3.1(react@18.3.1)
       tsup:
         specifier: ^8.2.4
-        version: 8.2.4(jiti@1.21.0)(postcss@8.4.41)(typescript@5.5.3)(yaml@2.4.3)
+        version: 8.2.4(jiti@1.21.0)(postcss@8.4.41)(tsx@4.17.0)(typescript@5.5.3)(yaml@2.4.3)
       typescript:
         specifier: 5.5.3
         version: 5.5.3
@@ -2076,6 +2086,9 @@ packages:
     resolution: {integrity: sha512-ts6Wi+2j3jQjqi70w5AlN8DFnkSwC+MqmxEzdEALB2qXZYV3X/b1CTfgPLGJNMeAWxdPfU8FO1ms3NUfaHCPYg==}
     engines: {node: '>=10'}
 
+  get-tsconfig@4.7.6:
+    resolution: {integrity: sha512-ZAqrLlu18NbDdRaHq+AKXzAmqIUPswPWKUchfytdAjiRFnCe5ojG2bstg6mRiZabkKfCoL/e98pbBELIV/YCeA==}
+
   github-slugger@2.0.0:
     resolution: {integrity: sha512-IaOQ9puYtjrkq7Y0Ygl9KDZnrf/aiUJYUpVf89y8kyaxbRG7Y1SrX/jaumrv81vc61+kiMempujsM3Yw7w5qcw==}
 
@@ -3137,6 +3150,9 @@ packages:
     resolution: {integrity: sha512-qYg9KP24dD5qka9J47d0aVky0N+b4fTU89LN9iDnjB5waksiC49rvMB0PrUJQGoTmH50XPiqOvAjDfaijGxYZw==}
     engines: {node: '>=8'}
 
+  resolve-pkg-maps@1.0.0:
+    resolution: {integrity: sha512-seS2Tj26TBVOC2NIc2rOe2y2ZO7efxITtLZcGSOnHHNOQ7CkiUBfw0Iw2ck6xkIhPwLhKNLS8BO+hEpngQlqzw==}
+
   resolve@1.22.8:
     resolution: {integrity: sha512-oKWePCxqpd6FlLvGV1VU0x7bkPmmCNolxzjMf4NczoDnQcIWrAF+cPtZn5i6n+RfD2d9i0tzpKnG6Yk168yIyw==}
     hasBin: true
@@ -3565,6 +3581,11 @@ packages:
         optional: true
       typescript:
         optional: true
+
+  tsx@4.17.0:
+    resolution: {integrity: sha512-eN4mnDA5UMKDt4YZixo9tBioibaMBpoxBkD+rIPAjVmYERSG0/dWEY1CEFuV89CgASlKL499q8AhmkMnnjtOJg==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
 
   turbo-darwin-64@2.0.12:
     resolution: {integrity: sha512-NAgfgbXxX/JScWQmmQnGbPuFZq7LIswHfcMk5JwyBXQM/xmklNOxxac7MnGGIOf19Z2f6S3qHy17VIj0SeGfnA==}
@@ -5630,6 +5651,10 @@ snapshots:
 
   get-stream@6.0.1: {}
 
+  get-tsconfig@4.7.6:
+    dependencies:
+      resolve-pkg-maps: 1.0.0
+
   github-slugger@2.0.0: {}
 
   glob-parent@5.1.2:
@@ -6775,12 +6800,13 @@ snapshots:
     optionalDependencies:
       postcss: 8.4.41
 
-  postcss-load-config@6.0.1(jiti@1.21.0)(postcss@8.4.41)(yaml@2.4.3):
+  postcss-load-config@6.0.1(jiti@1.21.0)(postcss@8.4.41)(tsx@4.17.0)(yaml@2.4.3):
     dependencies:
       lilconfig: 3.1.1
     optionalDependencies:
       jiti: 1.21.0
       postcss: 8.4.41
+      tsx: 4.17.0
       yaml: 2.4.3
 
   postcss-nested@6.2.0(postcss@8.4.41):
@@ -7037,6 +7063,8 @@ snapshots:
   resolve-from@4.0.0: {}
 
   resolve-from@5.0.0: {}
+
+  resolve-pkg-maps@1.0.0: {}
 
   resolve@1.22.8:
     dependencies:
@@ -7421,7 +7449,7 @@ snapshots:
 
   tslib@2.6.3: {}
 
-  tsup@8.2.4(jiti@1.21.0)(postcss@8.4.41)(typescript@5.5.3)(yaml@2.4.3):
+  tsup@8.2.4(jiti@1.21.0)(postcss@8.4.41)(tsx@4.17.0)(typescript@5.5.3)(yaml@2.4.3):
     dependencies:
       bundle-require: 5.0.0(esbuild@0.23.0)
       cac: 6.7.14
@@ -7433,7 +7461,7 @@ snapshots:
       globby: 11.1.0
       joycon: 3.1.1
       picocolors: 1.0.1
-      postcss-load-config: 6.0.1(jiti@1.21.0)(postcss@8.4.41)(yaml@2.4.3)
+      postcss-load-config: 6.0.1(jiti@1.21.0)(postcss@8.4.41)(tsx@4.17.0)(yaml@2.4.3)
       resolve-from: 5.0.0
       rollup: 4.20.0
       source-map: 0.8.0-beta.0
@@ -7447,6 +7475,13 @@ snapshots:
       - supports-color
       - tsx
       - yaml
+
+  tsx@4.17.0:
+    dependencies:
+      esbuild: 0.23.0
+      get-tsconfig: 4.7.6
+    optionalDependencies:
+      fsevents: 2.3.3
 
   turbo-darwin-64@2.0.12:
     optional: true
