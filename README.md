@@ -1,4 +1,5 @@
-![Filenest Banner](.github/images/banner.png)
+![Filenest Banner](.github/media/banner.png)
+![Filenest Demo](.github/media/demo.mp4)
 
 # Filenest  
 **Build your own File Manager Component**  
