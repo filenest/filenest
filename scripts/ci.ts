@@ -3,6 +3,7 @@ import { glob } from "glob"
 import semver from "semver"
 import chalk from "chalk"
 import { execSync } from "child_process"
+import * as ci from "@actions/core"
 
 const versionBump = (process.argv[2] || "patch") as BumpType
 
@@ -117,14 +118,22 @@ console.log(chalk.greenBright("=================================================
 // Publish all packages to npm
 //================================================================/
 
-// TODO
+execSync("pnpm --dry-run --filter '@filenest/*' --access public -r publish", {
+    stdio: "inherit",
+    env: {
+        ...process.env,
+        NODE_AUTH_TOKEN: process.env.NODE_AUTH_TOKEN,
+    }
+})
+
+ci.setOutput("version", newVersion)
 
 console.log(chalk.greenBright("\n================================================================"))
 console.log(chalk.greenBright(`Published all @filenest/* packages to npm (version ${newVersion})`))
 console.log(chalk.greenBright("================================================================\n"))
 
 //================================================================/
-// Clean up, commit, create GitHub release
+// Clean up
 //================================================================/
 
 // Reset all dependencies to use workspace:*
@@ -136,6 +145,4 @@ filesToReset.forEach((packagePath) => {
 console.log(chalk.cyanBright("\nWorkspace was reset"))
 console.log(chalk.cyanBright("\nCommitting changes..."))
 
-// TODO commit
-
-// TODO create GitHub release
+// Committing and creating GH release is done directly in workflow
