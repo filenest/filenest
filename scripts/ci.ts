@@ -5,7 +5,7 @@ import chalk from "chalk"
 import { execSync } from "child_process"
 import * as ci from "@actions/core"
 
-const versionBump = (process.argv[2] || "patch") as BumpType
+const versionBump = process.env.VERSION_BUMP_TYPE as BumpType
 
 type BumpType = "patch" | "minor" | "major"
 

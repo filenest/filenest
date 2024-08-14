@@ -40,6 +40,7 @@ jobs:
               id: publish
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+                  VERSION_BUMP_TYPE: ${{ github.event.inputs.version }}
               run: pnpm handle-with-care-ci
 
             - name: "Prepare GitHub Release"
