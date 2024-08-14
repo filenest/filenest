@@ -118,7 +118,7 @@ console.log(chalk.greenBright("=================================================
 // Publish all packages to npm
 //================================================================/
 
-execSync("pnpm -r publish --access public --dry-run --no-git-checks --filter '@filenest/*'", {
+execSync("pnpm -r publish --access public --no-git-checks --filter '@filenest/*'", {
     stdio: "inherit",
     env: {
         ...process.env,
