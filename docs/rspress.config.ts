@@ -7,10 +7,10 @@ export default defineConfig({
     base: "/filenest",
     title: "Filenest",
     description: "Building blocks for your own React file browser, connecting your favorite CDN with your app",
-    icon: "/filenest-owl.svg",
+    icon: "https://raw.githubusercontent.com/filenest/filenest/next/.github/media/filenest-owl.svg",
     logo: {
-        light: "/filenest-logo.svg",
-        dark: "/filenest-logo.svg",
+        light: "https://raw.githubusercontent.com/filenest/filenest/next/.github/media/filenest-logo.svg",
+        dark: "https://raw.githubusercontent.com/filenest/filenest/next/.github/media/filenest-logo.svg"
     },
     themeConfig: {
         socialLinks: [{ icon: "github", mode: "link", content: "https://github.com/filenest/filenest" }],

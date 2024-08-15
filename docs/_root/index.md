@@ -17,7 +17,7 @@ hero:
           text: Quick Start
           link: /docs/getting-started/quick-start
     image:
-        src: /filenest-owl.svg
+        src: https://raw.githubusercontent.com/filenest/filenest/next/.github/media/filenest-owl.svg
 
 features:
     - title: "Supports Popular Providers"
