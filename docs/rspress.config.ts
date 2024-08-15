@@ -4,6 +4,7 @@ import { pluginShiki } from "@rspress/plugin-shiki"
 
 export default defineConfig({
     root: path.join(__dirname, "_root"),
+    base: "/filenest",
     title: "Filenest",
     description: "Building blocks for your own React file browser, connecting your favorite CDN with your app",
     icon: "/filenest-owl.svg",
