@@ -1,4 +1,4 @@
-import { fetchRequestHandler } from "@trpc/server/adapters/fetch"
+import { FetchCreateContextFnOptions, fetchRequestHandler } from "@trpc/server/adapters/fetch"
 import { initTRPC } from "@trpc/server"
 import { initTRPCAdapter } from "@filenest/adapter-trpc"
 import { Cloudinary } from "@filenest/provider-cloudinary"
@@ -9,7 +9,10 @@ const provider = new Cloudinary({
     CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME!,
 })
 
-const t = initTRPC.create()
+const createContext = ({ req }: FetchCreateContextFnOptions) => ({ req })
+export type Context = Awaited<ReturnType<typeof createContext>>
+
+const t = initTRPC.context<Context>().create()
 
 const helloMiddleware = t.middleware(({ ctx, next }) => {
     console.log("hello from middleware. this runs on each request")
@@ -39,5 +42,6 @@ const handler = (req: Request) =>
         endpoint: "/api/trpc",
         req,
         router: trpcRouter,
+        createContext
     })
 export { handler as GET, handler as POST }
