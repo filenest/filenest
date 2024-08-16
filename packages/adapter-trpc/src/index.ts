@@ -1,4 +1,4 @@
-import { initTRPC, type MiddlewareBuilder } from "@trpc/server"
+import { initTRPC, ProcedureBuilder, ProcedureParams, type MiddlewareBuilder } from "@trpc/server"
 import { z } from "zod"
 import {
     CreateFolderInput,
@@ -29,9 +29,11 @@ type RouteMiddleware = Record<keyof Provider, Middleware[]>
 class ProcedureWithMiddleware {
     inputSchema: z.ZodType<unknown> = z.object({}).optional()
     middlewares: Middleware[]
+    procedure: ProcedureBuilder<any>
 
-    constructor(middlewares: Middleware[] = []) {
+    constructor(procedure: ProcedureBuilder<any>, middlewares: Middleware[] = []) {
         this.middlewares = middlewares
+        this.procedure = procedure
     }
 
     public input(schema: z.ZodType<any>) {
@@ -42,7 +44,7 @@ class ProcedureWithMiddleware {
     public execute(action: Provider[keyof Provider]) {
         const procedure = this.middlewares.reduce((procWithMw, mw) => {
             return procWithMw.use(mw)
-        }, t.procedure)
+        }, this.procedure)
 
         return procedure.input(this.inputSchema).mutation(async ({ input }) => await action(input as any))
     }
@@ -52,9 +54,15 @@ class FilenestTRPCRouter {
     private middleware: Middleware[] = []
     private routeMiddleware: Partial<RouteMiddleware> = {}
     private provider: Provider
+    private proc: ProcedureBuilder<any> = t.procedure
 
     constructor(provider: Provider) {
         this.provider = provider
+    }
+
+    public procedure(procedure: ProcedureBuilder<any>) {
+        this.proc = procedure
+        return this
     }
 
     public use(globalMiddleware: Middleware[], routeMiddleware?: Partial<RouteMiddleware>) {
@@ -71,8 +79,8 @@ class FilenestTRPCRouter {
                 const key = k as keyof Provider
                 const schemaName = ((key as string).charAt(0).toUpperCase() + (key as string).slice(1) + "Input") as keyof typeof inputSchemas
                 const mw = [...this.middleware, ...(this.routeMiddleware[key] || [])]
-                const proc = new ProcedureWithMiddleware(mw).input(inputSchemas[schemaName]).execute(this.provider[key])
-                return [key, proc]
+                const procedure = new ProcedureWithMiddleware(this.proc, mw).input(inputSchemas[schemaName]).execute(this.provider[key])
+                return [key, procedure]
             })
         ) as Record<string, any> // TODO: Improve type safety. Just putting this here to remove errors
 

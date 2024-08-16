@@ -1,5 +1,5 @@
 import { FetchCreateContextFnOptions, fetchRequestHandler } from "@trpc/server/adapters/fetch"
-import { initTRPC } from "@trpc/server"
+import { initTRPC, TRPCError } from "@trpc/server"
 import { initTRPCAdapter } from "@filenest/adapter-trpc"
 import { Cloudinary } from "@filenest/provider-cloudinary"
 
@@ -24,7 +24,13 @@ const folderMiddleware = t.middleware(({ ctx, next }) => {
     return next()
 })
 
+const adminProcedure = t.procedure.use(t.middleware(({ ctx, next }) => {
+    console.log("in most cases, your filenest media routes should be protected by authentication")
+    return next()
+}))
+
 const mediaRouter = initTRPCAdapter(provider)
+    .procedure(adminProcedure)
     .use(
         [helloMiddleware],
         {

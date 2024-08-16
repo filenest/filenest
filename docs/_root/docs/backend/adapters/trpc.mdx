@@ -103,3 +103,20 @@ const mediaRouter = initTRPCAdapter(provider)
     .use([owlMiddleware])
     .create()
 ```
+
+## Custom Procedure
+
+Oftentimes you have different procedures depending on the authentication
+requirements of a procedure. You can pass in an arbitrary procedure to be
+used for all Filenest tRPC procedures. This can make it easier to apply middleware.
+
+```ts
+const adminProcedure = t.procedure.use(t.middleware(({ ctx, next }) => {
+    // do auth checks
+    return next()
+}))
+
+const mediaRouter = initTRPCAdapter(provider)
+    .procedure(adminProcedure)
+    .create()
+```
