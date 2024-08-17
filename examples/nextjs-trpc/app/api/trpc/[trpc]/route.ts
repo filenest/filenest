@@ -1,5 +1,5 @@
 import { FetchCreateContextFnOptions, fetchRequestHandler } from "@trpc/server/adapters/fetch"
-import { initTRPC, TRPCError } from "@trpc/server"
+import { initTRPC } from "@trpc/server"
 import { initTRPCAdapter } from "@filenest/adapter-trpc"
 import { Cloudinary } from "@filenest/provider-cloudinary"
 
