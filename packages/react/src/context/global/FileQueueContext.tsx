@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useCallback, useContext, useState } from "react"
+import { createContext, useCallback, useContext, useRef, useState } from "react"
 import { useGlobalContext } from "./GlobalContext"
 
 export interface FileQueueContext {
@@ -13,6 +13,7 @@ export interface FileQueueContext {
     setUploader: (uploaderName: string, state: Partial<UploaderState[string]>) => void
     getUploader: (id: string) => UploaderState[string] | undefined
     getUploaderFiles: (id: string) => QueueFile[]
+    uploaderListeners: React.MutableRefObject<Record<string, UploaderListener | undefined>>
 }
 
 const FileQueueContext = createContext<FileQueueContext | null>(null)
@@ -33,6 +34,7 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
     const { currentFolder, fetchers, resourcesQuery } = useGlobalContext()
 
     const [uploaders, setUploaders] = useState<UploaderState>({})
+    const uploaderListeners = useRef<Record<string, UploaderListener | undefined>>({})
     const [files, setFiles] = useState<QueueFile[]>([])
 
     const getUploader = useCallback((id: string) => {
@@ -133,6 +135,8 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
         const uploader = getUploader(uploaderName)
         if (!uploader) return
 
+        const events = uploaderListeners.current[uploaderName]
+
         const filesToUpload = files.filter(f => f.uploaderName === uploaderName).map(f => f.file)
         if (!filesToUpload.length) return
 
@@ -160,15 +164,21 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
                     xhr.upload.addEventListener("progress", (e) => {
                         const percentage = (e.loaded / e.total) * 100
                         setQueueFile(uploaderName, file.name, { progress: Number(percentage.toFixed(2))})
-                    
+                        events?.onProgress?.(percentage)
                     })
                     xhr.upload.addEventListener("load", resolve)
                     xhr.upload.addEventListener("error", reject)
                     xhr.send(data)
                 })
                 setQueueFile(uploaderName, file.name, { isUploading: false, isSuccess: true })
+                events?.onUpload?.(file)
             } catch (error) {
                 setQueueFile(uploaderName, file.name, { isUploading: false, isSuccess: false })
+                let message = `An error occurred while uploading the file ${file.name}`
+                if (error instanceof Error) {
+                    message = error.message
+                }
+                events?.onError?.(message)
             }
         }
 
@@ -180,6 +190,7 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
             await resourcesQuery.refetch() // TODO: Better: add assets to state directly
             setUploader(uploaderName, { isUploading: false })
             clearQueue(uploaderName)
+            events?.onSuccess?.()
         }
     }, [files, currentFolder])
 
@@ -193,6 +204,7 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
         setUploader,
         getUploader,
         getUploaderFiles,
+        uploaderListeners
     }
 
     return <FileQueueContext.Provider value={contextValue}>{children}</FileQueueContext.Provider>
@@ -211,4 +223,12 @@ export interface QueueFile {
     isUploading: boolean
     isSuccess: boolean
     progress: number
+}
+
+
+interface UploaderListener {
+    onProgress?: (progress: number) => void
+    onUpload?: (file: File) => void
+    onSuccess?: () => void
+    onError?: (message: string) => void
 }

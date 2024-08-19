@@ -25,10 +25,10 @@ export interface UploaderProviderProps {
     noClick?: boolean
     multiple?: boolean
     uploadOnDrop?: boolean
-    onUpload?: (files: File[]) => void
+    onUpload?: (file: File) => void
     onProgress?: (progress: number) => void
     onSuccess?: () => void
-    onError?: (error: Error) => void
+    onError?: (message: string) => void
     disabled?: boolean
     maxFiles?: number
     maxSize?: number
@@ -46,10 +46,16 @@ export const UploaderProvider = ({
     onProgress,
     onSuccess,
     onUpload,
-    uploadOnDrop,
     name
 }: UploaderProviderProps) => {
-    const { upload } = useFileQueueContext()
+    const { uploaderListeners } = useFileQueueContext()
+
+    uploaderListeners.current[name] = {
+        onError,
+        onProgress,
+        onSuccess,
+        onUpload
+    }
 
     const dropzone = useDropzone({
         maxSize,
@@ -57,17 +63,8 @@ export const UploaderProvider = ({
         multiple,
         noClick,
         noDrag: noDrop,
-        onDrop: async (acceptedFiles) => {
-            if (uploadOnDrop) {
-                onUpload?.(acceptedFiles)
-                // Currently doesnt work, because upload function uses state from GlobalContext
-                // and at this point the state does not include the new acceptedFiles
-                
-                // await upload(name)
-            }
-        },
         onError: (err) => {
-            onError?.(err)
+            onError?.(err.message)
         },
         disabled
     })
