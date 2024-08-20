@@ -50,6 +50,7 @@ export interface GlobalContext {
     setSelectedFiles: SetState<Asset[]>
     isToolbarBusy: boolean
     setIsToolbarBusy: SetState<boolean>
+    onError?: (message: string) => void
 }
 
 const GlobalContext = createContext<GlobalContext | null>(null)
@@ -65,9 +66,9 @@ export const useGlobalContext = () => {
 interface GlobalProviderProps extends RootProps {}
 
 export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
-    const { endpoint, endpointIsTRPC = false } = props
+    const { endpoint, endpointIsTRPC = false, onError } = props
 
-    const fetchers = createFetchers({ endpoint, endpointIsTRPC })
+    const fetchers = createFetchers({ endpoint, endpointIsTRPC, onError })
 
     const _labels = { ...labels, ...props.labels }
     function _l(label: keyof typeof labels): string {
@@ -285,7 +286,8 @@ export const GlobalProvider = ({ children, ...props }: GlobalProviderProps) => {
         selectedFiles,
         setSelectedFiles,
         isToolbarBusy,
-        setIsToolbarBusy
+        setIsToolbarBusy,
+        onError
     }
 
     return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>

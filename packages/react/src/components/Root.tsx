@@ -12,6 +12,7 @@ export type RootProps = {
     endpointIsTRPC?: boolean
     labels?: Partial<Record<keyof typeof labels, string>>
     onAssetSelect?: (asset: Asset) => void
+    onError?: (message: string) => void
 }
 
 const queryClient = new QueryClient({

@@ -36,6 +36,12 @@ Can be used to store the selected asset URL in a form state, for example.
 
 **Type:** `(asset: Asset) => void`
 
+### `onError`
+A function that is called when a fetch error occurs.  
+Can be used to display toast notifications, for example.
+
+**Type:** `(message: string) => void`
+
 ## Usage
 
 ```tsx
