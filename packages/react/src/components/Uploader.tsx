@@ -38,7 +38,7 @@ const UploaderWrapper = ({
 
     return (
         <UploaderProvider {...uploaderConfig}>
-            <Uploader {...props}>{children}</Uploader>
+            <Uploader {...props} multiple={multiple}>{children}</Uploader>
         </UploaderProvider>
     )
 }
@@ -48,10 +48,11 @@ export interface UploaderProps
     asChild?: boolean
     children?: React.ReactNode
     name: string
+    multiple?: boolean
 }
 
-const Uploader = ({ children, asChild, ...props }: UploaderProps) => {
-    const { addToQueue } = useFileQueueContext()
+const Uploader = ({ children, asChild, multiple, ...props }: UploaderProps) => {
+    const { addToQueue, clearQueue } = useFileQueueContext()
     const { dropzone } = useUploaderContext()
 
     const id = props.name || "filenest-uploader"
@@ -64,6 +65,9 @@ const Uploader = ({ children, asChild, ...props }: UploaderProps) => {
             isSuccess: false,
             progress: 0,
         }))
+        if (!multiple) {
+            clearQueue(id)
+        }
         addToQueue(files)
     }, [dropzone.acceptedFiles])
 
