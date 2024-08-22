@@ -8,11 +8,22 @@ It must reference an `Uploader` component to find files to upload.
 
 This component extends `React.ComponentPropsWithoutRef<"div">`, meaning it accepts all native `div` element props.
 
+### `accept`
+For example: `{"image/*": [".png", ".gif", ".jpeg", ".jpg"]}`
+
+**Type:** `[key: string]: string[]`
+
 ### `asChild`
 
 **Type:** `boolean`
 
 ### `disabled`
+
+**Type:** `boolean`
+
+### `hideIfMaxFilesReached`
+Hides the uploader if the maximum number of files has been reached.  
+Also hides it, if a single file is selected and `multiple` is set to `false`.
 
 **Type:** `boolean`
 
@@ -66,6 +77,14 @@ A function to be called when all files of the queue are uploaded successfully.
 A function to be called when an error occurs during file upload.
 
 **Type:** `(message: string) => void`
+
+## Render Props
+
+### `isDragActive`
+It is recommended to use the `DropIndicator` component to conditionally
+render elements based on drag status.
+
+**Type:** `boolean`
 
 ## Usage
 

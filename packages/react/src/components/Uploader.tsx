@@ -7,8 +7,10 @@ import { useEffect } from "react"
 import { useFileQueueContext } from "../context/global/FileQueueContext"
 
 const UploaderWrapper = ({
+    accept,
     children,
     disabled,
+    hideIfMaxFilesReached,
     maxFiles,
     maxSize = 2.5e8, // 250 MB,
     multiple = true,
@@ -22,6 +24,7 @@ const UploaderWrapper = ({
     ...props
 }: UploaderProps & UploaderProviderProps) => {
     const uploaderConfig = {
+        accept,
         disabled,
         maxFiles,
         maxSize,
@@ -33,26 +36,40 @@ const UploaderWrapper = ({
         onSuccess,
         onUpload,
         uploadOnDrop,
-        name: props.name
+        name: props.name,
+    }
+
+    const uploaderProps = {
+        hideIfMaxFilesReached,
+        multiple,
+        maxFiles,
+        children,
+        ...props
     }
 
     return (
         <UploaderProvider {...uploaderConfig}>
-            <Uploader {...props} multiple={multiple}>{children}</Uploader>
+            <Uploader {...uploaderProps}/>
         </UploaderProvider>
     )
+}
+
+interface RenderProps {
+    isDragActive: boolean
 }
 
 export interface UploaderProps
     extends WithoutChildren<Omit<React.ComponentPropsWithoutRef<"div">, "onProgress" | "onError">> {
     asChild?: boolean
-    children?: React.ReactNode
+    children: ((props: RenderProps) => React.ReactNode) | React.ReactNode
     name: string
     multiple?: boolean
+    hideIfMaxFilesReached?: boolean
+    maxFiles?: number
 }
 
-const Uploader = ({ children, asChild, multiple, ...props }: UploaderProps) => {
-    const { addToQueue, clearQueue } = useFileQueueContext()
+const Uploader = ({ children, asChild, multiple, hideIfMaxFilesReached, maxFiles, ...props }: UploaderProps) => {
+    const { addToQueue, clearQueue, getUploaderFiles } = useFileQueueContext()
     const { dropzone } = useUploaderContext()
 
     const id = props.name || "filenest-uploader"
@@ -73,10 +90,25 @@ const Uploader = ({ children, asChild, multiple, ...props }: UploaderProps) => {
 
     const Comp = asChild ? Slot : "div"
 
+    const isHidden = (hideIfMaxFilesReached && maxFiles && getUploaderFiles(id).length >= maxFiles)
+        || (hideIfMaxFilesReached && !multiple && getUploaderFiles(id).length > 0)
+
+    if (isHidden) {
+        return null
+    }
+
+    const getChildren = () => {
+        if (typeof children === "function") {
+            return children({ isDragActive: dropzone.isDragActive })
+        }
+
+        return children
+    }
+
     return (
         <Comp {...dropzone.getRootProps({ ...props })}>
             <input {...dropzone.getInputProps()} />
-            {children}
+            {getChildren()}
         </Comp>
     )
 }

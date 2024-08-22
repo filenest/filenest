@@ -1,8 +1,8 @@
 "use client"
 
 import { createContext, useContext } from "react"
-import { useDropzone } from "react-dropzone"
-import { useFileQueueContext } from "../global/FileQueueContext"
+import { Accept, useDropzone } from "react-dropzone"
+import { QueueFile, useFileQueueContext } from "../global/FileQueueContext"
 
 export interface UploaderContext {
     dropzone: ReturnType<typeof useDropzone>
@@ -18,9 +18,14 @@ export const useUploaderContext = () => {
     return context
 }
 
+interface RenderProps {
+    isDragActive: boolean
+}
+
 export interface UploaderProviderProps {
-    children: React.ReactNode
+    children: ((props: RenderProps) => React.ReactNode) | React.ReactNode
     name: string
+    accept?: Accept
     noDrop?: boolean
     noClick?: boolean
     multiple?: boolean
@@ -35,6 +40,7 @@ export interface UploaderProviderProps {
 }
 
 export const UploaderProvider = ({
+    accept,
     children,
     disabled,
     maxFiles,
@@ -48,7 +54,7 @@ export const UploaderProvider = ({
     onUpload,
     name
 }: UploaderProviderProps) => {
-    const { uploaderListeners } = useFileQueueContext()
+    const { uploaderListeners, getUploaderFiles } = useFileQueueContext()
 
     uploaderListeners.current[name] = {
         onError,
@@ -58,6 +64,7 @@ export const UploaderProvider = ({
     }
 
     const dropzone = useDropzone({
+        accept,
         maxSize,
         maxFiles,
         multiple,
@@ -73,5 +80,13 @@ export const UploaderProvider = ({
         dropzone
     }
 
-    return <UploaderContext.Provider value={contextValue}>{children}</UploaderContext.Provider>
+    const getChildren = () => {
+        if (typeof children === "function") {
+            return children({ isDragActive: dropzone.isDragActive })
+        }
+
+        return children
+    }
+
+    return <UploaderContext.Provider value={contextValue}>{getChildren()}</UploaderContext.Provider>
 }
