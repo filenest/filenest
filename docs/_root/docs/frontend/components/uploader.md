@@ -11,7 +11,7 @@ This component extends `React.ComponentPropsWithoutRef<"div">`, meaning it accep
 ### `accept`
 For example: `{"image/*": [".png", ".gif", ".jpeg", ".jpg"]}`
 
-**Type:** `[key: string]: string[]`
+**Type:** `{[key: string]: string[]}`
 
 ### `asChild`
 
