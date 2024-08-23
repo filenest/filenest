@@ -142,6 +142,8 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
 
         setUploader(uploaderName, { isUploading: true })
 
+        const uploadedFiles: unknown[] = []
+
         for (const file of filesToUpload) {
             setQueueFile(uploaderName, file.name, { isUploading: true })
 
@@ -158,7 +160,7 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
             url.searchParams.sort()
 
             try {
-                await new Promise((resolve, reject) => {
+                const result = await new Promise((resolve, reject) => {
                     const xhr = new XMLHttpRequest()
                     xhr.open("POST", url.toString(), true)
                     xhr.upload.addEventListener("progress", (e) => {
@@ -166,10 +168,16 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
                         setQueueFile(uploaderName, file.name, { progress: Number(percentage.toFixed(2))})
                         events?.onProgress?.(percentage)
                     })
-                    xhr.upload.addEventListener("load", resolve)
+                    xhr.addEventListener("readystatechange", () => {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            const json = JSON.parse(xhr.response)
+                            resolve(json)
+                        }
+                    })
                     xhr.upload.addEventListener("error", reject)
                     xhr.send(data)
                 })
+                uploadedFiles.push(result)
                 setQueueFile(uploaderName, file.name, { isUploading: false, isSuccess: true })
                 events?.onUpload?.(file)
             } catch (error) {
@@ -190,7 +198,7 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
             await resourcesQuery.refetch() // TODO: Better: add assets to state directly
             setUploader(uploaderName, { isUploading: false })
             clearQueue(uploaderName)
-            events?.onSuccess?.()
+            events?.onSuccess?.(uploadedFiles)
         }
     }, [files, currentFolder])
 
@@ -229,6 +237,6 @@ export interface QueueFile {
 interface UploaderListener {
     onProgress?: (progress: number) => void
     onUpload?: (file: File) => void
-    onSuccess?: () => void
+    onSuccess?: (files: unknown[]) => void
     onError?: (message: string) => void
 }

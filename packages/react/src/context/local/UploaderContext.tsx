@@ -32,7 +32,7 @@ export interface UploaderProviderProps {
     uploadOnDrop?: boolean
     onUpload?: (file: File) => void
     onProgress?: (progress: number) => void
-    onSuccess?: () => void
+    onSuccess?: (files: unknown[]) => void
     onError?: (message: string) => void
     disabled?: boolean
     maxFiles?: number

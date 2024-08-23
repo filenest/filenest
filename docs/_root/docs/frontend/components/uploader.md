@@ -69,9 +69,10 @@ A function to be called whenever a file from the queue is uploaded.
 **Type:** `(file: File) => void`
 
 ### `onSuccess`
-A function to be called when all files of the queue are uploaded successfully.
+A function to be called when all files of the queue are uploaded successfully.  
+Comes with an array of all uploaded files (raw response data from provider upload endpoint).
 
-**Type:** `() => void`
+**Type:** `(files: unknown[]) => void`
 
 ### `onError`
 A function to be called when an error occurs during file upload.
