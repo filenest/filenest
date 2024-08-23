@@ -64,9 +64,10 @@ A function to be called whenever a file's upload progress changes.
 **Type:** `(progress: number) => void`
 
 ### `onUpload`
-A function to be called whenever a file from the queue is uploaded.
+A function to be called whenever a file from the queue is uploaded.  
+You can access the raw response data from the provider upload endpoint.
 
-**Type:** `(file: File) => void`
+**Type:** `(file: unknown) => void`
 
 ### `onSuccess`
 A function to be called when all files of the queue are uploaded successfully.  

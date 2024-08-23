@@ -179,7 +179,7 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
                 })
                 uploadedFiles.push(result)
                 setQueueFile(uploaderName, file.name, { isUploading: false, isSuccess: true })
-                events?.onUpload?.(file)
+                events?.onUpload?.(result)
             } catch (error) {
                 setQueueFile(uploaderName, file.name, { isUploading: false, isSuccess: false })
                 let message = `An error occurred while uploading the file ${file.name}`
@@ -236,7 +236,7 @@ export interface QueueFile {
 
 interface UploaderListener {
     onProgress?: (progress: number) => void
-    onUpload?: (file: File) => void
+    onUpload?: (file: unknown) => void
     onSuccess?: (files: unknown[]) => void
     onError?: (message: string) => void
 }

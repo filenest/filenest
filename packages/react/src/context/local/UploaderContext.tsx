@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react"
 import { Accept, useDropzone } from "react-dropzone"
-import { QueueFile, useFileQueueContext } from "../global/FileQueueContext"
+import { useFileQueueContext } from "../global/FileQueueContext"
 
 export interface UploaderContext {
     dropzone: ReturnType<typeof useDropzone>
@@ -30,7 +30,7 @@ export interface UploaderProviderProps {
     noClick?: boolean
     multiple?: boolean
     uploadOnDrop?: boolean
-    onUpload?: (file: File) => void
+    onUpload?: (file: unknown) => void
     onProgress?: (progress: number) => void
     onSuccess?: (files: unknown[]) => void
     onError?: (message: string) => void
@@ -54,7 +54,7 @@ export const UploaderProvider = ({
     onUpload,
     name
 }: UploaderProviderProps) => {
-    const { uploaderListeners, getUploaderFiles } = useFileQueueContext()
+    const { uploaderListeners } = useFileQueueContext()
 
     uploaderListeners.current[name] = {
         onError,
