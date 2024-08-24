@@ -2,6 +2,7 @@
 
 import * as Primitive from "@radix-ui/react-alert-dialog"
 import { useGlobalContext } from "../../context/global/GlobalContext"
+import { cloneElement, isValidElement } from "react"
 
 export const AlertDialog = ({ children, ...props }: Primitive.AlertDialogProps) => {
     const { alertDialog } = useGlobalContext()
@@ -48,17 +49,26 @@ export const AlertDialogContent = ({ children, ...props }: Primitive.AlertDialog
 export const AlertDialogCancel = ({ children, ...props }: Primitive.AlertDialogCancelProps) => {
     const { alertDialog } = useGlobalContext()
 
+    const textLabel = alertDialog.content.cancel
+
+    function getChildren() {
+        if (isValidElement(children)) {
+            return cloneElement(children, {}, textLabel)
+        }
+        return textLabel
+    }
+
     if (alertDialog.cancel) {
         return (
-            <Primitive.Action asChild {...props} onClick={alertDialog.cancel}>
-                <div>{alertDialog.content.cancel}</div>
+            <Primitive.Action {...props} onClick={alertDialog.cancel}>
+                {getChildren()}
             </Primitive.Action>
         )
     }
 
     return (
-        <Primitive.Cancel asChild {...props}>
-            <div>{alertDialog.content.cancel}</div>
+        <Primitive.Cancel {...props}>
+            {getChildren()}
         </Primitive.Cancel>
     )
 }
@@ -66,9 +76,18 @@ export const AlertDialogCancel = ({ children, ...props }: Primitive.AlertDialogC
 export const AlertDialogAction = ({ children, ...props }: Primitive.AlertDialogActionProps) => {
     const { alertDialog } = useGlobalContext()
 
+    const textLabel = alertDialog.content.commit
+
+    function getChildren() {
+        if (isValidElement(children)) {
+            return cloneElement(children, {}, textLabel)
+        }
+        return textLabel
+    }
+
     return (
-        <Primitive.Action asChild {...props} onClick={alertDialog.action}>
-            <div>{alertDialog.content.commit}</div>
+        <Primitive.Action {...props} onClick={alertDialog.action}>
+            {getChildren()}
         </Primitive.Action>
     )
 }
