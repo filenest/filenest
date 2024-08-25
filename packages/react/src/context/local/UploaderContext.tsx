@@ -73,7 +73,25 @@ export const UploaderProvider = ({
         onError: (err) => {
             onError?.(err.message)
         },
-        disabled
+        disabled,
+        onDragEnter: (e) => {
+            e.stopPropagation()
+        },
+        onDragLeave: (e) => {
+            e.stopPropagation()
+        },
+        onDragOver: (e) => {
+            e.stopPropagation()
+        },
+        onDrop: (_, __, e) => {
+            e.stopPropagation()
+        },
+        onDropAccepted: (_, e) => {
+            e.stopPropagation()
+        },
+        onDropRejected: (_, e) => {
+            e.stopPropagation()
+        }
     })
 
     const contextValue = {
