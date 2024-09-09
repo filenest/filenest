@@ -3,7 +3,7 @@
 https://github.com/user-attachments/assets/bc5e5510-fe11-44e2-b141-72a3abd4714f
 
 # Filenest  
-<img src="https://img.shields.io/npm/v/@filenest/core.svg" alt="version" />  
+![npm](https://img.shields.io/npm/v/@filenest/core.svg)
 
 **Build your own File Manager Component**  
 Filenest provides everything you need to connect a third party file storage to your JS/TS app.
