@@ -20,6 +20,7 @@ const UploaderWrapper = ({
     onProgress,
     onSuccess,
     onUpload,
+    uploadPath,
     uploadOnDrop,
     ...props
 }: UploaderProps & UploaderProviderProps) => {
@@ -37,6 +38,7 @@ const UploaderWrapper = ({
         onUpload,
         uploadOnDrop,
         name: props.name,
+        uploadPath,
     }
 
     const uploaderProps = {
@@ -70,7 +72,7 @@ export interface UploaderProps
 
 const Uploader = ({ children, asChild, multiple, hideIfMaxFilesReached, maxFiles, ...props }: UploaderProps) => {
     const { addToQueue, clearQueue, getUploaderFiles } = useFileQueueContext()
-    const { dropzone } = useUploaderContext()
+    const { dropzone, uploadPath } = useUploaderContext()
 
     const id = props.name || "filenest-uploader"
 
@@ -78,6 +80,7 @@ const Uploader = ({ children, asChild, multiple, hideIfMaxFilesReached, maxFiles
         const files = dropzone.acceptedFiles.map((item) => ({
             uploaderName: id,
             file: item,
+            uploadPath,
             isUploading: false,
             isSuccess: false,
             progress: 0,

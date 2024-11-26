@@ -137,18 +137,21 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
 
         const events = uploaderListeners.current[uploaderName]
 
-        const filesToUpload = files.filter(f => f.uploaderName === uploaderName).map(f => f.file)
+        const filesToUpload = files.filter(f => f.uploaderName === uploaderName)
+            .map(f => ({ raw: f.file, path: f.uploadPath }))
+
         if (!filesToUpload.length) return
 
         setUploader(uploaderName, { isUploading: true })
 
         const uploadedFiles: unknown[] = []
 
-        for (const file of filesToUpload) {
-            setQueueFile(uploaderName, file.name, { isUploading: true })
+        for (const { path, raw: rawFile } of filesToUpload) {
+            setQueueFile(uploaderName, rawFile.name, { isUploading: true })
 
             const params = {
-                folder: currentFolder.path,
+                folder: path || currentFolder.path,
+                asset_folder: path || currentFolder.path,
                 use_filename: "true",
                 unique_filename: "true",
             }
@@ -156,7 +159,7 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
             const _url = await fetchers.getUploadUrl({ params })
             const url = new URL(_url)
             const data = new FormData()
-            data.append("file", file)
+            data.append("file", rawFile)
             url.searchParams.sort()
 
             try {
@@ -165,7 +168,7 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
                     xhr.open("POST", url.toString(), true)
                     xhr.upload.addEventListener("progress", (e) => {
                         const percentage = (e.loaded / e.total) * 100
-                        setQueueFile(uploaderName, file.name, { progress: Number(percentage.toFixed(2))})
+                        setQueueFile(uploaderName, rawFile.name, { progress: Number(percentage.toFixed(2))})
                         events?.onProgress?.(percentage)
                     })
                     xhr.addEventListener("readystatechange", () => {
@@ -178,11 +181,11 @@ export const FileQueueProvider = ({ children }: FileQueueProviderProps) => {
                     xhr.send(data)
                 })
                 uploadedFiles.push(result)
-                setQueueFile(uploaderName, file.name, { isUploading: false, isSuccess: true })
+                setQueueFile(uploaderName, rawFile.name, { isUploading: false, isSuccess: true })
                 events?.onUpload?.(result)
             } catch (error) {
-                setQueueFile(uploaderName, file.name, { isUploading: false, isSuccess: false })
-                let message = `An error occurred while uploading the file ${file.name}`
+                setQueueFile(uploaderName, rawFile.name, { isUploading: false, isSuccess: false })
+                let message = `An error occurred while uploading the file ${rawFile.name}`
                 if (error instanceof Error) {
                     message = error.message
                 }
@@ -228,6 +231,7 @@ interface UploaderState {
 export interface QueueFile {
     uploaderName: string
     file: File
+    uploadPath?: string
     isUploading: boolean
     isSuccess: boolean
     progress: number

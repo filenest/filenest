@@ -6,6 +6,7 @@ import { useFileQueueContext } from "../global/FileQueueContext"
 
 export interface UploaderContext {
     dropzone: ReturnType<typeof useDropzone>
+    uploadPath?: string
 }
 
 const UploaderContext = createContext<UploaderContext | null>(null)
@@ -30,6 +31,7 @@ export interface UploaderProviderProps {
     noClick?: boolean
     multiple?: boolean
     uploadOnDrop?: boolean
+    uploadPath?: string
     onUpload?: (file: unknown) => void
     onProgress?: (progress: number) => void
     onSuccess?: (files: unknown[]) => void
@@ -52,7 +54,8 @@ export const UploaderProvider = ({
     onProgress,
     onSuccess,
     onUpload,
-    name
+    uploadPath,
+    name,
 }: UploaderProviderProps) => {
     const { uploaderListeners } = useFileQueueContext()
 
@@ -60,7 +63,7 @@ export const UploaderProvider = ({
         onError,
         onProgress,
         onSuccess,
-        onUpload
+        onUpload,
     }
 
     const dropzone = useDropzone({
@@ -91,11 +94,12 @@ export const UploaderProvider = ({
         },
         onDropRejected: (_, e) => {
             e.stopPropagation()
-        }
+        },
     })
 
     const contextValue = {
-        dropzone
+        dropzone,
+        uploadPath,
     }
 
     const getChildren = () => {

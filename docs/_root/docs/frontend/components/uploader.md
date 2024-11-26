@@ -80,6 +80,11 @@ A function to be called when an error occurs during file upload.
 
 **Type:** `(message: string) => void`
 
+### `uploadPath`
+Default path this uploader will upload files to.
+
+**Type:** `string`
+
 ## Render Props
 
 ### `isDragActive`
