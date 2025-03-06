@@ -1,3 +1,14 @@
+> [!NOTE]
+> ### Current state of Filenest (March 2025)
+> 
+> I've been using Filenest in production for a while now and it works well (if you can live with limited features).
+> Because I'm working on other projects, I currently don't have the time to add new features to Filenest.
+> The open issues will be worked on at some point and the library will receive a major API overhaul. But not in the coming months...
+>
+> Feel free to use Filenest as a simple media library in your app, if you use Cloudinary and Next.js or tRPC.
+> Other providers like Cloudflare R2, uploadthing and S3 will follow in the future, with the hopes of making Filenest
+> a really nice package to build your own asset management UI.
+
 ![Filenest Banner](.github/media/banner.png)
 
 https://github.com/user-attachments/assets/bc5e5510-fe11-44e2-b141-72a3abd4714f
