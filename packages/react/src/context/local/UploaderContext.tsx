@@ -87,13 +87,19 @@ export const UploaderProvider = ({
             e.stopPropagation()
         },
         onDrop: (_, __, e) => {
-            e.stopPropagation()
+            if (!Array.isArray(e)) {
+                e.stopPropagation()
+            }
         },
         onDropAccepted: (_, e) => {
-            e.stopPropagation()
+            if (!Array.isArray(e)) {
+                e.stopPropagation()
+            }
         },
         onDropRejected: (_, e) => {
-            e.stopPropagation()
+            if (!Array.isArray(e)) {
+                e.stopPropagation()
+            }
         },
     })
 

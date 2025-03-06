@@ -10,7 +10,7 @@
         "lint": "pnpm --filter=\"@filenest/*\" run lint",
         "handle-with-care-ci": "tsx ./scripts/ci.ts"
     },
-    "packageManager": "pnpm@9.7.0",
+    "packageManager": "pnpm@10.4.0",
     "engines": {
         "pnpm": ">=9.7.0",
         "node": ">=20.9.0"
@@ -19,11 +19,11 @@
         "turbo": "^2.0.12"
     },
     "devDependencies": {
-        "@actions/core": "^1.10.1",
+        "@actions/core": "^1.11.1",
         "@types/semver": "^7.5.8",
-        "chalk": "^5.3.0",
-        "glob": "^11.0.0",
-        "semver": "^7.6.3",
-        "tsx": "^4.17.0"
+        "chalk": "^5.4.1",
+        "glob": "^11.0.1",
+        "semver": "^7.7.1",
+        "tsx": "^4.19.3"
     }
 }
