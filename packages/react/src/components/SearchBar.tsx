@@ -5,10 +5,10 @@ import { useGlobalContext } from "../context/global/GlobalContext"
 
 export interface SearchBarProps extends React.ComponentPropsWithoutRef<"input"> {
     asChild?: boolean
-    location: "current" | "global"
+    scope: "current" | "global"
 }
 
-export const SearchBar = ({ asChild, location, ...props }: SearchBarProps) => {
+export const SearchBar = ({ asChild, scope, ...props }: SearchBarProps) => {
     const { handleSearch } = useGlobalContext()
 
     const Comp = asChild ? Slot : "input"
@@ -21,7 +21,7 @@ export const SearchBar = ({ asChild, location, ...props }: SearchBarProps) => {
             suppressHydrationWarning // Hide `extra attributes from the server` warning
             onChange={(e) => {
                 if (e.target.value.length >= minLength || e.target.value === "") {
-                    handleSearch(e.target.value, location)
+                    handleSearch(e.target.value, scope)
                 }
             }}
         />
