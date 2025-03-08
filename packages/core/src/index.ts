@@ -5,13 +5,43 @@ export interface Provider {
     name: string
 
     files: RouteHandlers<
-        { prefix?: string; delimiter?: string; query?: string },
+        {
+            prefix?: string
+            delimiter?: string
+            query?: string
+            limit?: number
+            skip?: number
+            cursor?: string | number
+        },
         { data: FileBase[] },
         any,
         any
     >
-    folders: RouteHandlers<any, any, any, any>
-    resources: RouteHandlers<any, any, any, any>
+    folders: RouteHandlers<
+        {
+            path?: string
+        },
+        { data: FolderBase[] },
+        {
+            key: string
+            path: string
+            displayName?: string
+        },
+        { data: FolderBase }
+    >
+    resources: RouteHandlers<
+        {
+            path: string
+        },
+        {
+            data: {
+                files: FileBase[]
+                folders: FolderBase[]
+            }
+        },
+        never,
+        never
+    >
 }
 
 export interface RouteHandlers<
@@ -72,4 +102,27 @@ export interface FileBase {
      * Timestamp of last modification
      */
     updatedAt: string
+
+    /**
+     * URL to view the file
+     */
+    url: string
+}
+
+export interface FolderBase {
+    /**
+     * Unique identifier for the folder.
+     * Will be = `key` in case of S3 compatible provider.
+     */
+    id: string
+
+    /**
+     * The folder ID, but practically it's a common prefix of files
+     */
+    key: string
+
+    /**
+     * Display name of the folder, if supported
+     */
+    displayName?: string
 }
