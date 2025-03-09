@@ -1,61 +1,19 @@
-/**
- * Base for all other providers
- */
-export interface Provider {
-    name: string
+type AvailableHandlers = "files" | "folders" | "resources"
 
-    files: RouteHandlers<
-        {
-            prefix?: string
-            delimiter?: string
-            query?: string
-            limit?: number
-            skip?: number
-            cursor?: string | number
-        },
-        { data: FileBase[] },
-        any,
-        any
-    >
-    folders: RouteHandlers<
-        {
-            path?: string
-        },
-        { data: FolderBase[] },
-        {
-            key: string
-            path: string
-            displayName?: string
-        },
-        { data: FolderBase }
-    >
-    resources: RouteHandlers<
-        {
-            path: string
-        },
-        {
-            data: {
-                files: FileBase[]
-                folders: FolderBase[]
-            }
-        },
-        never,
-        never
-    >
+type RequestMethods = "GET" | "POST" | "PUT"
+
+type ExpandRecursively<T> = T extends object
+    ? T extends infer O
+        ? { [K in keyof O]: ExpandRecursively<O[K]> }
+        : never
+    : T
+
+type SupportsMethods = {
+    [key in RequestMethods]: boolean
 }
 
-export interface RouteHandlers<
-    TGETInput extends AnyRouteInput,
-    TGETReturn extends AnyRouteReturn,
-    TPOSTInput extends AnyRouteInput,
-    TPOSTReturn extends AnyRouteReturn
-> {
-    GET: (
-        input?: TGETInput
-    ) => Promise<(TGETReturn & RouteReturnSuccess) | RouteReturnError>
-    POST: (
-        input?: TPOSTInput
-    ) => Promise<(TPOSTReturn & RouteReturnSuccess) | RouteReturnError>
+type SupportsHandlers = {
+    [key in AvailableHandlers]: boolean | ExpandRecursively<SupportsMethods>
 }
 
 type AnyRouteInput = Record<string, string | number | boolean>
@@ -74,6 +32,43 @@ type RouteReturnError = {
     error: unknown
     message?: string
 }
+
+type RouteHandlersWithIO = {
+    [key in RequestMethods]: (
+        input?: AnyRouteInput
+    ) => Promise<(AnyRouteReturn & RouteReturnSuccess) | RouteReturnError>
+}
+
+type BuiltRouteHandlers<TSupports extends SupportsHandlers> = {
+    [handler in AvailableHandlers as TSupports[handler] extends false
+        ? never
+        : handler]: TSupports[handler] extends true
+        ? { [key in keyof RouteHandlersWithIO]: RouteHandlersWithIO[key] }
+        : TSupports[handler] extends SupportsMethods
+        ? {
+              [method in RequestMethods as TSupports[handler][method] extends true
+                  ? method
+                  : never]: RouteHandlersWithIO[method]
+          }
+        : never
+}
+
+type ProviderBase = {
+    name: string
+}
+
+/**
+ * The provider config ensures a providers type safety
+ */
+export type ProviderConfig = {
+    supports: SupportsHandlers
+}
+
+/**
+ * The base interface for a provider
+ */
+export type Provider<TConfig extends ProviderConfig> = ProviderBase &
+    BuiltRouteHandlers<TConfig["supports"]>
 
 export interface FileBase {
     /**

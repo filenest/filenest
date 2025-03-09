@@ -1,10 +1,18 @@
-import { RouteHandlers, type Provider } from "@filenest/core"
+import { type Provider, ProviderConfig } from "@filenest/core"
+
+const providerConfig: ProviderConfig = {
+    supports: {
+        files: true,
+        folders: false,
+        resources: true,
+    },
+}
 
 interface UploadThingConfig {
     UPLOADTHING_TOKEN: string
 }
 
-export class UploadThing implements Provider {
+export class UploadThing implements Provider<typeof providerConfig> {
     name = "UploadThing" as const
 
     private UPLOADTHING_TOKEN: string
@@ -37,7 +45,7 @@ export class UploadThing implements Provider {
         })
     }
 
-    files: Provider["files"] = {
+    files = {
         GET: async (input = {}) => {
             try {
                 const body: Record<string, any> = {}
@@ -93,16 +101,7 @@ export class UploadThing implements Provider {
         },
     }
 
-    folders: Provider["folders"] = {
-        GET: async (input) => {
-            return { success: false, error: true, message: "Not supported" }
-        },
-        POST: async (input) => {
-            return { success: false, error: true, message: "Not supported" }
-        },
-    }
-
-    resources: Provider["resources"] = {
+    resources = {
         GET: async (input) => {
             if (!input) {
                 return { success: false, error: true, message: "Missing input" }
