@@ -1,14 +1,9 @@
 import crypto from "crypto"
-import slugify from "slugify"
 import {
-    DeleteAssetInput,
-    GetUploadUrlInput,
-    RenameAssetInput,
-    type AssetType,
-    type CreateFolderInput,
-    type DeleteFolderInput,
-    type GetResourcesInput,
-    type RenameFolderInput,
+    ErrorCodes,
+    FileBase,
+    FolderBase,
+    RouteReturnError,
     type Provider,
 } from "@filenest/core"
 
@@ -19,11 +14,26 @@ type CloudinaryConfig = {
 }
 
 export class Cloudinary implements Provider {
+    name = "Cloudinary" as const
+
+    supports = {
+        files: {
+            rename: true,
+        },
+        folders: {
+            list: true,
+            create: true,
+            delete: true,
+            rename: true,
+        },
+    }
+
     private _URL: string
-    private _MAX_RESULTS = 50
+    private _MAX_RESULTS = 500
     private _API_SECRET: string
     private _API_KEY: string
     private _HEADERS: Headers
+    private resourceTypes = ["image", "raw", "video"]
 
     private async _doFetch(url: string | URL, init?: RequestInit) {
         return fetch(url, { headers: this._HEADERS, ...init }).then((res) => res.json())
@@ -78,34 +88,14 @@ export class Cloudinary implements Provider {
         return (await this._doFetch(url)) as CloudinaryEnvironment
     }
 
-    private _mapResourceType(type: string, format: string) {
-        switch (type) {
-            case "image":
-                if (format == "pdf") return "document"
-                return "image"
-            case "video":
-                return "video"
-            case "raw":
-                return "document"
-            default:
-                return "other"
-        }
-    }
-
-    private _mapResourceToSchema(resource: CloudinaryResource) {
+    private _mapResourceToSchema(resource: CloudinaryResource): FileBase {
         return {
-            assetId: resource.asset_id,
-            publicId: resource.public_id,
-            type: this._mapResourceType(resource.resource_type, resource.format) as AssetType,
-            format: resource.format,
-            url: resource.url,
-            folder: resource.folder,
+            id: resource.asset_id,
+            key: resource.public_id,
+            url: resource.secure_url,
             name: resource.display_name || resource.filename,
-            bytes: resource.bytes,
-            width: resource.width,
-            height: resource.height,
-            tags: resource.tags,
-            modifiedAt: resource.version,
+            size: resource.bytes,
+            updatedAt: resource.version.toString(),
         }
     }
 
@@ -113,11 +103,11 @@ export class Cloudinary implements Provider {
         return resource.map((asset) => this._mapResourceToSchema(asset))
     }
 
-    private _mapFolderToSchema(folder: CloudinaryFolder) {
+    private _mapFolderToSchema(folder: CloudinaryFolder): FolderBase {
         return {
             id: folder.path,
-            name: folder.name,
-            path: folder.path,
+            key: folder.path,
+            displayName: folder.name,
         }
     }
 
@@ -131,215 +121,354 @@ export class Cloudinary implements Provider {
         return asset
     }
 
-    public getResources = async (input?: GetResourcesInput) => {
-        let url = new URL(this._URL.toString() + "/resources/search")
+    files: Provider["files"] = {
+        GET: async (input) => {
+            let url: URL = new URL(this._URL.toString() + "/resources")
 
-        const folder = () => {
-            if (input?.global) return
-            return input?.folder ? `folder:\"${input.folder}\"` : 'folder=""'
-        }
+            if (!input?.prefix && !input?.query) {
+                return new RouteReturnError("Specify either prefix or query")
+            }
 
-        const searchQuery = input?.searchQuery
-            ? `(public_id:${input.searchQuery}* OR display_name:${input.searchQuery}* OR filename:${input.searchQuery}*)`
-            : undefined
+            if (input?.prefix && input.query) {
+                return new RouteReturnError(
+                    "Specify either prefix or query, but not both"
+                )
+            }
 
-        const expression = [folder(), searchQuery].filter(i => !!i).join(" AND ")
+            if (input?.query) {
+                url = new URL(this._URL.toString() + "/resources/search")
 
-        url.searchParams.append("expression", expression)
-        url.searchParams.append("with_field", "tags")
-        url.searchParams.append("max_results", this._MAX_RESULTS.toString())
+                const folder = input?.prefix ? `folder:\"${input.prefix}\"` : 'folder=""'
 
-        if (input?.nextCursor) {
-            url.searchParams.append("next_cursor", input.nextCursor)
-        }
+                const searchQuery = `(public_id:${input.query}* OR display_name:${input.query}* OR filename:${input.query}*)`
 
-        const assets: CloudinarySearchResponse = await this._doFetch(url)
+                const expression = [folder, searchQuery].filter((i) => !!i).join(" AND ")
 
-        url = new URL([this._URL.toString(), "/folders/", input?.folder].join(""))
+                url.searchParams.append("expression", expression)
+                url.searchParams.append("max_results", this._MAX_RESULTS.toString())
+            }
 
-        const folders: CloudinaryFolderResponse = await this._doFetch(url)
+            if (input?.prefix) {
+                const { settings } = await this._getConfig()
 
-        return {
-            folder: assets.resources[0]?.folder || input?.folder || "",
-            resources: {
-                folders: {
-                    data: this._mapFoldersToSchema(folders.folders),
+                if (settings.folder_mode === "fixed") {
+                    url.searchParams.append("prefix", input.prefix)
+                }
+
+                if (settings.folder_mode === "dynamic") {
+                    url = new URL(this._URL.toString() + "/resources/by_asset_folder")
+                    url.searchParams.append("asset_folder", input.prefix)
+                    url.searchParams.append("max_results", this._MAX_RESULTS.toString())
+                }
+            }
+
+            if (input?.cursor) {
+                url.searchParams.append("next_cursor", input.cursor.toString())
+            }
+
+            const files: CloudinarySearchResponse = await this._doFetch(url)
+
+            return {
+                success: true,
+                data: {
+                    files: this._mapResourcesToSchema(files.resources),
+                    count: files.total_count,
+                    cursor: files.next_cursor,
+                },
+            }
+        },
+        POST: async (input) => {
+            const { getRequiredParams, getSignedUrl, signingParams } = input
+
+            if (getRequiredParams && getSignedUrl) {
+                return new RouteReturnError(
+                    "You need to specify either getRequiredParams or getSignedUrl, but not both"
+                )
+            }
+
+            if (getRequiredParams) {
+                return {
+                    success: true,
+                    data: {
+                        requiredParams: {
+                            fileParam: "file",
+                            folderParam: "folder",
+                        },
+                        defaultParams: {
+                            use_filename: "true",
+                            unique_filename: "true",
+                        },
+                    },
+                }
+            }
+
+            if (getSignedUrl) {
+                if (!signingParams) {
+                    return new RouteReturnError("signingParams is required")
+                }
+
+                const { settings } = await this._getConfig()
+
+                if (settings.folder_mode === "dynamic") {
+                    signingParams.asset_folder =
+                        signingParams.folder || signingParams.asset_folder || ""
+                    delete signingParams.folder
+                }
+
+                const timestamp = Math.floor(Date.now() / 1000).toString()
+                signingParams.timestamp = timestamp
+
+                const signature = await this._makeSignature(signingParams)
+
+                const url = new URL(this._URL.toString() + "/auto/upload")
+                url.searchParams.append("api_key", this._API_KEY)
+                url.searchParams.append("signature", signature)
+                Object.entries(signingParams).forEach(([key, value]) => {
+                    url.searchParams.append(key, value)
+                })
+                url.searchParams.sort()
+
+                return {
+                    success: true,
+                    data: url.toString(),
+                }
+            }
+
+            return new RouteReturnError(
+                "You need to specify either getRequiredParams or getSignedUrl"
+            )
+        },
+        DELETE: async (input) => {
+            const { ids, prefix } = input
+
+            if (!ids && !prefix) {
+                return new RouteReturnError("Specify either ids or prefix")
+            }
+
+            if (ids && prefix) {
+                return new RouteReturnError("Specify either ids or prefix, but not both")
+            }
+
+            if (ids) {
+                // Cloudinary allows 100 ids at a time
+                const chunkSize = 100
+                const chunks = Array.from(
+                    { length: Math.ceil(ids.length / chunkSize) },
+                    (_, i) => ids.slice(i * chunkSize, i * chunkSize + chunkSize)
+                )
+
+                let deletedCount = 0
+
+                const url = new URL(this._URL.toString() + "/resources")
+
+                for (const chunk of chunks) {
+                    url.searchParams.set("asset_ids", chunk.join(","))
+
+                    const response = (await this._doFetch(url, {
+                        method: "DELETE",
+                    }).then((res) => res.json())) as CloudinaryFilesDeleteResponse
+
+                    deletedCount += Object.keys(response.deleted).length
+                }
+
+                return {
+                    success: true,
+                    data: deletedCount,
+                }
+            }
+
+            if (prefix) {
+                let isAllDeleted = false
+                let deletedCount = 0
+
+                for (const type of this.resourceTypes) {
+                    const url = new URL(this._URL.toString() + `/resources/${type}`)
+                    url.searchParams.append("prefix", prefix)
+
+                    while (!isAllDeleted) {
+                        const response = (await this._doFetch(url, {
+                            method: "DELETE",
+                        }).then((res) => res.json())) as CloudinaryFilesDeleteResponse
+
+                        deletedCount += Object.keys(response.deleted).length
+
+                        if (response.next_cursor && response.partial) {
+                            url.searchParams.set("next_cursor", response.next_cursor)
+                        } else {
+                            isAllDeleted = true
+                        }
+                    }
+                }
+
+                return {
+                    success: true,
+                    data: deletedCount,
+                }
+            }
+
+            return new RouteReturnError("Specify either ids or prefix")
+        },
+        PUT: async (input) => {
+            return new RouteReturnError("Not implemented")
+        },
+    }
+
+    folders: Provider["folders"] = {
+        GET: async (input) => {
+            const url = new URL([this._URL.toString(), "/folders/", input.path].join(""))
+
+            const folders: CloudinaryFolderResponse = await this._doFetch(url)
+
+            return {
+                success: true,
+                data: {
+                    folders: this._mapFoldersToSchema(folders.folders),
                     count: folders.total_count,
+                    cursor: folders.next_cursor,
                 },
-                assets: {
-                    data: this._mapResourcesToSchema(assets.resources),
-                    count: assets.total_count,
-                    nextCursor: assets.next_cursor,
-                },
-            },
-        }
-    }
-
-    public createFolder = async (input: CreateFolderInput) => {
-        const url = new URL(this._URL.toString() + "/folders/" + input.path)
-        const folder: CloudinaryFolder = await this._doFetch(url, { method: "POST" })
-        return this._mapFolderToSchema(folder)
-    }
-
-    public renameFolder = async (input: RenameFolderInput) => {
-        // We need to check if environment uses fixed or dynamic folder mode.
-        // Only dynamic folder mode supports renaming folders.
-        const config = await this._getConfig()
-
-        if (config.settings.folder_mode === "fixed") {
-            throw new Error("Renaming folders is not supported in fixed folder mode.")
-        }
-
-        const url = new URL(this._URL.toString() + "/folders/" + input.path)
-        url.searchParams.append("to_folder", input.newPath)
-
-        const folder: { from: CloudinaryFolder; to: CloudinaryFolder } = await this._doFetch(url, { method: "PUT" })
-
-        return this._mapFolderToSchema(folder.to)
-    }
-
-    public deleteFolder = async (input: DeleteFolderInput) => {
-        const { resources } = await this.getResources({ folder: input.path })
-        const config = await this._getConfig()
-
-        if (resources.assets.count > 0 && !input.force) {
-            return {
-                success: false,
-                message: "ERR_FOLDER_NOT_EMPTY",
             }
-        }
+        },
+        POST: async (input) => {
+            const url = new URL(this._URL.toString() + "/folders/" + input.path)
+            const folder: CloudinaryFolder = await this._doFetch(url, { method: "POST" })
+            return {
+                success: true,
+                data: this._mapFolderToSchema(folder),
+            }
+        },
+        PUT: async (input) => {
+            const { path, newPath } = input
 
-        const resource_types = ["image", "raw", "video"]
+            // We need to check if environment uses fixed or dynamic folder mode.
+            // Only dynamic folder mode supports renaming folders.
+            const config = await this._getConfig()
 
-        // Delete all assets in the folder when force deleting
-        if (resources.assets.count > 0) {
             if (config.settings.folder_mode === "fixed") {
-                await Promise.all(
-                    resource_types.map(async (type) => {
-                        const url = new URL(this._URL.toString() + `/resources/${type}/upload`)
-                        url.searchParams.set("prefix", input.path + "/")
-                        return this._doFetch(url, { method: "DELETE" })
-                    })
+                return new RouteReturnError(
+                    "Renaming folders is not supported in fixed folder mode"
                 )
             }
 
-            if (config.settings.folder_mode === "dynamic") {
-                let url = new URL(this._URL.toString() + "/resources/by_asset_folder")
-                url.searchParams.set("asset_folder", input.path)
-                const assets: CloudinarySearchResponse = await this._doFetch(url)
-                const public_ids = assets.resources.map((asset) => asset.public_id)
-                await Promise.all(
-                    resource_types.map(async (type) => {
-                        const url = new URL(this._URL.toString() + `/resources/${type}/upload`)
-                        url.searchParams.set("public_ids", public_ids.join(","))
-                        return this._doFetch(url, { method: "DELETE" })
-                    })
-                )
+            const url = new URL(this._URL.toString() + "/folders/" + path)
+            if (newPath) {
+                url.searchParams.append("to_folder", newPath)
             }
-        }
 
-        // ...Finally delete folder
-        const url = new URL(this._URL.toString() + "/folders/" + input.path)
-        await this._doFetch(url, { method: "DELETE" })
+            const folder: { from: CloudinaryFolder; to: CloudinaryFolder } =
+                await this._doFetch(url, { method: "PUT" })
 
-        return {
-            success: true,
-        }
-    }
-
-    public getUploadUrl = async (input: GetUploadUrlInput) => {
-        const { params } = input
-        
-        const { settings } = await this._getConfig()
-
-        if (settings.folder_mode === "dynamic") {
-            params.asset_folder = params.folder || params.asset_folder || ""
-            delete params.folder
-        }
-
-        const timestamp = Math.floor(Date.now() / 1000).toString()
-        params.timestamp = timestamp
-
-        const signature = await this._makeSignature(params)
-
-        const url = new URL(this._URL.toString() + "/auto/upload")
-        url.searchParams.append("api_key", this._API_KEY)
-        url.searchParams.append("signature", signature)
-        Object.entries(params).forEach(([key, value]) => {
-            url.searchParams.append(key, value)
-        })
-        url.searchParams.sort()
-
-        return url.toString()
-    }
-
-    public renameAsset = async (input: RenameAssetInput) => {
-        const { id, name, updateDeliveryUrl } = input
-
-        const { settings } = await this._getConfig()
-
-        if (settings.folder_mode === "fixed" && !updateDeliveryUrl) {
             return {
-                success: false,
-                message: "ERR_DELIVERY_URL_WILL_CHANGE",
+                success: true,
+                data: this._mapFolderToSchema(folder.to),
             }
-        }
+        },
+        DELETE: async (input) => {
+            const { path, ignoreNotEmpty } = input
 
-        if (settings.folder_mode === "dynamic" && updateDeliveryUrl === undefined) {
+            const result = await this.files.GET({ prefix: path })
+
+            if ("error" in result) {
+                return result
+            }
+
+            const hasFiles = (result.data.count ?? 0) > 0
+
+            const config = await this._getConfig()
+
+            if (hasFiles && !ignoreNotEmpty) {
+                return new RouteReturnError("This folder is not empty", {
+                    code: ErrorCodes.FOLDER_NOT_EMPTY,
+                })
+            }
+
+            // Delete all assets in the folder when force deleting
+            if (hasFiles) {
+                if (config.settings.folder_mode === "fixed") {
+                    await this.files.DELETE({ prefix: path })
+                }
+
+                if (config.settings.folder_mode === "dynamic") {
+                    // In dynamic folders mode, we need to go to
+                    // manually delete all assets in nested folders
+                    let url = new URL(this._URL.toString() + "/resources/by_asset_folder")
+                    url.searchParams.set("asset_folder", path)
+                    url.searchParams.set("max_results", this._MAX_RESULTS.toString())
+
+                    const allFolders: FolderBase[] = []
+
+                    const getAllSubfolders = async (path: string) => {
+                        const result = await this.folders!.GET({ path })
+                        if ("error" in result) {
+                            return
+                        }
+                        for (const folder of result.data.folders) {
+                            allFolders.push(folder)
+                            await getAllSubfolders(folder.key)
+                        }
+                    }
+
+                    // Recursively get all subfolders
+                    await getAllSubfolders(path)
+
+                    // Then delete all assets in those folders
+                    await Promise.all(
+                        allFolders.map(async (folder) => {
+                            // We need to get their ids and then delete them by id
+                            let allDone = false
+
+                            while (!allDone) {
+                                const result = await this.files.GET({
+                                    prefix: folder.key,
+                                })
+
+                                if ("error" in result) return
+
+                                const ids = result.data.files.map((file) => file.id)
+                                await this.files.DELETE({ ids })
+
+                                if (!result.data.cursor) {
+                                    allDone = true
+                                }
+                            }
+                        })
+                    )
+                }
+            }
+
+            // ...Finally delete folder
+            const url = new URL(this._URL.toString() + "/folders/" + input.path)
+            await this._doFetch(url, { method: "DELETE" })
+
             return {
-                success: false,
-                message: "ERR_UPDATE_DELIVERY_URL_REQUIRED",
+                success: true,
+                data: {},
             }
-        }
-
-        const { resource_type, type, public_id } = await this._getRawAssetByAssetId(id)
-
-        if (settings.folder_mode === "dynamic") {
-            const url = new URL(this._URL.toString() + `/resources/${resource_type}/${type}/` + public_id)
-            url.searchParams.append("display_name", name.replace("/", "-"))
-            await this._doFetch(url, { method: "POST" })
-        }
-
-        if (
-            (settings.folder_mode === "fixed" && updateDeliveryUrl) ||
-            (settings.folder_mode === "dynamic" && updateDeliveryUrl === true)
-        ) {
-            const timestamp = Math.floor(Date.now() / 1000).toString()
-
-            const url = new URL(this._URL.toString() + `/${resource_type}/rename`)
-            url.searchParams.append("from_public_id", public_id)
-            url.searchParams.append("to_public_id", slugify(name))
-            url.searchParams.append("api_key", this._API_KEY)
-            url.searchParams.append("timestamp", timestamp)
-
-            const signature = await this._makeSignature({
-                timestamp,
-                from_public_id: public_id,
-                to_public_id: slugify(name),
-            })
-
-            url.searchParams.append("signature", signature)
-            url.searchParams.sort()
-
-            await this._doFetch(url, { method: "POST" })
-        }
-
-        return {
-            success: true,
-        }
+        },
     }
 
-    public deleteAsset = async (input: DeleteAssetInput) => {
-        const { resource_type, type, public_id } = await this._getRawAssetByAssetId(input.id)
+    resources: Provider["resources"] = {
+        GET: async (input) => {
+            if (!input?.path) {
+                return new RouteReturnError("Missing path")
+            }
 
-        const url = new URL(this._URL.toString() + `/resources/${resource_type}/${type}`)
-        url.searchParams.append("public_ids", [public_id].toString())
+            const filesResult = await this.files.GET({ prefix: input.path })
+            const foldersResult = await this.folders!.GET({ path: input.path })
 
-        await this._doFetch(url, { method: "DELETE" })
+            if ("error" in filesResult || "error" in foldersResult) {
+                return new RouteReturnError("Failed to fetch resources")
+            }
 
-        return {
-            success: true,
-        }
+            return {
+                success: true,
+                data: {
+                    files: filesResult.data.files,
+                    filesCount: filesResult.data.count,
+                    folders: foldersResult.data.folders,
+                    foldersCount: foldersResult.data.count,
+                },
+            }
+        },
     }
 }
 
@@ -385,7 +514,7 @@ type CloudinaryResource = {
 type CloudinarySearchResponse = {
     resources: CloudinaryResource[]
     total_count: number
-    next_cursor: string
+    next_cursor?: string | null
 }
 
 type CloudinaryFolder = {
@@ -394,6 +523,13 @@ type CloudinaryFolder = {
 }
 
 type CloudinaryFolderResponse = {
-    total_count: number
     folders: CloudinaryFolder[]
+    total_count: number
+    next_cursor?: string | null
+}
+
+type CloudinaryFilesDeleteResponse = {
+    deleted: Record<string, "deleted">
+    partial: boolean
+    next_cursor?: string | null
 }

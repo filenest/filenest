@@ -1,74 +1,159 @@
-type AvailableHandlers = "files" | "folders" | "resources"
+/**
+ * Base for all other providers
+ */
+export interface Provider {
+    name: string
 
-type RequestMethods = "GET" | "POST" | "PUT"
+    supports: {
+        files: {
+            rename: boolean
+        }
+        folders: {
+            list: boolean | "virtual"
+            create: boolean
+            delete: boolean
+            rename: boolean
+        }
+    }
 
-type ExpandRecursively<T> = T extends object
-    ? T extends infer O
-        ? { [K in keyof O]: ExpandRecursively<O[K]> }
-        : never
-    : T
+    files: {
+        /**
+         * Get files matching the input params
+         */
+        GET: (input?: {
+            prefix?: string
+            delimiter?: string
+            query?: string
+            limit?: number
+            skip?: number
+            cursor?: string | number | null
+        }) => Promise<
+            | RouteReturnSuccess<{
+                  files: FileBase[]
+                  cursor?: string | null
+                  count?: number
+              }>
+            | RouteReturnError
+        >
 
-type SupportsMethods = {
-    [key in RequestMethods]: boolean
-}
+        /**
+         * Get presigned upload URL and info about required params
+         * for uploading a file on the client
+         */
+        POST: (input: {
+            getRequiredParams?: boolean
+            getSignedUrl?: boolean
+            signingParams?: Record<string, string>
+        }) => Promise<
+            | RouteReturnSuccess<
+                  | {
+                        requiredParams: {
+                            fileParam: string
+                            folderParam: string
+                        }
+                        defaultParams: Record<string, any>
+                    }
+                  | string
+              >
+            | RouteReturnError
+        >
 
-type SupportsHandlers = {
-    [key in AvailableHandlers]: boolean | ExpandRecursively<SupportsMethods>
+        /**
+         * Update details of a file
+         */
+        PUT?: (
+            input: AnyRouteInput
+        ) => Promise<RouteReturnSuccess<AnyRouteReturn> | RouteReturnError>
+
+        /**
+         * Delete files
+         */
+        DELETE: (input: {
+            ids?: string[]
+            prefix?: string
+        }) => Promise<RouteReturnSuccess<AnyRouteReturn> | RouteReturnError>
+    }
+
+    folders?: {
+        /**
+         * Get all folders in a path
+         */
+        GET: (input: {
+            path: string
+        }) => Promise<
+            | RouteReturnSuccess<{
+                  folders: FolderBase[]
+                  cursor?: string | null
+                  count?: number
+              }>
+            | RouteReturnError
+        >
+
+        /**
+         * Create a new folder
+         */
+        POST?: (input: {
+            key: string
+            path: string
+            displayName?: string
+        }) => Promise<RouteReturnSuccess<FolderBase> | RouteReturnError>
+
+        /**
+         * Update details of a folder
+         */
+        PUT?: (input: {
+            path: string
+            newPath?: string
+            displayName?: string
+        }) => Promise<RouteReturnSuccess<FolderBase> | RouteReturnError>
+
+        /**
+         * Delete a folder (and its contents)
+         */
+        DELETE?: (input: {
+            path: string
+            ignoreNotEmpty?: boolean
+        }) => Promise<RouteReturnSuccess<AnyRouteReturn> | RouteReturnError>
+    }
+
+    resources: {
+        /**
+         * Get all files and folders in a path
+         */
+        GET: (input?: { path: string }) => Promise<
+            | RouteReturnSuccess<{
+                  files: FileBase[]
+                  filesCount?: number
+                  folders?: FolderBase[]
+                  foldersCount?: number
+              }>
+            | RouteReturnError
+        >
+    }
 }
 
 type AnyRouteInput = Record<string, string | number | boolean>
 
-type AnyRouteReturn = {
-    data: any
-}
+type AnyRouteReturn = string | number | boolean | Record<string, any>
 
-type RouteReturnSuccess = {
+type RouteReturnSuccess<T> = {
     success: true
+    data: T
     message?: string
 }
 
-type RouteReturnError = {
-    success: false
+export class RouteReturnError {
+    success = false
     error: unknown
-    message?: string
-}
+    message: string
+    code?: number
 
-type RouteHandlersWithIO = {
-    [key in RequestMethods]: (
-        input?: AnyRouteInput
-    ) => Promise<(AnyRouteReturn & RouteReturnSuccess) | RouteReturnError>
+    constructor(message: string, opts: { error?: unknown; code?: number } = {}) {
+        this.message = message
+        this.error = opts.error
+        this.code = opts.code
+    }
 }
-
-type BuiltRouteHandlers<TSupports extends SupportsHandlers> = {
-    [handler in AvailableHandlers as TSupports[handler] extends false
-        ? never
-        : handler]: TSupports[handler] extends true
-        ? { [key in keyof RouteHandlersWithIO]: RouteHandlersWithIO[key] }
-        : TSupports[handler] extends SupportsMethods
-        ? {
-              [method in RequestMethods as TSupports[handler][method] extends true
-                  ? method
-                  : never]: RouteHandlersWithIO[method]
-          }
-        : never
-}
-
-type ProviderBase = {
-    name: string
-}
-
-/**
- * The provider config ensures a providers type safety
- */
-export type ProviderConfig = {
-    supports: SupportsHandlers
-}
-
-/**
- * The base interface for a provider
- */
-export type Provider<TConfig extends ProviderConfig> = ProviderBase &
-    BuiltRouteHandlers<TConfig["supports"]>
 
 export interface FileBase {
     /**
@@ -121,3 +206,7 @@ export interface FolderBase {
      */
     displayName?: string
 }
+
+export const ErrorCodes = {
+    FOLDER_NOT_EMPTY: 1000,
+} as const

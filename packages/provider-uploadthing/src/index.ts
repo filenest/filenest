@@ -1,19 +1,23 @@
-import { type Provider, ProviderConfig } from "@filenest/core"
-
-const providerConfig: ProviderConfig = {
-    supports: {
-        files: true,
-        folders: false,
-        resources: true,
-    },
-}
+import { RouteReturnError, type Provider } from "@filenest/core"
 
 interface UploadThingConfig {
     UPLOADTHING_TOKEN: string
 }
 
-export class UploadThing implements Provider<typeof providerConfig> {
+export class UploadThing implements Provider {
     name = "UploadThing" as const
+
+    supports = {
+        files: {
+            rename: true,
+        },
+        folders: {
+            list: false,
+            create: false,
+            delete: false,
+            rename: false,
+        },
+    }
 
     private UPLOADTHING_TOKEN: string
     private apiKey: string
@@ -45,7 +49,7 @@ export class UploadThing implements Provider<typeof providerConfig> {
         })
     }
 
-    files = {
+    files: Provider["files"] = {
         GET: async (input = {}) => {
             try {
                 const body: Record<string, any> = {}
@@ -79,58 +83,55 @@ export class UploadThing implements Provider<typeof providerConfig> {
 
                 return {
                     success: true,
-                    data: json.files.map((file) => ({
-                        id: file.key,
-                        key: file.key,
-                        name: file.name,
-                        size: file.size,
-                        updatedAt: file.uploadedAt.toString(),
-                        url: this.getFileUrl(file.key),
-                    })),
+                    data: {
+                        files: files.map((file) => ({
+                            id: file.key,
+                            key: file.key,
+                            name: file.name,
+                            size: file.size,
+                            updatedAt: file.uploadedAt.toString(),
+                            url: this.getFileUrl(file.key),
+                        })),
+                        count: files.length,
+                    },
                 }
             } catch (error) {
-                return {
-                    success: false,
-                    error,
-                    message: "Failed to fetch files",
-                }
+                return new RouteReturnError("Failed to fetch files", { error })
             }
         },
         POST: async (input) => {
-            return { success: true, message: "POST files" }
+            return { success: false, error: true, message: "Not implemented" }
+        },
+        DELETE: async (input) => {
+            return { success: false, error: true, message: "Not implemented" }
         },
     }
 
-    resources = {
+    resources: Provider["resources"] = {
         GET: async (input) => {
             if (!input) {
                 return { success: false, error: true, message: "Missing input" }
             }
 
             try {
-                const files = await this.files.GET({ prefix: input.path })
+                const result = await this.files.GET({ prefix: input.path })
 
-                if ("error" in files) {
+                if ("error" in result) {
                     throw new Error("Failed to fetch resources")
                 }
 
                 return {
                     success: true,
                     data: {
-                        files: files.data,
+                        files: result.data.files,
+                        filesCount: result.data.count,
                         folders: [], // not supported, return empty array
+                        foldersCount: 0,
                     },
                 }
             } catch (error) {
-                return {
-                    success: false,
-                    error,
-                    message: "Failed to fetch resources",
-                }
+                return new RouteReturnError("Failed to fetch resources", { error })
             }
-        },
-        POST: async (input) => {
-            return { success: false, error: true, message: "Method not supported" }
         },
     }
 }
