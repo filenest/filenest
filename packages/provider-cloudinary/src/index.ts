@@ -1,6 +1,6 @@
 import crypto from "crypto"
 import {
-    ErrorCodes,
+    ErrorCode,
     FileBase,
     FolderBase,
     RouteReturnError,
@@ -377,7 +377,7 @@ export class Cloudinary implements Provider {
 
             if (hasFiles && !ignoreNotEmpty) {
                 return new RouteReturnError("This folder is not empty", {
-                    code: ErrorCodes.FOLDER_NOT_EMPTY,
+                    code: ErrorCode.FOLDER_NOT_EMPTY,
                 })
             }
 

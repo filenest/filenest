@@ -78,9 +78,7 @@ export interface Provider {
         /**
          * Get all folders in a path
          */
-        GET: (input: {
-            path: string
-        }) => Promise<
+        GET: (input: { path: string }) => Promise<
             | RouteReturnSuccess<{
                   folders: FolderBase[]
                   cursor?: string | null
@@ -146,9 +144,9 @@ export class RouteReturnError {
     success = false
     error: unknown
     message: string
-    code?: number
+    code?: ErrorCode
 
-    constructor(message: string, opts: { error?: unknown; code?: number } = {}) {
+    constructor(message: string, opts: { error?: unknown; code?: ErrorCode } = {}) {
         this.message = message
         this.error = opts.error
         this.code = opts.code
@@ -207,6 +205,8 @@ export interface FolderBase {
     displayName?: string
 }
 
-export const ErrorCodes = {
+export const ErrorCode = {
     FOLDER_NOT_EMPTY: 1000,
 } as const
+
+type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode]
