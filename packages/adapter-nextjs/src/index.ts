@@ -4,8 +4,8 @@ import { NextRequest, NextResponse } from "next/server"
 type Middleware = (req: NextRequest) => void | NextResponse | Promise<void | NextResponse>
 
 class FilenestNextjsHandler {
-    provider: Provider
-    middleware?: Middleware
+    private provider: Provider
+    private middleware?: Middleware
 
     constructor(provider: Provider) {
         this.provider = provider
