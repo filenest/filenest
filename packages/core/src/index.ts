@@ -4,23 +4,11 @@
 export interface Provider {
     name: string
 
-    supports: {
-        files: {
-            rename: boolean
-        }
-        folders: {
-            list: boolean | "virtual"
-            create: boolean
-            delete: boolean
-            rename: boolean
-        }
-    }
-
     files: {
         /**
          * Get files matching the input params
          */
-        GET: (input?: {
+        getFiles: (input?: {
             prefix?: string
             delimiter?: string
             query?: string
@@ -37,14 +25,9 @@ export interface Provider {
         >
 
         /**
-         * Get presigned upload URL and info about required params
-         * for uploading a file on the client
+         * Get the parameter names required for uploading a file
          */
-        POST: (input: {
-            getRequiredParams?: boolean
-            getSignedUrl?: boolean
-            signingParams?: Record<string, string>
-        }) => Promise<
+        getRequiredParams: () =>
             | RouteReturnSuccess<
                   | {
                         requiredParams: {
@@ -56,19 +39,25 @@ export interface Provider {
                   | string
               >
             | RouteReturnError
-        >
+
+        /**
+         * Get presigned upload URL
+         */
+        getUploadUrl: (input: {
+            signingParams: Record<string, string>
+        }) => Promise<RouteReturnSuccess<string> | RouteReturnError>
 
         /**
          * Update details of a file
          */
-        PUT?: (
+        updateFile?: (
             input: AnyRouteInput
         ) => Promise<RouteReturnSuccess<AnyRouteReturn> | RouteReturnError>
 
         /**
          * Delete files
          */
-        DELETE: (input: {
+        deleteFiles: (input: {
             ids?: string[]
             prefix?: string
         }) => Promise<RouteReturnSuccess<AnyRouteReturn> | RouteReturnError>
@@ -78,7 +67,7 @@ export interface Provider {
         /**
          * Get all folders in a path
          */
-        GET: (input: { path: string }) => Promise<
+        getFolders: (input: { path: string }) => Promise<
             | RouteReturnSuccess<{
                   folders: FolderBase[]
                   cursor?: string | null
@@ -90,7 +79,7 @@ export interface Provider {
         /**
          * Create a new folder
          */
-        POST?: (input: {
+        createFolder?: (input: {
             key: string
             path: string
             displayName?: string
@@ -99,7 +88,7 @@ export interface Provider {
         /**
          * Update details of a folder
          */
-        PUT?: (input: {
+        updateFolder?: (input: {
             path: string
             newPath?: string
             displayName?: string
@@ -108,25 +97,22 @@ export interface Provider {
         /**
          * Delete a folder (and its contents)
          */
-        DELETE?: (input: {
+        deleteFolder?: (input: {
             path: string
             ignoreNotEmpty?: boolean
         }) => Promise<RouteReturnSuccess<AnyRouteReturn> | RouteReturnError>
     }
+}
 
-    resources: {
-        /**
-         * Get all files and folders in a path
-         */
-        GET: (input?: { path: string }) => Promise<
-            | RouteReturnSuccess<{
-                  files: FileBase[]
-                  filesCount?: number
-                  folders?: FolderBase[]
-                  foldersCount?: number
-              }>
-            | RouteReturnError
-        >
+export interface FeatureFlags {
+    files: {
+        rename: boolean
+    }
+    folders: {
+        list: boolean | "virtual"
+        create: boolean
+        delete: boolean
+        rename: boolean
     }
 }
 
@@ -215,6 +201,5 @@ export function getHandlersFromProvider(provider: Provider) {
     return {
         files: provider.files,
         folders: provider.folders,
-        resources: provider.resources,
     }
 }

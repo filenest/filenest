@@ -11,7 +11,10 @@ class FilenestNextjsHandler {
         this.provider = provider
     }
 
-    private handleRequest = async (req: NextRequest) => {
+    private handleRequest = async (
+        req: NextRequest,
+        { params }: { params: { handler: string[] } }
+    ) => {
         if (this.middleware) {
             const result = await this.middleware(req)
             if (result instanceof NextResponse && !result.ok) {
@@ -19,12 +22,12 @@ class FilenestNextjsHandler {
             }
         }
 
-        const { pathname } = new URL(req.url)
         const handlers = getHandlersFromProvider(this.provider)
-        const handlerName = pathname.split("/").at(-1) as keyof typeof handlers
-        const requestMethod = req.method as unknown as keyof {
+        const handlerName = params.handler[0] as keyof typeof handlers
+        const handlerAction = params.handler[1] as keyof {
             [k in keyof typeof handlers as keyof (typeof handlers)[k]]: string
         }
+        const requestParams = req.nextUrl.searchParams
 
         if (!handlerName) {
             return new NextResponse(
@@ -50,9 +53,9 @@ class FilenestNextjsHandler {
 
         const handler = this.provider[handlerName]
 
-        if (!(handler as any)[requestMethod]) {
+        if (!(handler as any)[handlerAction]) {
             return new NextResponse(
-                `Invalid request method "${requestMethod}" for handler name "${handlerName}".`,
+                `Invalid request method "${handlerAction}" for handler name "${handlerName}".`,
                 { status: 400 }
             )
         }
@@ -65,8 +68,13 @@ class FilenestNextjsHandler {
             body = {}
         }
 
+        // Add query params to the body
+        for (const [key, value] of requestParams.entries()) {
+            body[key] = value
+        }
+
         try {
-            const result = await (handler as any)[requestMethod](body)
+            const result = await (handler as any)[handlerAction](body)
             return NextResponse.json(result)
         } catch (error) {
             const message =
@@ -94,7 +102,7 @@ class FilenestNextjsHandler {
  * Initializes and returns a FilenestNextjsHandler instance
  *
  * @example
- * // app/api/filenest/[handler]/route.ts
+ * // app/api/filenest/[...handler]/route.ts
  * const provider = new Provider({ ... });
  * export const { GET, POST, PUT, DELETE } = initNextjsAdapter(provider).create();
  *

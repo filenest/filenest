@@ -1,11 +1,24 @@
 import crypto from "crypto"
 import {
     ErrorCode,
+    FeatureFlags,
     FileBase,
     FolderBase,
     RouteReturnError,
     type Provider,
 } from "@filenest/core"
+
+export const featureFlags: FeatureFlags = {
+    files: {
+        rename: true,
+    },
+    folders: {
+        list: true,
+        create: true,
+        delete: true,
+        rename: true,
+    },
+}
 
 type CloudinaryConfig = {
     API_KEY: string
@@ -16,17 +29,7 @@ type CloudinaryConfig = {
 export class Cloudinary implements Provider {
     name = "Cloudinary" as const
 
-    supports = {
-        files: {
-            rename: true,
-        },
-        folders: {
-            list: true,
-            create: true,
-            delete: true,
-            rename: true,
-        },
-    }
+    supports = featureFlags
 
     private _URL: string
     private _MAX_RESULTS = 500
@@ -122,7 +125,7 @@ export class Cloudinary implements Provider {
     }
 
     files: Provider["files"] = {
-        GET: async (input) => {
+        getFiles: async (input) => {
             let url: URL = new URL(this._URL.toString() + "/resources")
 
             if (!input?.prefix && !input?.query) {
@@ -177,68 +180,55 @@ export class Cloudinary implements Provider {
                 },
             }
         },
-        POST: async (input) => {
-            const { getRequiredParams, getSignedUrl, signingParams } = input
-
-            if (getRequiredParams && getSignedUrl) {
-                return new RouteReturnError(
-                    "You need to specify either getRequiredParams or getSignedUrl, but not both"
-                )
-            }
-
-            if (getRequiredParams) {
-                return {
-                    success: true,
-                    data: {
-                        requiredParams: {
-                            fileParam: "file",
-                            folderParam: "folder",
-                        },
-                        defaultParams: {
-                            use_filename: "true",
-                            unique_filename: "true",
-                        },
+        getRequiredParams: () => {
+            return {
+                success: true,
+                data: {
+                    requiredParams: {
+                        fileParam: "file",
+                        folderParam: "folder",
                     },
-                }
+                    defaultParams: {
+                        use_filename: "true",
+                        unique_filename: "true",
+                    },
+                },
             }
-
-            if (getSignedUrl) {
-                if (!signingParams) {
-                    return new RouteReturnError("signingParams is required")
-                }
-
-                const { settings } = await this._getConfig()
-
-                if (settings.folder_mode === "dynamic") {
-                    signingParams.asset_folder =
-                        signingParams.folder || signingParams.asset_folder || ""
-                    delete signingParams.folder
-                }
-
-                const timestamp = Math.floor(Date.now() / 1000).toString()
-                signingParams.timestamp = timestamp
-
-                const signature = await this._makeSignature(signingParams)
-
-                const url = new URL(this._URL.toString() + "/auto/upload")
-                url.searchParams.append("api_key", this._API_KEY)
-                url.searchParams.append("signature", signature)
-                Object.entries(signingParams).forEach(([key, value]) => {
-                    url.searchParams.append(key, value)
-                })
-                url.searchParams.sort()
-
-                return {
-                    success: true,
-                    data: url.toString(),
-                }
-            }
-
-            return new RouteReturnError(
-                "You need to specify either getRequiredParams or getSignedUrl"
-            )
         },
-        DELETE: async (input) => {
+        getUploadUrl: async (input) => {
+            const { signingParams } = input
+
+            if (!signingParams) {
+                return new RouteReturnError("signingParams is required")
+            }
+
+            const { settings } = await this._getConfig()
+
+            if (settings.folder_mode === "dynamic") {
+                signingParams.asset_folder =
+                    signingParams.folder || signingParams.asset_folder || ""
+                delete signingParams.folder
+            }
+
+            const timestamp = Math.floor(Date.now() / 1000).toString()
+            signingParams.timestamp = timestamp
+
+            const signature = await this._makeSignature(signingParams)
+
+            const url = new URL(this._URL.toString() + "/auto/upload")
+            url.searchParams.append("api_key", this._API_KEY)
+            url.searchParams.append("signature", signature)
+            Object.entries(signingParams).forEach(([key, value]) => {
+                url.searchParams.append(key, value)
+            })
+            url.searchParams.sort()
+
+            return {
+                success: true,
+                data: url.toString(),
+            }
+        },
+        deleteFiles: async (input) => {
             const { ids, prefix } = input
 
             if (!ids && !prefix) {
@@ -308,13 +298,13 @@ export class Cloudinary implements Provider {
 
             return new RouteReturnError("Specify either ids or prefix")
         },
-        PUT: async (input) => {
+        updateFile: async (input) => {
             return new RouteReturnError("Not implemented")
         },
     }
 
     folders: Provider["folders"] = {
-        GET: async (input) => {
+        getFolders: async (input) => {
             const url = new URL([this._URL.toString(), "/folders/", input.path].join(""))
 
             const folders: CloudinaryFolderResponse = await this._doFetch(url)
@@ -328,7 +318,7 @@ export class Cloudinary implements Provider {
                 },
             }
         },
-        POST: async (input) => {
+        createFolder: async (input) => {
             const url = new URL(this._URL.toString() + "/folders/" + input.path)
             const folder: CloudinaryFolder = await this._doFetch(url, { method: "POST" })
             return {
@@ -336,7 +326,7 @@ export class Cloudinary implements Provider {
                 data: this._mapFolderToSchema(folder),
             }
         },
-        PUT: async (input) => {
+        updateFolder: async (input) => {
             const { path, newPath } = input
 
             // We need to check if environment uses fixed or dynamic folder mode.
@@ -362,10 +352,10 @@ export class Cloudinary implements Provider {
                 data: this._mapFolderToSchema(folder.to),
             }
         },
-        DELETE: async (input) => {
+        deleteFolder: async (input) => {
             const { path, ignoreNotEmpty } = input
 
-            const result = await this.files.GET({ prefix: path })
+            const result = await this.files.getFiles({ prefix: path })
 
             if ("error" in result) {
                 return result
@@ -384,7 +374,7 @@ export class Cloudinary implements Provider {
             // Delete all assets in the folder when force deleting
             if (hasFiles) {
                 if (config.settings.folder_mode === "fixed") {
-                    await this.files.DELETE({ prefix: path })
+                    await this.files.deleteFiles({ prefix: path })
                 }
 
                 if (config.settings.folder_mode === "dynamic") {
@@ -397,7 +387,7 @@ export class Cloudinary implements Provider {
                     const allFolders: FolderBase[] = []
 
                     const getAllSubfolders = async (path: string) => {
-                        const result = await this.folders!.GET({ path })
+                        const result = await this.folders!.getFolders({ path })
                         if ("error" in result) {
                             return
                         }
@@ -417,14 +407,14 @@ export class Cloudinary implements Provider {
                             let allDone = false
 
                             while (!allDone) {
-                                const result = await this.files.GET({
+                                const result = await this.files.getFiles({
                                     prefix: folder.key,
                                 })
 
                                 if ("error" in result) return
 
                                 const ids = result.data.files.map((file) => file.id)
-                                await this.files.DELETE({ ids })
+                                await this.files.deleteFiles({ ids })
 
                                 if (!result.data.cursor) {
                                     allDone = true
@@ -442,31 +432,6 @@ export class Cloudinary implements Provider {
             return {
                 success: true,
                 data: {},
-            }
-        },
-    }
-
-    resources: Provider["resources"] = {
-        GET: async (input) => {
-            if (!input?.path) {
-                return new RouteReturnError("Missing path")
-            }
-
-            const filesResult = await this.files.GET({ prefix: input.path })
-            const foldersResult = await this.folders!.GET({ path: input.path })
-
-            if ("error" in filesResult || "error" in foldersResult) {
-                return new RouteReturnError("Failed to fetch resources")
-            }
-
-            return {
-                success: true,
-                data: {
-                    files: filesResult.data.files,
-                    filesCount: filesResult.data.count,
-                    folders: foldersResult.data.folders,
-                    foldersCount: foldersResult.data.count,
-                },
             }
         },
     }

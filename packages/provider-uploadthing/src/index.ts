@@ -1,4 +1,16 @@
-import { RouteReturnError, type Provider } from "@filenest/core"
+import { FeatureFlags, RouteReturnError, type Provider } from "@filenest/core"
+
+export const featureFlags: FeatureFlags = {
+    files: {
+        rename: true,
+    },
+    folders: {
+        list: false,
+        create: false,
+        delete: false,
+        rename: false,
+    },
+}
 
 interface UploadThingConfig {
     UPLOADTHING_TOKEN: string
@@ -7,17 +19,7 @@ interface UploadThingConfig {
 export class UploadThing implements Provider {
     name = "UploadThing" as const
 
-    supports = {
-        files: {
-            rename: true,
-        },
-        folders: {
-            list: false,
-            create: false,
-            delete: false,
-            rename: false,
-        },
-    }
+    supports = featureFlags
 
     private UPLOADTHING_TOKEN: string
     private apiKey: string
@@ -50,7 +52,7 @@ export class UploadThing implements Provider {
     }
 
     files: Provider["files"] = {
-        GET: async (input = {}) => {
+        getFiles: async (input = {}) => {
             try {
                 const body: Record<string, any> = {}
                 if (input.limit) body.limit = input.limit
@@ -99,40 +101,15 @@ export class UploadThing implements Provider {
                 return new RouteReturnError("Failed to fetch files", { error })
             }
         },
-        POST: async (input) => {
+        getRequiredParams: () => {
             return { success: false, error: true, message: "Not implemented" }
         },
-        DELETE: async (input) => {
+        getUploadUrl: async (input) => {
             return { success: false, error: true, message: "Not implemented" }
         },
-    }
-
-    resources: Provider["resources"] = {
-        GET: async (input) => {
-            if (!input) {
-                return { success: false, error: true, message: "Missing input" }
-            }
-
-            try {
-                const result = await this.files.GET({ prefix: input.path })
-
-                if ("error" in result) {
-                    throw new Error("Failed to fetch resources")
-                }
-
-                return {
-                    success: true,
-                    data: {
-                        files: result.data.files,
-                        filesCount: result.data.count,
-                        folders: [], // not supported, return empty array
-                        foldersCount: 0,
-                    },
-                }
-            } catch (error) {
-                return new RouteReturnError("Failed to fetch resources", { error })
-            }
-        },
+        deleteFiles: async (input) => {
+            return { success: false, error: true, message: "Not implemented" }
+        }
     }
 }
 
