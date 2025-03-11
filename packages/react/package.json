@@ -30,6 +30,7 @@
         "lint": "eslint ."
     },
     "dependencies": {
+        "@filenest/core": "workspace:*",
         "@radix-ui/react-alert-dialog": "^1.1.6",
         "@radix-ui/react-dialog": "^1.1.6",
         "@radix-ui/react-dropdown-menu": "^2.1.6",
@@ -40,7 +41,6 @@
         "tailwind-merge": "^2"
     },
     "peerDependencies": {
-        "@filenest/core": "workspace:*",
         "react": ">=18",
         "react-dom": ">=18"
     },

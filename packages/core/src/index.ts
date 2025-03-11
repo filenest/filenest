@@ -210,3 +210,11 @@ export const ErrorCode = {
 } as const
 
 type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode]
+
+export function getHandlersFromProvider(provider: Provider) {
+    return {
+        files: provider.files,
+        folders: provider.folders,
+        resources: provider.resources,
+    }
+}

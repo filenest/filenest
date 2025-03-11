@@ -30,6 +30,7 @@
         "lint": "eslint ."
     },
     "dependencies": {
+        "@filenest/core": "workspace:*",
         "slugify": "1.6.6"
     },
     "devDependencies": {
@@ -38,9 +39,6 @@
         "@types/node": "^22.13.9",
         "eslint": "9.21.0",
         "tsup": "^8.4.0"
-    },
-    "peerDependencies": {
-        "@filenest/core": "workspace:*"
     },
     "engines": {
         "pnpm": ">=10.0.0"
