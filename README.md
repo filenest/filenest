@@ -1,3 +1,8 @@
+> [!NOTE]  
+> Filenest is currently getting a big overhaul.  
+> I suggest waiting for the next update to start using it.  
+> Star the repo to not miss the release ⭐️
+
 ![Filenest Banner](.github/media/banner.png)
 
 https://github.com/user-attachments/assets/bc5e5510-fe11-44e2-b141-72a3abd4714f
