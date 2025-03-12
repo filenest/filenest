@@ -1,12 +1,12 @@
 import crypto from "crypto"
 import {
     ErrorCode,
-    FeatureFlags,
     FileBase,
     FolderBase,
     RouteReturnError,
     type Provider,
 } from "@filenest/core"
+import { FeatureFlags } from "@filenest/core/provider"
 
 export const featureFlags: FeatureFlags = {
     files: {

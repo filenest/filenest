@@ -25,8 +25,8 @@
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "tsup src/index.ts --dts --format cjs,esm --sourcemap",
-        "dev": "tsup src/index.ts --dts --sourcemap --watch",
+        "build": "tsup src/index.tsx --dts --format cjs,esm --sourcemap",
+        "dev": "tsup src/index.tsx --dts --sourcemap --watch",
         "lint": "eslint ."
     },
     "dependencies": {

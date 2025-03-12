@@ -1,4 +1,5 @@
-import { type Provider, getHandlersFromProvider } from "@filenest/core"
+import { type Provider } from "@filenest/core"
+import { getHandlersFromProvider } from "@filenest/core/utils"
 import { NextRequest, NextResponse } from "next/server"
 
 type Middleware = (req: NextRequest) => void | NextResponse | Promise<void | NextResponse>
@@ -92,8 +93,6 @@ class FilenestNextjsHandler {
         return {
             GET: this.handleRequest,
             POST: this.handleRequest,
-            PUT: this.handleRequest,
-            DELETE: this.handleRequest,
         }
     }
 }
@@ -104,11 +103,11 @@ class FilenestNextjsHandler {
  * @example
  * // app/api/filenest/[...handler]/route.ts
  * const provider = new Provider({ ... });
- * export const { GET, POST, PUT, DELETE } = initNextjsAdapter(provider).create();
+ * export const { GET, POST } = initNextjsAdapter(provider).create();
  *
  * @example
  * // With middleware:
- * export const { GET, POST, PUT, DELETE } = initNextjsAdapter(provider)
+ * export const { GET, POST } = initNextjsAdapter(provider)
  *     .use((req) => {
  *        // You can do auth here. Execution will stop if you return an error.
  *        // return new NextResponse("Unauthorized", { status: 401 });

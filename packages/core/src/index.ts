@@ -104,18 +104,6 @@ export interface Provider {
     }
 }
 
-export interface FeatureFlags {
-    files: {
-        rename: boolean
-    }
-    folders: {
-        list: boolean | "virtual"
-        create: boolean
-        delete: boolean
-        rename: boolean
-    }
-}
-
 type AnyRouteInput = Record<string, string | number | boolean>
 
 type AnyRouteReturn = string | number | boolean | Record<string, any>
@@ -196,10 +184,3 @@ export const ErrorCode = {
 } as const
 
 type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode]
-
-export function getHandlersFromProvider(provider: Provider) {
-    return {
-        files: provider.files,
-        folders: provider.folders,
-    }
-}

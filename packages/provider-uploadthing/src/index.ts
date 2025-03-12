@@ -1,4 +1,5 @@
-import { FeatureFlags, RouteReturnError, type Provider } from "@filenest/core"
+import { RouteReturnError, type Provider } from "@filenest/core"
+import { FeatureFlags } from "@filenest/core/provider"
 
 export const featureFlags: FeatureFlags = {
     files: {
@@ -109,7 +110,7 @@ export class UploadThing implements Provider {
         },
         deleteFiles: async (input) => {
             return { success: false, error: true, message: "Not implemented" }
-        }
+        },
     }
 }
 

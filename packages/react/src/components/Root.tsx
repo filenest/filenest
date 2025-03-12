@@ -1,34 +1,36 @@
 "use client"
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { GlobalProvider } from "../context/global/GlobalContext"
-import { FileQueueProvider } from "../context/global/FileQueueContext"
-import type { labels } from "../utils/labels"
-import type { Asset } from "@filenest/core"
+import React, { useState } from "react"
+import { type FilenestClientConfig } from ".."
+import { FileBase, FolderBase } from "@filenest/core"
 
-export type RootProps = {
-    children: React.ReactNode
-    endpoint: string
-    endpointIsTRPC?: boolean
-    labels?: Partial<Record<keyof typeof labels, string>>
-    onAssetSelect?: (asset: Asset) => void
-    onError?: (message: string) => void
+interface GlobalContext {}
+
+const GlobalContext = React.createContext<GlobalContext | null>(null)
+
+export function useGlobalContext() {
+    const context = React.useContext(GlobalContext)
+    if (!context) {
+        throw new Error(
+            "This component uses useGlobalContext, but was not used within Filenest.Root"
+        )
+    }
+    return context
 }
 
-const queryClient = new QueryClient({
-    defaultOptions: {
-        queries: {
-            refetchOnWindowFocus: false,
-        },
-    },
-})
+export const FilenestRoot = ({
+    children,
+    config,
+}: {
+    children: React.ReactNode
+    config: FilenestClientConfig
+}) => {
+    const [foldersInList, setFoldersInList] = useState<FolderBase[]>([])
+    const [filesInList, setFilesInList] = useState<FileBase[]>([])
 
-export const Root = ({ children, ...props }: RootProps) => {
+    const contextValue = {}
+
     return (
-        <QueryClientProvider client={queryClient}>
-            <GlobalProvider {...props}>
-                <FileQueueProvider>{children}</FileQueueProvider>
-            </GlobalProvider>
-        </QueryClientProvider>
+        <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>
     )
 }

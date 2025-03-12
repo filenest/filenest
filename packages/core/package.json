@@ -19,14 +19,28 @@
         ".": {
             "import": "./dist/index.js",
             "types": "./dist/index.d.ts",
-            "module": "./dist/index.js",
-            "require": "./dist/index.js"
+            "module": "./dist/index.js"
+        },
+        "./utils": {
+            "import": "./dist/utils.js",
+            "types": "./dist/utils.d.ts",
+            "module": "./dist/utils.js"
+        },
+        "./adapter": {
+            "import": "./dist/adapter.js",
+            "types": "./dist/adapter.d.ts",
+            "module": "./dist/adapter.js"
+        },
+        "./provider": {
+            "import": "./dist/provider.js",
+            "types": "./dist/provider.d.ts",
+            "module": "./dist/provider.js"
         }
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "tsup src/index.ts --dts --format cjs,esm --sourcemap",
-        "dev": "tsup src/index.ts --dts --sourcemap --watch",
+        "build": "tsup src/index.ts src/utils.ts src/adapter.ts src/provider.ts --dts --format cjs,esm --sourcemap",
+        "dev": "tsup src/index.ts src/utils.ts src/adapter.ts src/provider.ts --dts --sourcemap --watch",
         "lint": "eslint ."
     },
     "devDependencies": {
