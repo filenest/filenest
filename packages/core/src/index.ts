@@ -1,8 +1,12 @@
+import { FeatureFlags } from "./provider"
+
 /**
  * Base for all other providers
  */
 export interface Provider {
     name: string
+
+    supports: FeatureFlags
 
     files: {
         /**
@@ -16,43 +20,37 @@ export interface Provider {
             skip?: number
             cursor?: string | number | null
         }) => Promise<
-            | RouteReturnSuccess<{
-                  files: FileBase[]
-                  cursor?: string | null
-                  count?: number
-              }>
-            | RouteReturnError
+            FilenestResponse<{
+                files: FilenestFile[]
+                cursor?: string | null
+                count?: number
+            }>
         >
 
         /**
          * Get the parameter names required for uploading a file
          */
-        getRequiredParams: () =>
-            | RouteReturnSuccess<
-                  | {
-                        requiredParams: {
-                            fileParam: string
-                            folderParam: string
-                        }
-                        defaultParams: Record<string, any>
-                    }
-                  | string
-              >
-            | RouteReturnError
+        getRequiredParams: () => Promise<
+            FilenestResponse<{
+                requiredParams: {
+                    fileParam: string
+                    folderParam: string
+                }
+                defaultParams: Record<string, any>
+            }>
+        >
 
         /**
          * Get presigned upload URL
          */
         getUploadUrl: (input: {
             signingParams: Record<string, string>
-        }) => Promise<RouteReturnSuccess<string> | RouteReturnError>
+        }) => Promise<FilenestResponse<string>>
 
         /**
          * Update details of a file
          */
-        updateFile?: (
-            input: AnyRouteInput
-        ) => Promise<RouteReturnSuccess<AnyRouteReturn> | RouteReturnError>
+        updateFile?: (input: any) => Promise<FilenestResponse<AnyRouteReturn>>
 
         /**
          * Delete files
@@ -60,7 +58,7 @@ export interface Provider {
         deleteFiles: (input: {
             ids?: string[]
             prefix?: string
-        }) => Promise<RouteReturnSuccess<AnyRouteReturn> | RouteReturnError>
+        }) => Promise<FilenestResponse<AnyRouteReturn>>
     }
 
     folders?: {
@@ -68,12 +66,11 @@ export interface Provider {
          * Get all folders in a path
          */
         getFolders: (input: { path: string }) => Promise<
-            | RouteReturnSuccess<{
-                  folders: FolderBase[]
-                  cursor?: string | null
-                  count?: number
-              }>
-            | RouteReturnError
+            FilenestResponse<{
+                folders: FilenestFolder[]
+                cursor?: string | null
+                count?: number
+            }>
         >
 
         /**
@@ -83,7 +80,7 @@ export interface Provider {
             key: string
             path: string
             displayName?: string
-        }) => Promise<RouteReturnSuccess<FolderBase> | RouteReturnError>
+        }) => Promise<FilenestResponse<FilenestFolder>>
 
         /**
          * Update details of a folder
@@ -92,7 +89,7 @@ export interface Provider {
             path: string
             newPath?: string
             displayName?: string
-        }) => Promise<RouteReturnSuccess<FolderBase> | RouteReturnError>
+        }) => Promise<FilenestResponse<FilenestFolder>>
 
         /**
          * Delete a folder (and its contents)
@@ -100,15 +97,13 @@ export interface Provider {
         deleteFolder?: (input: {
             path: string
             ignoreNotEmpty?: boolean
-        }) => Promise<RouteReturnSuccess<AnyRouteReturn> | RouteReturnError>
+        }) => Promise<FilenestResponse<AnyRouteReturn>>
     }
 }
 
-type AnyRouteInput = Record<string, string | number | boolean>
+export type AnyRouteReturn = string | number | boolean | Record<string, any>
 
-type AnyRouteReturn = string | number | boolean | Record<string, any>
-
-type RouteReturnSuccess<T> = {
+export type RouteReturnSuccess<T> = {
     success: true
     data: T
     message?: string
@@ -127,7 +122,11 @@ export class RouteReturnError {
     }
 }
 
-export interface FileBase {
+export type FilenestResponse<TReturn extends AnyRouteReturn> =
+    | RouteReturnSuccess<TReturn>
+    | RouteReturnError
+
+export interface FilenestFile {
     /**
      * Unique identifier for the file.
      * Will be = `key` in case of S3 compatible provider.
@@ -151,6 +150,11 @@ export interface FileBase {
     size: number
 
     /**
+     * File extension
+     */
+    extension: string
+
+    /**
      * Timestamp of last modification
      */
     updatedAt: string
@@ -161,7 +165,7 @@ export interface FileBase {
     url: string
 }
 
-export interface FolderBase {
+export interface FilenestFolder {
     /**
      * Unique identifier for the folder.
      * Will be = `key` in case of S3 compatible provider.

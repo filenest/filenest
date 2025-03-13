@@ -1,5 +1,6 @@
-import { type Provider } from "@filenest/core"
-import { getHandlersFromProvider } from "@filenest/core/utils"
+import { FilenestHandlers, type Provider } from "@filenest/core"
+import { MakeAdapterClientConfig } from "@filenest/core/adapter"
+import { ClientAPICaller, getHandlersFromProvider } from "@filenest/core/utils"
 import { NextRequest, NextResponse } from "next/server"
 
 type Middleware = (req: NextRequest) => void | NextResponse | Promise<void | NextResponse>
@@ -14,7 +15,7 @@ class FilenestNextjsHandler {
 
     private handleRequest = async (
         req: NextRequest,
-        { params }: { params: { handler: string[] } }
+        { params }: { params: Promise<{ handler: string[] }> }
     ) => {
         if (this.middleware) {
             const result = await this.middleware(req)
@@ -23,15 +24,16 @@ class FilenestNextjsHandler {
             }
         }
 
+        const routeParams = await params
         const handlers = getHandlersFromProvider(this.provider)
-        const handlerName = params.handler[0] as keyof typeof handlers
-        const handlerAction = params.handler[1] as keyof {
+        const handlerName = routeParams.handler[0] as keyof typeof handlers
+        const handlerAction = routeParams.handler[1] as keyof {
             [k in keyof typeof handlers as keyof (typeof handlers)[k]]: string
         }
         const requestParams = req.nextUrl.searchParams
 
         if (!handlerName) {
-            return new NextResponse(
+            return NextResponse.json(
                 [
                     "Missing handler name.",
                     "Your API route should end with one of the following:",
@@ -42,7 +44,7 @@ class FilenestNextjsHandler {
         }
 
         if (!this.provider[handlerName]) {
-            return new NextResponse(
+            return NextResponse.json(
                 [
                     `Invalid handler name "${handlerName}".`,
                     "It should be one of the following:",
@@ -55,7 +57,7 @@ class FilenestNextjsHandler {
         const handler = this.provider[handlerName]
 
         if (!(handler as any)[handlerAction]) {
-            return new NextResponse(
+            return NextResponse.json(
                 `Invalid request method "${handlerAction}" for handler name "${handlerName}".`,
                 { status: 400 }
             )
@@ -110,7 +112,7 @@ class FilenestNextjsHandler {
  * export const { GET, POST } = initNextjsAdapter(provider)
  *     .use((req) => {
  *        // You can do auth here. Execution will stop if you return an error.
- *        // return new NextResponse("Unauthorized", { status: 401 });
+ *        // return NextResponse.json("Unauthorized", { status: 401 });
  *
  *        // Execution will continue if you either return nothing
  *        // or a NextResponse with a status of 200-299.
@@ -119,4 +121,32 @@ class FilenestNextjsHandler {
  */
 export function initNextjsAdapter(provider: Provider) {
     return new FilenestNextjsHandler(provider)
+}
+
+export const adapterConfig: MakeAdapterClientConfig = (options) => {
+    const { providerSupports, endpoint, onError } = options
+
+    const caller = new ClientAPICaller(endpoint, onError)
+
+    const fetchers = {
+        files: {
+            async getFiles(input) {
+                return await caller.call("/files/getFiles", input)
+            },
+            async deleteFiles(input) {
+                return await caller.call("/files/deleteFiles", input)
+            },
+            async getUploadUrl(input) {
+                return await caller.call("/files/getUploadUrl", input)
+            },
+            async getRequiredParams() {
+                return await caller.call("/files/getRequiredParams", undefined)
+            },
+        },
+        folders: {},
+    }
+
+    return {
+        fetchers,
+    }
 }

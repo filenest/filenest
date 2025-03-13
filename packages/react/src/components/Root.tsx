@@ -2,9 +2,11 @@
 
 import React, { useState } from "react"
 import { type FilenestClientConfig } from ".."
-import { FileBase, FolderBase } from "@filenest/core"
+import { FilenestFile, FilenestFolder } from "@filenest/core"
 
-interface GlobalContext {}
+interface GlobalContext {
+    fetchers: ReturnType<FilenestClientConfig["adapterConfig"]>["fetchers"]
+}
 
 const GlobalContext = React.createContext<GlobalContext | null>(null)
 
@@ -25,10 +27,17 @@ export const FilenestRoot = ({
     children: React.ReactNode
     config: FilenestClientConfig
 }) => {
-    const [foldersInList, setFoldersInList] = useState<FolderBase[]>([])
-    const [filesInList, setFilesInList] = useState<FileBase[]>([])
+    const { endpoint, adapterConfig, providerConfig } = config
 
-    const contextValue = {}
+    const [foldersInList, setFoldersInList] = useState<FilenestFolder[]>([])
+    const [filesInList, setFilesInList] = useState<FilenestFile[]>([])
+
+    const { supports } = providerConfig()
+    const { fetchers } = adapterConfig({ endpoint, providerSupports: supports })
+
+    const contextValue = {
+        fetchers,
+    }
 
     return (
         <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>

@@ -33,8 +33,10 @@
         "@internal/eslint": "workspace:*",
         "@internal/tsconfig": "workspace:*",
         "eslint": "9.21.0",
-        "next": "^15",
         "tsup": "^8.4.0"
+    },
+    "peerDependencies": {
+        "next": "^15"
     },
     "dependencies": {
         "@filenest/core": "workspace:*"

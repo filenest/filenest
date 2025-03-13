@@ -1,5 +1,6 @@
 import { RouteReturnError, type Provider } from "@filenest/core"
 import { FeatureFlags } from "@filenest/core/provider"
+import { getFileExtension } from "@filenest/core/utils"
 
 export const featureFlags: FeatureFlags = {
     files: {
@@ -92,6 +93,7 @@ export class UploadThing implements Provider {
                             key: file.key,
                             name: file.name,
                             size: file.size,
+                            extension: getFileExtension(file.name),
                             updatedAt: file.uploadedAt.toString(),
                             url: this.getFileUrl(file.key),
                         })),
@@ -102,7 +104,7 @@ export class UploadThing implements Provider {
                 return new RouteReturnError("Failed to fetch files", { error })
             }
         },
-        getRequiredParams: () => {
+        getRequiredParams: async () => {
             return { success: false, error: true, message: "Not implemented" }
         },
         getUploadUrl: async (input) => {

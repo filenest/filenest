@@ -1,12 +1,13 @@
 import crypto from "crypto"
 import {
     ErrorCode,
-    FileBase,
-    FolderBase,
+    FilenestFile,
+    FilenestFolder,
     RouteReturnError,
     type Provider,
 } from "@filenest/core"
 import { FeatureFlags } from "@filenest/core/provider"
+import { getFileExtension } from "@filenest/core/utils"
 
 export const featureFlags: FeatureFlags = {
     files: {
@@ -91,12 +92,13 @@ export class Cloudinary implements Provider {
         return (await this._doFetch(url)) as CloudinaryEnvironment
     }
 
-    private _mapResourceToSchema(resource: CloudinaryResource): FileBase {
+    private _mapResourceToSchema(resource: CloudinaryResource): FilenestFile {
         return {
             id: resource.asset_id,
             key: resource.public_id,
             url: resource.secure_url,
             name: resource.display_name || resource.filename,
+            extension: getFileExtension(resource.filename),
             size: resource.bytes,
             updatedAt: resource.version.toString(),
         }
@@ -106,7 +108,7 @@ export class Cloudinary implements Provider {
         return resource.map((asset) => this._mapResourceToSchema(asset))
     }
 
-    private _mapFolderToSchema(folder: CloudinaryFolder): FolderBase {
+    private _mapFolderToSchema(folder: CloudinaryFolder): FilenestFolder {
         return {
             id: folder.path,
             key: folder.path,
@@ -180,7 +182,7 @@ export class Cloudinary implements Provider {
                 },
             }
         },
-        getRequiredParams: () => {
+        getRequiredParams: async () => {
             return {
                 success: true,
                 data: {
@@ -384,7 +386,7 @@ export class Cloudinary implements Provider {
                     url.searchParams.set("asset_folder", path)
                     url.searchParams.set("max_results", this._MAX_RESULTS.toString())
 
-                    const allFolders: FolderBase[] = []
+                    const allFolders: FilenestFolder[] = []
 
                     const getAllSubfolders = async (path: string) => {
                         const result = await this.folders!.getFolders({ path })
