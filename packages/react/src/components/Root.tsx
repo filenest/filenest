@@ -5,7 +5,7 @@ import { type FilenestClientConfig } from ".."
 import { FilenestFile, FilenestFolder } from "@filenest/core"
 
 interface GlobalContext {
-    fetchers: ReturnType<FilenestClientConfig["adapterConfig"]>["fetchers"]
+    client: ReturnType<FilenestClientConfig["client"]>
 }
 
 const GlobalContext = React.createContext<GlobalContext | null>(null)
@@ -27,16 +27,15 @@ export const FilenestRoot = ({
     children: React.ReactNode
     config: FilenestClientConfig
 }) => {
-    const { endpoint, adapterConfig, providerConfig } = config
+    const { endpoint, client } = config
 
     const [foldersInList, setFoldersInList] = useState<FilenestFolder[]>([])
     const [filesInList, setFilesInList] = useState<FilenestFile[]>([])
 
-    const { supports } = providerConfig()
-    const { fetchers } = adapterConfig({ endpoint, providerSupports: supports })
+    const filenestClient = client({ endpoint })
 
     const contextValue = {
-        fetchers,
+        client: filenestClient,
     }
 
     return (

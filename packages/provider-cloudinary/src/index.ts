@@ -6,20 +6,7 @@ import {
     RouteReturnError,
     type Provider,
 } from "@filenest/core"
-import { FeatureFlags } from "@filenest/core/provider"
 import { getFileExtension } from "@filenest/core/utils"
-
-export const featureFlags: FeatureFlags = {
-    files: {
-        rename: true,
-    },
-    folders: {
-        list: true,
-        create: true,
-        delete: true,
-        rename: true,
-    },
-}
 
 type CloudinaryConfig = {
     API_KEY: string
@@ -29,8 +16,6 @@ type CloudinaryConfig = {
 
 export class Cloudinary implements Provider {
     name = "Cloudinary" as const
-
-    supports = featureFlags
 
     private _URL: string
     private _MAX_RESULTS = 500
@@ -126,7 +111,7 @@ export class Cloudinary implements Provider {
         return asset
     }
 
-    files: Provider["files"] = {
+    files = {
         getFiles: async (input) => {
             let url: URL = new URL(this._URL.toString() + "/resources")
 
@@ -303,9 +288,9 @@ export class Cloudinary implements Provider {
         updateFile: async (input) => {
             return new RouteReturnError("Not implemented")
         },
-    }
+    } satisfies Provider["files"]
 
-    folders: Provider["folders"] = {
+    folders = {
         getFolders: async (input) => {
             const url = new URL([this._URL.toString(), "/folders/", input.path].join(""))
 
@@ -436,7 +421,7 @@ export class Cloudinary implements Provider {
                 data: {},
             }
         },
-    }
+    } satisfies Provider["folders"]
 }
 
 type CloudinaryEnvironment = {

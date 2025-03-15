@@ -1,12 +1,8 @@
-import { FeatureFlags } from "./provider"
-
 /**
  * Base for all other providers
  */
 export interface Provider {
     name: string
-
-    supports: FeatureFlags
 
     files: {
         /**
@@ -61,7 +57,7 @@ export interface Provider {
         }) => Promise<FilenestResponse<AnyRouteReturn>>
     }
 
-    folders?: {
+    folders: {
         /**
          * Get all folders in a path
          */
@@ -76,7 +72,7 @@ export interface Provider {
         /**
          * Create a new folder
          */
-        createFolder?: (input: {
+        createFolder: (input: {
             key: string
             path: string
             displayName?: string
@@ -85,7 +81,7 @@ export interface Provider {
         /**
          * Update details of a folder
          */
-        updateFolder?: (input: {
+        updateFolder: (input: {
             path: string
             newPath?: string
             displayName?: string
@@ -94,7 +90,7 @@ export interface Provider {
         /**
          * Delete a folder (and its contents)
          */
-        deleteFolder?: (input: {
+        deleteFolder: (input: {
             path: string
             ignoreNotEmpty?: boolean
         }) => Promise<FilenestResponse<AnyRouteReturn>>
@@ -185,6 +181,7 @@ export interface FilenestFolder {
 
 export const ErrorCode = {
     FOLDER_NOT_EMPTY: 1000,
+    FEATURE_NOT_SUPPORTED: 1001,
 } as const
 
 type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode]

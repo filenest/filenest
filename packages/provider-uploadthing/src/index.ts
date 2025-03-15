@@ -1,18 +1,5 @@
-import { RouteReturnError, type Provider } from "@filenest/core"
-import { FeatureFlags } from "@filenest/core/provider"
+import { ErrorCode, RouteReturnError, type Provider } from "@filenest/core"
 import { getFileExtension } from "@filenest/core/utils"
-
-export const featureFlags: FeatureFlags = {
-    files: {
-        rename: true,
-    },
-    folders: {
-        list: false,
-        create: false,
-        delete: false,
-        rename: false,
-    },
-}
 
 interface UploadThingConfig {
     UPLOADTHING_TOKEN: string
@@ -20,8 +7,6 @@ interface UploadThingConfig {
 
 export class UploadThing implements Provider {
     name = "UploadThing" as const
-
-    supports = featureFlags
 
     private UPLOADTHING_TOKEN: string
     private apiKey: string
@@ -53,7 +38,7 @@ export class UploadThing implements Provider {
         })
     }
 
-    files: Provider["files"] = {
+    files = {
         getFiles: async (input = {}) => {
             try {
                 const body: Record<string, any> = {}
@@ -105,15 +90,44 @@ export class UploadThing implements Provider {
             }
         },
         getRequiredParams: async () => {
-            return { success: false, error: true, message: "Not implemented" }
+            return new RouteReturnError("Not supported", {
+                code: ErrorCode.FEATURE_NOT_SUPPORTED,
+            })
         },
         getUploadUrl: async (input) => {
-            return { success: false, error: true, message: "Not implemented" }
+            return new RouteReturnError("Not supported", {
+                code: ErrorCode.FEATURE_NOT_SUPPORTED,
+            })
         },
         deleteFiles: async (input) => {
-            return { success: false, error: true, message: "Not implemented" }
+            return new RouteReturnError("Not supported", {
+                code: ErrorCode.FEATURE_NOT_SUPPORTED,
+            })
         },
-    }
+    } satisfies Provider["files"]
+
+    folders = {
+        getFolders: async () => {
+            return new RouteReturnError("Not supported", {
+                code: ErrorCode.FEATURE_NOT_SUPPORTED,
+            })
+        },
+        createFolder: async () => {
+            return new RouteReturnError("Not supported", {
+                code: ErrorCode.FEATURE_NOT_SUPPORTED,
+            })
+        },
+        deleteFolder: async () => {
+            return new RouteReturnError("Not supported", {
+                code: ErrorCode.FEATURE_NOT_SUPPORTED,
+            })
+        },
+        updateFolder: async () => {
+            return new RouteReturnError("Not supported", {
+                code: ErrorCode.FEATURE_NOT_SUPPORTED,
+            })
+        },
+    } satisfies Provider["folders"]
 }
 
 interface UploadThingError {

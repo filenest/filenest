@@ -35,12 +35,17 @@
             "import": "./dist/provider.js",
             "types": "./dist/provider.d.ts",
             "module": "./dist/provider.js"
+        },
+        "./client": {
+            "import": "./dist/client.js",
+            "types": "./dist/client.d.ts",
+            "module": "./dist/client.js"
         }
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "tsup src/index.ts src/utils.ts src/adapter.ts src/provider.ts --dts --format cjs,esm --sourcemap",
-        "dev": "tsup src/index.ts src/utils.ts src/adapter.ts src/provider.ts --dts --sourcemap --watch",
+        "build": "tsup src/index.ts src/utils.ts src/adapter.ts src/provider.ts src/client.ts --dts --format cjs,esm --sourcemap",
+        "dev": "tsup src/index.ts src/utils.ts src/adapter.ts src/provider.ts src/client.ts --dts --sourcemap --watch",
         "lint": "eslint ."
     },
     "devDependencies": {

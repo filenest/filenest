@@ -1,6 +1,5 @@
 import { initNextjsAdapter } from "@filenest/adapter-nextjs"
 import { UploadThing } from "@filenest/provider-uploadthing"
-import { NextResponse } from "next/server"
 
 const provider = new UploadThing({
     UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN!,

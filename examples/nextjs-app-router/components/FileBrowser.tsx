@@ -1,14 +1,17 @@
 "use client"
 
 import { createFilenestComponents } from "@filenest/react"
+import { client } from "@filenest/adapter-nextjs"
 
 export const FileBrowser = () => {
     const Filenest = createFilenestComponents({
         endpoint: "/api/filenest",
-        adapter
+        client,
     })
 
     return (
-        <div></div>
+        <div>
+            <Filenest.Root>hello</Filenest.Root>
+        </div>
     )
 }

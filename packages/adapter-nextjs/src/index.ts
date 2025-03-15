@@ -1,6 +1,5 @@
-import { FilenestHandlers, type Provider } from "@filenest/core"
-import { MakeAdapterClientConfig } from "@filenest/core/adapter"
-import { ClientAPICaller, getHandlersFromProvider } from "@filenest/core/utils"
+import { FilenestResponse, type Provider } from "@filenest/core"
+import { getHandlersFromProvider } from "@filenest/core/utils"
 import { NextRequest, NextResponse } from "next/server"
 
 type Middleware = (req: NextRequest) => void | NextResponse | Promise<void | NextResponse>
@@ -58,7 +57,7 @@ class FilenestNextjsHandler {
 
         if (!(handler as any)[handlerAction]) {
             return NextResponse.json(
-                `Invalid request method "${handlerAction}" for handler name "${handlerName}".`,
+                `Invalid action "${handlerAction}" for handler name "${handlerName}".`,
                 { status: 400 }
             )
         }
@@ -77,7 +76,10 @@ class FilenestNextjsHandler {
         }
 
         try {
-            const result = await (handler as any)[handlerAction](body)
+            // Do the requested action
+            const result = (await (handler as any)[handlerAction](
+                body
+            )) as FilenestResponse<any>
             return NextResponse.json(result)
         } catch (error) {
             const message =
@@ -123,30 +125,4 @@ export function initNextjsAdapter(provider: Provider) {
     return new FilenestNextjsHandler(provider)
 }
 
-export const adapterConfig: MakeAdapterClientConfig = (options) => {
-    const { providerSupports, endpoint, onError } = options
-
-    const caller = new ClientAPICaller(endpoint, onError)
-
-    const fetchers = {
-        files: {
-            async getFiles(input) {
-                return await caller.call("/files/getFiles", input)
-            },
-            async deleteFiles(input) {
-                return await caller.call("/files/deleteFiles", input)
-            },
-            async getUploadUrl(input) {
-                return await caller.call("/files/getUploadUrl", input)
-            },
-            async getRequiredParams() {
-                return await caller.call("/files/getRequiredParams", undefined)
-            },
-        },
-        folders: {},
-    }
-
-    return {
-        fetchers,
-    }
-}
+export { RESTClient as client } from "@filenest/core/adapter"

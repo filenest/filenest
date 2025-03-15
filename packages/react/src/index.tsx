@@ -1,11 +1,11 @@
-import { MakeAdapterClientConfig } from "@filenest/core/adapter"
-import { MakeProviderClientConfig } from "@filenest/core/provider"
+import { MakeAdapterClient } from "@filenest/core/adapter"
+//import { MakeProviderClientConfig } from "@filenest/core/provider"
 import { FilenestRoot } from "./components/Root"
 
 export interface FilenestClientConfig {
     endpoint: string
-    adapterConfig: MakeAdapterClientConfig
-    providerConfig: MakeProviderClientConfig
+    client: MakeAdapterClient
+    //providerConfig: MakeProviderClientConfig
 }
 
 export function createFilenestComponents(config: FilenestClientConfig) {
