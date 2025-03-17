@@ -3,6 +3,8 @@
 import React from "react"
 import { FilenestFile } from "@filenest/core"
 import { SetterGetter } from "../../utils/types"
+import { useGlobalContext } from "../Root"
+import { useFilesContext } from "../../context/FilesContext"
 
 interface FileContext {
   file: FilenestFile
@@ -24,7 +26,13 @@ export function useFileContext() {
 
 interface RenderProps {
   file: FilenestFile
-  isLoading: boolean
+  rootProps: {
+    onClick: React.MouseEventHandler<HTMLDivElement>
+  }
+  state: {
+    isLoading: boolean
+    isSelected: boolean
+  }
 }
 
 export interface FileProps {
@@ -33,6 +41,9 @@ export interface FileProps {
 }
 
 export const File = ({ file, children }: FileProps) => {
+  const { selectedFiles } = useGlobalContext()
+  const { files } = useFilesContext()
+
   const [isLoading, setIsLoading] = React.useState(false)
   const [isDeleting, setIsDeleting] = React.useState(false)
 
@@ -45,6 +56,55 @@ export const File = ({ file, children }: FileProps) => {
     )
   }
 
+  const isSelected = React.useMemo(
+    () => selectedFiles.value.some((f) => f.id === file.id),
+    [selectedFiles.value, file.id]
+  )
+
+  const state = {
+    isLoading: isLoading || isDeleting,
+    isSelected,
+  }
+
+  const toggleSelection = () => {
+    selectedFiles.set((current) => {
+      if (current.some((f) => f.id === file.id)) {
+        return current.filter((f) => f.id !== file.id)
+      }
+      return [...current, file]
+    })
+  }
+
+  const rootProps = {
+    onClick: ((e) => {
+      // Handle selection of multiple files
+      if (e.ctrlKey || e.metaKey) {
+        if (e.detail === 1) {
+          toggleSelection()
+          return
+        } else if (e.detail === 2) {
+          // Deselect all files by CTRL + double clicking
+          selectedFiles.set([])
+          return
+        }
+      } else if (e.shiftKey) {
+        toggleSelection()
+        const firstSelectedFile = selectedFiles.value.at(0)
+        if (!firstSelectedFile || !files.value.length) return
+        const data = files.value
+        const firstSelectedIndex = data.findIndex((f) => f.id === firstSelectedFile.id)
+        const newlySelectedIndex = data.findIndex((f) => f.id === file.id)
+        const min = Math.min(firstSelectedIndex, newlySelectedIndex)
+        const max = Math.max(firstSelectedIndex, newlySelectedIndex)
+        const filesToSelect = data.slice(min, max + 1)
+
+        selectedFiles.set([])
+        selectedFiles.set((current) => [...current, ...filesToSelect])
+        return
+      }
+    }) satisfies React.MouseEventHandler<HTMLDivElement>,
+  }
+
   const contextValue = {
     file,
     isLoading: { value: isLoading, set: setIsLoading },
@@ -54,7 +114,11 @@ export const File = ({ file, children }: FileProps) => {
   if (typeof children === "function") {
     return (
       <FileContext.Provider value={contextValue}>
-        {children({ file, isLoading: isLoading || isDeleting })}
+        {children({
+          file,
+          state,
+          rootProps,
+        })}
       </FileContext.Provider>
     )
   } else {

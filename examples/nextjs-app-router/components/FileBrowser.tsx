@@ -24,14 +24,20 @@ export const FileBrowser = () => {
                 {files.map((File, index) => (
                   <File.Root
                     key={index}
-                    children={({ file }) => (
-                      <div className="p-3 bg-zinc-900 border border-zinc-800 rounded flex justify-between items-center">
-                        <span>{file.name}</span>
+                    children={({ file, rootProps, state }) => (
+                      <div
+                        className={`
+                        bg-zinc-900 border border-zinc-800 rounded flex justify-between items-center
+                        ${state.isSelected && "outline-2 outline-cyan-600"}`}
+                      >
+                        <div {...rootProps} className="p-3 w-full">
+                          {file.name}
+                        </div>
                         <File.Delete
                           children={({ trigger, isDeleting }) => (
                             <button
                               className={`
-                                py-1 px-2 bg-gradient-to-b from-zinc-800 to-zinc-900
+                                m-2 py-1 px-2 bg-gradient-to-b from-zinc-800 to-zinc-900
                                 border border-zinc-700 rounded-lg cursor-pointer
                                 disabled:opacity-50 disabled:cursor-not-allowed
                               `}
