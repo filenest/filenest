@@ -13,12 +13,13 @@ export interface Provider {
             delimiter?: string
             query?: string
             limit?: number
-            skip?: number
+            skip?: number | null
             cursor?: string | number | null
         }) => Promise<
             FilenestResponse<{
                 files: FilenestFile[]
-                cursor?: string | null
+                nextCursor?: string | null
+                nextSkip?: number | null
                 count?: number
             }>
         >
@@ -64,7 +65,7 @@ export interface Provider {
         getFolders: (input: { path: string }) => Promise<
             FilenestResponse<{
                 folders: FilenestFolder[]
-                cursor?: string | null
+                nextCursor?: string | null
                 count?: number
             }>
         >

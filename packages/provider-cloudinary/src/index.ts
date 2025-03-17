@@ -163,7 +163,7 @@ export class Cloudinary implements Provider {
                 data: {
                     files: this._mapResourcesToSchema(files.resources),
                     count: files.total_count,
-                    cursor: files.next_cursor,
+                    nextCursor: files.next_cursor,
                 },
             }
         },
@@ -403,7 +403,7 @@ export class Cloudinary implements Provider {
                                 const ids = result.data.files.map((file) => file.id)
                                 await this.files.deleteFiles({ ids })
 
-                                if (!result.data.cursor) {
+                                if (!result.data.nextCursor) {
                                     allDone = true
                                 }
                             }

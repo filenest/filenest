@@ -12,20 +12,33 @@ export class ClientAPICallerREST {
     async call<THandler extends (input: any) => Promise<FilenestResponse<any>>>(
         url: string,
         body: Parameters<THandler>[0],
-        options?: RequestInit
+        options: RequestInit = { method: "GET" }
     ): Promise<ReturnType<THandler>> {
-        const fetchUrl = new URL(this.endpoint + url)
+        const baseUrl = this.endpoint + url
+        const searchParams = new URLSearchParams()
         const bodyInput = options?.method === "POST" ? JSON.stringify(body) : undefined
-        if (options?.method === "GET") {
-            for (const key of Object.keys(body)) {
-                fetchUrl.searchParams.append(key, body[key] as string)
+
+        const getFetchUrl = () => {
+            if (options?.method === "GET") {
+                if (body) {
+                    for (const key of Object.keys(body)) {
+                        if (body[key]) searchParams.append(key, body[key] as string)
+                    }
+                    if (searchParams.entries().toArray().length > 0) {
+                        return baseUrl + "?" + searchParams.toString()
+                    }
+                }
             }
+            if (options?.method === "POST") {
+                return baseUrl
+            }
+            return baseUrl
         }
 
         try {
-            const response = await fetch(fetchUrl, {
+            const response = await fetch(getFetchUrl(), {
                 body: bodyInput,
-                credentials: "same-origin",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -58,29 +71,33 @@ export class ClientAPICallerTRPC {
     async call<THandler extends (input: any) => Promise<FilenestResponse<any>>>(
         url: string,
         body: Parameters<THandler>[0],
-        options?: RequestInit
+        options: RequestInit = { method: "GET" }
     ): Promise<ReturnType<THandler>> {
-        const fetchUrl = new URL(this.endpoint + url)
+        const baseUrl = this.endpoint + url
         const bodyInput = options?.method === "POST" ? JSON.stringify(body) : undefined
-        
-        const finalUrl = () => {
+
+        const getFetchUrl = () => {
             if (options?.method === "GET") {
                 const inputParamData: Record<string, any> = {}
-                for (const key of Object.keys(body)) {
-                    inputParamData[key] = body[key]
+                if (body) {
+                    for (const key of Object.keys(body)) {
+                        inputParamData[key] = body[key]
+                    }
                 }
-                return `${fetchUrl}?input=${encodeURIComponent(JSON.stringify(inputParamData))}`
+                return `${baseUrl}?input=${encodeURIComponent(
+                    JSON.stringify(inputParamData)
+                )}`
             }
             if (options?.method === "POST") {
-                return fetchUrl
+                return baseUrl
             }
-            return fetchUrl
+            return baseUrl
         }
 
         try {
-            const response = await fetch(finalUrl(), {
+            const response = await fetch(getFetchUrl(), {
                 body: bodyInput,
-                credentials: "same-origin",
+                credentials: "include",
                 ...options,
             })
 

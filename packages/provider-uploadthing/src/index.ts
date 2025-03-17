@@ -13,6 +13,7 @@ export class UploadThing implements Provider {
     private appId: string
     private apiUrlV6 = "https://api.uploadthing.com/v6"
     private apiUrlV7 = "https://api.uploadthing.com/v7"
+    private LIMIT = 30
 
     constructor(config: UploadThingConfig) {
         this.UPLOADTHING_TOKEN = config.UPLOADTHING_TOKEN
@@ -42,13 +43,72 @@ export class UploadThing implements Provider {
         getFiles: async (input = {}) => {
             try {
                 const body: Record<string, any> = {}
-                if (input.limit) body.limit = input.limit
-                if (input.skip) body.offset = input.skip
+                body.limit = Number(input.limit || this.LIMIT)
+                if (input.skip) body.offset = Number(input.skip)
+
+                let files: UploadThingListItemsResponse["files"] = []
 
                 // Uploadthing doesn't support filering as of writing this.
-                // So let's fetch all files and filter them in memory.
+                // So let's fetch many files and filter them in memory.
                 // Might be bad practice, but I want filtering. Can change later.
-                if (input.query) body.limit = 100_000
+                if (input.query) {
+                    body.limit = this.LIMIT
+                    let hasMore = false
+
+                    // Fetch many files and try to return 50 search results
+                    do {
+                        const response = await this.defaultFetch(
+                            `${this.apiUrlV6}/listFiles`,
+                            {
+                                body: JSON.stringify(body),
+                            }
+                        )
+
+                        const json = (await response.json()) as
+                            | UploadThingListItemsResponse
+                            | UploadThingError
+
+                        if ("error" in json) {
+                            throw new Error(json.error)
+                        }
+
+                        files.push(
+                            ...json.files.filter((file) =>
+                                file.name
+                                    .toLowerCase()
+                                    .includes(input.query!.toLowerCase())
+                            )
+                        )
+
+                        if (json.hasMore) {
+                            hasMore = true
+                            // Increase offset to fetch more files after we've
+                            // searched through the current batch
+                            body.offset += this.LIMIT
+                        } else {
+                            hasMore = false
+                        }
+                    } while (files.length < 50 && hasMore)
+
+                    return {
+                        success: true,
+                        data: {
+                            files: files.map((file) => ({
+                                id: file.key,
+                                key: file.key,
+                                name: file.name,
+                                size: file.size,
+                                extension: getFileExtension(file.name),
+                                updatedAt: file.uploadedAt.toString(),
+                                url: this.getFileUrl(file.key),
+                            })),
+                            count: files.length,
+                            ...(hasMore && {
+                                nextSkip: body.offset,
+                            }),
+                        },
+                    }
+                }
 
                 const response = await this.defaultFetch(`${this.apiUrlV6}/listFiles`, {
                     body: JSON.stringify(body),
@@ -62,13 +122,7 @@ export class UploadThing implements Provider {
                     throw new Error(json.error)
                 }
 
-                let files = json.files
-
-                if (input.query) {
-                    files = files.filter((file) =>
-                        file.name.toLowerCase().includes(input.query!.toLowerCase())
-                    )
-                }
+                files = json.files
 
                 return {
                     success: true,
@@ -83,6 +137,11 @@ export class UploadThing implements Provider {
                             url: this.getFileUrl(file.key),
                         })),
                         count: files.length,
+                        ...(json.hasMore && {
+                            nextSkip:
+                                Number(input.skip || 0) +
+                                Number(input.limit || this.LIMIT),
+                        }),
                     },
                 }
             } catch (error) {
@@ -132,6 +191,7 @@ export class UploadThing implements Provider {
 
 interface UploadThingError {
     error: string
+    data: Array<Record<string, any>>
 }
 
 interface UploadThingListItemsResponse {

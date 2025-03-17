@@ -2,10 +2,19 @@
 
 import React, { useState } from "react"
 import { type FilenestClientConfig } from ".."
-import { FilenestFile, FilenestFolder } from "@filenest/core"
+import { FilenestFolder } from "@filenest/core"
+import { SetState } from "../utils/types"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { FilesProvider } from "../context/FilesContext"
+
+const queryClient = new QueryClient()
 
 interface GlobalContext {
     client: ReturnType<FilenestClientConfig["client"]>
+    folders: {
+        value: FilenestFolder[]
+        set: SetState<FilenestFolder[]>
+    }
 }
 
 const GlobalContext = React.createContext<GlobalContext | null>(null)
@@ -30,15 +39,22 @@ export const FilenestRoot = ({
     const { endpoint, client } = config
 
     const [foldersInList, setFoldersInList] = useState<FilenestFolder[]>([])
-    const [filesInList, setFilesInList] = useState<FilenestFile[]>([])
 
     const filenestClient = client({ endpoint })
 
     const contextValue = {
         client: filenestClient,
+        folders: {
+            value: foldersInList,
+            set: setFoldersInList,
+        },
     }
 
     return (
-        <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>
+        <QueryClientProvider client={queryClient}>
+            <GlobalContext.Provider value={contextValue}>
+                <FilesProvider>{children}</FilesProvider>
+            </GlobalContext.Provider>
+        </QueryClientProvider>
     )
 }
