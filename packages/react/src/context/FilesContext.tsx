@@ -4,13 +4,10 @@ import { useInfiniteQuery } from "@tanstack/react-query"
 import { useGlobalContext } from "../components/Root"
 import React from "react"
 import { FilenestFile } from "@filenest/core"
-import { SetState } from "../utils/types"
+import { SetterGetter } from "../utils/types"
 
 interface FilesContext {
-    files: {
-        value: FilenestFile[]
-        set: SetState<FilenestFile[]>
-    }
+    files: SetterGetter<FilenestFile[]>
     isLoading: boolean
     isFetching: boolean
     hasNextPage: boolean

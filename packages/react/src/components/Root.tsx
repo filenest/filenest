@@ -23,7 +23,7 @@ export function useGlobalContext() {
     const context = React.useContext(GlobalContext)
     if (!context) {
         throw new Error(
-            "This component uses useGlobalContext, but was not used within Filenest.Root"
+            "One of your components uses useGlobalContext, but was not used within Filenest.Root"
         )
     }
     return context

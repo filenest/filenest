@@ -159,9 +159,32 @@ export class UploadThing implements Provider {
             })
         },
         deleteFiles: async (input) => {
-            return new RouteReturnError("Not supported", {
-                code: ErrorCode.FEATURE_NOT_SUPPORTED,
-            })
+            const body = {
+                fileKeys: input.ids,
+            }
+
+            try {
+                const response = await this.defaultFetch(`${this.apiUrlV6}/deleteFiles`, {
+                    body: JSON.stringify(body),
+                })
+
+                const json = (await response.json()) as
+                    | UploadThingDeleteItemsResponse
+                    | UploadThingError
+
+                if ("error" in json) {
+                    throw new Error(json.error)
+                }
+
+                return {
+                    success: true,
+                    data: {
+                        count: json.deletedCount,
+                    },
+                }
+            } catch (error) {
+                return new RouteReturnError("Failed to delete files", { error })
+            }
         },
     } satisfies Provider["files"]
 
@@ -203,4 +226,9 @@ interface UploadThingListItemsResponse {
         size: number
         uploadedAt: number
     }>
+}
+
+interface UploadThingDeleteItemsResponse {
+    success: boolean
+    deletedCount: number
 }
