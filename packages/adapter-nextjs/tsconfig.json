@@ -1,9 +1,9 @@
 {
-    "extends": "@internal/tsconfig/base.tsconfig.json",
-    "compilerOptions": {
-        "outDir": "dist",
-        "removeComments": false
-    },
-    "include": ["src"],
-    "exclude": ["node_modules", "dist"]
+  "extends": "@internal/tsconfig/base.tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "removeComments": false
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

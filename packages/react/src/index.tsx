@@ -5,17 +5,17 @@ import { FileList } from "./components/FileList"
 import { LoadMore } from "./components/LoadMore"
 
 export interface FilenestClientConfig {
-    endpoint: string
-    client: MakeAdapterClient
-    //providerConfig: MakeProviderClientConfig
+  endpoint: string
+  client: MakeAdapterClient
+  //providerConfig: MakeProviderClientConfig
 }
 
 export function createFilenestComponents(config: FilenestClientConfig) {
-    return {
-        Root: ({ children }: { children: React.ReactNode }) => (
-            <FilenestRoot config={config} children={children} />
-        ),
-        FileList,
-        LoadMore,
-    }
+  return {
+    Root: ({ children }: { children: React.ReactNode }) => (
+      <FilenestRoot config={config} children={children} />
+    ),
+    FileList,
+    LoadMore,
+  }
 }

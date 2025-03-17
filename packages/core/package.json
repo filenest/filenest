@@ -1,66 +1,66 @@
 {
-    "name": "@filenest/core",
-    "version": "0.10.0-next.0",
-    "description": "",
-    "keywords": [],
-    "author": "nordowl",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/filenest/filenest"
+  "name": "@filenest/core",
+  "version": "0.10.0-next.0",
+  "description": "",
+  "keywords": [],
+  "author": "nordowl",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/filenest/filenest"
+  },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "module": "./dist/index.js"
     },
-    "license": "MIT",
-    "main": "dist/index.js",
-    "module": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "files": [
-        "dist"
-    ],
-    "exports": {
-        ".": {
-            "import": "./dist/index.js",
-            "types": "./dist/index.d.ts",
-            "module": "./dist/index.js"
-        },
-        "./utils": {
-            "import": "./dist/utils.js",
-            "types": "./dist/utils.d.ts",
-            "module": "./dist/utils.js"
-        },
-        "./adapter": {
-            "import": "./dist/adapter.js",
-            "types": "./dist/adapter.d.ts",
-            "module": "./dist/adapter.js"
-        },
-        "./provider": {
-            "import": "./dist/provider.js",
-            "types": "./dist/provider.d.ts",
-            "module": "./dist/provider.js"
-        },
-        "./client": {
-            "import": "./dist/client.js",
-            "types": "./dist/client.d.ts",
-            "module": "./dist/client.js"
-        }
+    "./utils": {
+      "import": "./dist/utils.js",
+      "types": "./dist/utils.d.ts",
+      "module": "./dist/utils.js"
     },
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "tsup src/index.ts src/utils.ts src/adapter.ts src/provider.ts src/client.ts --dts --format cjs,esm --sourcemap",
-        "dev": "tsup src/index.ts src/utils.ts src/adapter.ts src/provider.ts src/client.ts --dts --sourcemap --watch",
-        "lint": "eslint ."
+    "./adapter": {
+      "import": "./dist/adapter.js",
+      "types": "./dist/adapter.d.ts",
+      "module": "./dist/adapter.js"
     },
-    "devDependencies": {
-        "@internal/eslint": "workspace:*",
-        "@internal/tsconfig": "workspace:*",
-        "eslint": "9.21.0",
-        "tsup": "^8.4.0"
+    "./provider": {
+      "import": "./dist/provider.js",
+      "types": "./dist/provider.d.ts",
+      "module": "./dist/provider.js"
     },
-    "peerDependencies": {
-        "zod": ">=3"
-    },
-    "engines": {
-        "pnpm": ">=10.0.0"
-    },
-    "publishConfig": {
-        "access": "public"
+    "./client": {
+      "import": "./dist/client.js",
+      "types": "./dist/client.d.ts",
+      "module": "./dist/client.js"
     }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsup src/index.ts src/utils.ts src/adapter.ts src/provider.ts src/client.ts --dts --format cjs,esm --sourcemap",
+    "dev": "tsup src/index.ts src/utils.ts src/adapter.ts src/provider.ts src/client.ts --dts --sourcemap --watch",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@internal/eslint": "workspace:*",
+    "@internal/tsconfig": "workspace:*",
+    "eslint": "9.21.0",
+    "tsup": "^8.4.0"
+  },
+  "peerDependencies": {
+    "zod": ">=3"
+  },
+  "engines": {
+    "pnpm": ">=10.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

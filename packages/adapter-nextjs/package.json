@@ -1,50 +1,50 @@
 {
-    "name": "@filenest/adapter-nextjs",
-    "version": "0.10.0-next.0",
-    "description": "",
-    "keywords": [],
-    "author": "nordowl",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/filenest/filenest"
-    },
-    "license": "MIT",
-    "main": "dist/index.js",
-    "module": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "files": [
-        "dist"
-    ],
-    "exports": {
-        ".": {
-            "import": "./dist/index.js",
-            "types": "./dist/index.d.ts",
-            "module": "./dist/index.js",
-            "require": "./dist/index.js"
-        }
-    },
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "tsup src/index.ts --dts --format cjs,esm --sourcemap",
-        "dev": "tsup src/index.ts --dts --sourcemap --watch",
-        "lint": "eslint ."
-    },
-    "devDependencies": {
-        "@internal/eslint": "workspace:*",
-        "@internal/tsconfig": "workspace:*",
-        "eslint": "9.21.0",
-        "tsup": "^8.4.0"
-    },
-    "peerDependencies": {
-        "next": "^15"
-    },
-    "dependencies": {
-        "@filenest/core": "workspace:*"
-    },
-    "engines": {
-        "pnpm": ">=10.0.0"
-    },
-    "publishConfig": {
-        "access": "public"
+  "name": "@filenest/adapter-nextjs",
+  "version": "0.10.0-next.0",
+  "description": "",
+  "keywords": [],
+  "author": "nordowl",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/filenest/filenest"
+  },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "module": "./dist/index.js",
+      "require": "./dist/index.js"
     }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsup src/index.ts --dts --format cjs,esm --sourcemap",
+    "dev": "tsup src/index.ts --dts --sourcemap --watch",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@internal/eslint": "workspace:*",
+    "@internal/tsconfig": "workspace:*",
+    "eslint": "9.21.0",
+    "tsup": "^8.4.0"
+  },
+  "peerDependencies": {
+    "next": "^15"
+  },
+  "dependencies": {
+    "@filenest/core": "workspace:*"
+  },
+  "engines": {
+    "pnpm": ">=10.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

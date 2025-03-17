@@ -5,100 +5,99 @@ import { NextRequest, NextResponse } from "next/server"
 type Middleware = (req: NextRequest) => void | NextResponse | Promise<void | NextResponse>
 
 class FilenestNextjsHandler {
-    private provider: Provider
-    private middleware?: Middleware
+  private provider: Provider
+  private middleware?: Middleware
 
-    constructor(provider: Provider) {
-        this.provider = provider
+  constructor(provider: Provider) {
+    this.provider = provider
+  }
+
+  private handleRequest = async (
+    req: NextRequest,
+    { params }: { params: Promise<{ handler: string[] }> }
+  ) => {
+    if (this.middleware) {
+      const result = await this.middleware(req)
+      if (result instanceof NextResponse && !result.ok) {
+        return result
+      }
     }
 
-    private handleRequest = async (
-        req: NextRequest,
-        { params }: { params: Promise<{ handler: string[] }> }
-    ) => {
-        if (this.middleware) {
-            const result = await this.middleware(req)
-            if (result instanceof NextResponse && !result.ok) {
-                return result
-            }
-        }
+    const routeParams = await params
+    const handlers = getHandlersFromProvider(this.provider)
+    const handlerName = routeParams.handler[0] as keyof typeof handlers
+    const handlerAction = routeParams.handler[1] as keyof {
+      [k in keyof typeof handlers as keyof (typeof handlers)[k]]: string
+    }
+    const requestParams = req.nextUrl.searchParams
 
-        const routeParams = await params
-        const handlers = getHandlersFromProvider(this.provider)
-        const handlerName = routeParams.handler[0] as keyof typeof handlers
-        const handlerAction = routeParams.handler[1] as keyof {
-            [k in keyof typeof handlers as keyof (typeof handlers)[k]]: string
-        }
-        const requestParams = req.nextUrl.searchParams
-
-        if (!handlerName) {
-            return NextResponse.json(
-                [
-                    "Missing handler name.",
-                    "Your API route should end with one of the following:",
-                    Object.keys(handlers).join(", "),
-                ].join(" "),
-                { status: 400 }
-            )
-        }
-
-        if (!this.provider[handlerName]) {
-            return NextResponse.json(
-                [
-                    `Invalid handler name "${handlerName}".`,
-                    "It should be one of the following:",
-                    Object.keys(handlers).join(", "),
-                ].join(" "),
-                { status: 400 }
-            )
-        }
-
-        const handler = this.provider[handlerName]
-
-        if (!(handler as any)[handlerAction]) {
-            return NextResponse.json(
-                `Invalid action "${handlerAction}" for handler name "${handlerName}".`,
-                { status: 400 }
-            )
-        }
-
-        // Prevents errors when there is no body
-        let body
-        try {
-            body = await req.json()
-        } catch (error) {
-            body = {}
-        }
-
-        // Add query params to the body
-        for (const [key, value] of requestParams.entries()) {
-            body[key] = value
-        }
-
-        try {
-            // Do the requested action
-            const result = (await (handler as any)[handlerAction](
-                body
-            )) as FilenestResponse<any>
-            return NextResponse.json(result)
-        } catch (error) {
-            const message =
-                error instanceof Error ? error.message : "An unknown error occurred"
-            return NextResponse.json({ success: false, message }, { status: 500 })
-        }
+    if (!handlerName) {
+      return NextResponse.json(
+        [
+          "Missing handler name.",
+          "Your API route should end with one of the following:",
+          Object.keys(handlers).join(", "),
+        ].join(" "),
+        { status: 400 }
+      )
     }
 
-    public use(middleware: Middleware) {
-        this.middleware = middleware
-        return this
+    if (!this.provider[handlerName]) {
+      return NextResponse.json(
+        [
+          `Invalid handler name "${handlerName}".`,
+          "It should be one of the following:",
+          Object.keys(handlers).join(", "),
+        ].join(" "),
+        { status: 400 }
+      )
     }
 
-    public create() {
-        return {
-            GET: this.handleRequest,
-            POST: this.handleRequest,
-        }
+    const handler = this.provider[handlerName]
+
+    if (!(handler as any)[handlerAction]) {
+      return NextResponse.json(
+        `Invalid action "${handlerAction}" for handler name "${handlerName}".`,
+        { status: 400 }
+      )
     }
+
+    // Prevents errors when there is no body
+    let body
+    try {
+      body = await req.json()
+    } catch (error) {
+      body = {}
+    }
+
+    // Add query params to the body
+    for (const [key, value] of requestParams.entries()) {
+      body[key] = value
+    }
+
+    try {
+      // Do the requested action
+      const result = (await (handler as any)[handlerAction](
+        body
+      )) as FilenestResponse<any>
+      return NextResponse.json(result)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "An unknown error occurred"
+      return NextResponse.json({ success: false, message }, { status: 500 })
+    }
+  }
+
+  public use(middleware: Middleware) {
+    this.middleware = middleware
+    return this
+  }
+
+  public create() {
+    return {
+      GET: this.handleRequest,
+      POST: this.handleRequest,
+    }
+  }
 }
 
 /**
@@ -122,7 +121,7 @@ class FilenestNextjsHandler {
  *     .create();
  */
 export function initNextjsAdapter(provider: Provider) {
-    return new FilenestNextjsHandler(provider)
+  return new FilenestNextjsHandler(provider)
 }
 
 export { RESTClient as client } from "@filenest/core/adapter"

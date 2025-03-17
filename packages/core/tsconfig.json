@@ -1,8 +1,8 @@
 {
-    "extends": "@internal/tsconfig/base.tsconfig.json",
-    "compilerOptions": {
-        "outDir": "dist",
-    },
-    "include": ["src"],
-    "exclude": ["node_modules", "dist"]
+  "extends": "@internal/tsconfig/base.tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -1,59 +1,59 @@
 {
-    "name": "@filenest/react",
-    "version": "0.10.0-next.0",
-    "description": "",
-    "keywords": [],
-    "author": "nordowl",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/filenest/filenest"
-    },
-    "license": "MIT",
-    "main": "dist/index.js",
-    "module": "dist/index.js",
-    "types": "dist/index.d.ts",
-    "files": [
-        "dist"
-    ],
-    "exports": {
-        ".": {
-            "import": "./dist/index.js",
-            "types": "./dist/index.d.ts",
-            "module": "./dist/index.js",
-            "require": "./dist/index.js"
-        }
-    },
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "tsup src/index.tsx --dts --format cjs,esm --sourcemap",
-        "dev": "tsup src/index.tsx --dts --sourcemap --watch",
-        "lint": "eslint ."
-    },
-    "dependencies": {
-        "@filenest/core": "0.10.0-next.0",
-        "@tanstack/react-query": "^5.68.0",
-        "clsx": "2.1.1",
-        "react-dropzone": "^14.3.8",
-        "tailwind-merge": "3.0.2"
-    },
-    "peerDependencies": {
-        "react": ">=18",
-        "react-dom": ">=18"
-    },
-    "devDependencies": {
-        "@internal/eslint": "workspace:*",
-        "@internal/tsconfig": "workspace:*",
-        "@types/react": ">=18",
-        "@types/react-dom": ">=18",
-        "eslint": "9.21.0",
-        "react": ">=18",
-        "react-dom": ">=18",
-        "tsup": "^8.4.0"
-    },
-    "engines": {
-        "pnpm": ">=10.0.0"
-    },
-    "publishConfig": {
-        "access": "public"
+  "name": "@filenest/react",
+  "version": "0.10.0-next.0",
+  "description": "",
+  "keywords": [],
+  "author": "nordowl",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/filenest/filenest"
+  },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "module": "./dist/index.js",
+      "require": "./dist/index.js"
     }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsup src/index.tsx --dts --format cjs,esm --sourcemap",
+    "dev": "tsup src/index.tsx --dts --sourcemap --watch",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@filenest/core": "0.10.0-next.0",
+    "@tanstack/react-query": "^5.68.0",
+    "clsx": "2.1.1",
+    "react-dropzone": "^14.3.8",
+    "tailwind-merge": "3.0.2"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "devDependencies": {
+    "@internal/eslint": "workspace:*",
+    "@internal/tsconfig": "workspace:*",
+    "@types/react": ">=18",
+    "@types/react-dom": ">=18",
+    "eslint": "9.21.0",
+    "react": ">=18",
+    "react-dom": ">=18",
+    "tsup": "^8.4.0"
+  },
+  "engines": {
+    "pnpm": ">=10.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

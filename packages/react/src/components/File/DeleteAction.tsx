@@ -7,54 +7,54 @@ import { useGlobalContext } from "../Root"
 import { useFilesContext } from "../../context/FilesContext"
 
 interface RenderProps {
-    trigger: () => void
-    isDeleting: boolean
+  trigger: () => void
+  isDeleting: boolean
 }
 
 export interface DeleteActionProps {
-    file?: FilenestFile
-    children: React.ReactNode | ((props: RenderProps) => React.ReactNode)
+  file?: FilenestFile
+  children: React.ReactNode | ((props: RenderProps) => React.ReactNode)
 }
 
 export const DeleteAction = ({ file: propsFile, children }: DeleteActionProps) => {
-    const queryClient = useQueryClient()
+  const queryClient = useQueryClient()
 
-    const { isDeleting, isLoading, file: ctxFile } = useFileContext()
-    const { files } = useFilesContext()
-    const { client } = useGlobalContext()
+  const { isDeleting, isLoading, file: ctxFile } = useFileContext()
+  const { files } = useFilesContext()
+  const { client } = useGlobalContext()
 
-    const file = propsFile || ctxFile
+  const file = propsFile || ctxFile
 
-    const mutation = useMutation({
-        mutationKey: ["filenest-deleteFile", file.id],
-        mutationFn: async () => {
-            return await client.fetchers.files.deleteFiles({
-                ids: [file.id],
-            })
-        },
-        onMutate: () => {
-            isDeleting.set(true)
-            isLoading.set(true)
-        },
-        onSettled: () => {
-            isDeleting.set(false)
-            isLoading.set(false)
-        },
-        onSuccess: (data) => {
-            if (data.success) {
-                files.set((prev) => [...prev.filter((f) => f.id !== file.id)])
-                queryClient.invalidateQueries({ queryKey: ["filenest-files"] })
-            }
-        },
-    })
+  const mutation = useMutation({
+    mutationKey: ["filenest-deleteFile", file.id],
+    mutationFn: async () => {
+      return await client.fetchers.files.deleteFiles({
+        ids: [file.id],
+      })
+    },
+    onMutate: () => {
+      isDeleting.set(true)
+      isLoading.set(true)
+    },
+    onSettled: () => {
+      isDeleting.set(false)
+      isLoading.set(false)
+    },
+    onSuccess: (data) => {
+      if (data.success) {
+        files.set((prev) => [...prev.filter((f) => f.id !== file.id)])
+        queryClient.invalidateQueries({ queryKey: ["filenest-files"] })
+      }
+    },
+  })
 
-    async function trigger() {
-        mutation.mutate()
-    }
+  async function trigger() {
+    mutation.mutate()
+  }
 
-    if (typeof children === "function") {
-        return children({ trigger, isDeleting: isDeleting.value })
-    } else {
-        return children
-    }
+  if (typeof children === "function") {
+    return children({ trigger, isDeleting: isDeleting.value })
+  } else {
+    return children
+  }
 }

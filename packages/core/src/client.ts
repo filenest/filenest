@@ -1,120 +1,118 @@
 import { FilenestResponse, RouteReturnError } from "."
 
 export class ClientAPICallerREST {
-    private endpoint: string
-    private onError?: (message: string) => void
+  private endpoint: string
+  private onError?: (message: string) => void
 
-    constructor(endpoint: string, onError?: (message: string) => void) {
-        this.endpoint = endpoint
-        this.onError = onError
+  constructor(endpoint: string, onError?: (message: string) => void) {
+    this.endpoint = endpoint
+    this.onError = onError
+  }
+
+  async call<THandler extends (input: any) => Promise<FilenestResponse<any>>>(
+    url: string,
+    body: Parameters<THandler>[0],
+    options: RequestInit = { method: "GET" }
+  ): Promise<ReturnType<THandler>> {
+    const baseUrl = this.endpoint + url
+    const searchParams = new URLSearchParams()
+    const bodyInput = options?.method === "POST" ? JSON.stringify(body) : undefined
+
+    const getFetchUrl = () => {
+      if (options?.method === "GET") {
+        if (body) {
+          for (const key of Object.keys(body)) {
+            if (body[key]) searchParams.append(key, body[key] as string)
+          }
+          if (searchParams.entries().toArray().length > 0) {
+            return baseUrl + "?" + searchParams.toString()
+          }
+        }
+      }
+      if (options?.method === "POST") {
+        return baseUrl
+      }
+      return baseUrl
     }
 
-    async call<THandler extends (input: any) => Promise<FilenestResponse<any>>>(
-        url: string,
-        body: Parameters<THandler>[0],
-        options: RequestInit = { method: "GET" }
-    ): Promise<ReturnType<THandler>> {
-        const baseUrl = this.endpoint + url
-        const searchParams = new URLSearchParams()
-        const bodyInput = options?.method === "POST" ? JSON.stringify(body) : undefined
+    try {
+      const response = await fetch(getFetchUrl(), {
+        body: bodyInput,
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        ...options,
+      })
 
-        const getFetchUrl = () => {
-            if (options?.method === "GET") {
-                if (body) {
-                    for (const key of Object.keys(body)) {
-                        if (body[key]) searchParams.append(key, body[key] as string)
-                    }
-                    if (searchParams.entries().toArray().length > 0) {
-                        return baseUrl + "?" + searchParams.toString()
-                    }
-                }
-            }
-            if (options?.method === "POST") {
-                return baseUrl
-            }
-            return baseUrl
-        }
+      const result = (await response.json()) as Awaited<ReturnType<THandler>>
 
-        try {
-            const response = await fetch(getFetchUrl(), {
-                body: bodyInput,
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                ...options,
-            })
-
-            const result = (await response.json()) as Awaited<ReturnType<THandler>>
-
-            return result
-        } catch (error: any) {
-            let message = "An unknown error occurred in the Filenest client fetcher"
-            if ("message" in error) {
-                message = `An error occurred in the Filenest client fetcher: ${error.message}`
-            }
-            this.onError?.(message)
-            return new RouteReturnError(message, { error }) as ReturnType<THandler>
-        }
+      return result
+    } catch (error: any) {
+      let message = "An unknown error occurred in the Filenest client fetcher"
+      if ("message" in error) {
+        message = `An error occurred in the Filenest client fetcher: ${error.message}`
+      }
+      this.onError?.(message)
+      return new RouteReturnError(message, { error }) as ReturnType<THandler>
     }
+  }
 }
 
 export class ClientAPICallerTRPC {
-    private endpoint: string
-    private onError?: (message: string) => void
+  private endpoint: string
+  private onError?: (message: string) => void
 
-    constructor(endpoint: string, onError?: (message: string) => void) {
-        this.endpoint = endpoint
-        this.onError = onError
+  constructor(endpoint: string, onError?: (message: string) => void) {
+    this.endpoint = endpoint
+    this.onError = onError
+  }
+
+  async call<THandler extends (input: any) => Promise<FilenestResponse<any>>>(
+    url: string,
+    body: Parameters<THandler>[0],
+    options: RequestInit = { method: "GET" }
+  ): Promise<ReturnType<THandler>> {
+    const baseUrl = this.endpoint + url
+    const bodyInput = options?.method === "POST" ? JSON.stringify(body) : undefined
+
+    const getFetchUrl = () => {
+      if (options?.method === "GET") {
+        const inputParamData: Record<string, any> = {}
+        if (body) {
+          for (const key of Object.keys(body)) {
+            inputParamData[key] = body[key]
+          }
+        }
+        return `${baseUrl}?input=${encodeURIComponent(JSON.stringify(inputParamData))}`
+      }
+      if (options?.method === "POST") {
+        return baseUrl
+      }
+      return baseUrl
     }
 
-    async call<THandler extends (input: any) => Promise<FilenestResponse<any>>>(
-        url: string,
-        body: Parameters<THandler>[0],
-        options: RequestInit = { method: "GET" }
-    ): Promise<ReturnType<THandler>> {
-        const baseUrl = this.endpoint + url
-        const bodyInput = options?.method === "POST" ? JSON.stringify(body) : undefined
+    try {
+      const response = await fetch(getFetchUrl(), {
+        body: bodyInput,
+        credentials: "include",
+        ...options,
+      })
 
-        const getFetchUrl = () => {
-            if (options?.method === "GET") {
-                const inputParamData: Record<string, any> = {}
-                if (body) {
-                    for (const key of Object.keys(body)) {
-                        inputParamData[key] = body[key]
-                    }
-                }
-                return `${baseUrl}?input=${encodeURIComponent(
-                    JSON.stringify(inputParamData)
-                )}`
-            }
-            if (options?.method === "POST") {
-                return baseUrl
-            }
-            return baseUrl
+      const { result } = (await response.json()) as {
+        result: {
+          data: Awaited<ReturnType<THandler>>
         }
+      }
 
-        try {
-            const response = await fetch(getFetchUrl(), {
-                body: bodyInput,
-                credentials: "include",
-                ...options,
-            })
-
-            const { result } = (await response.json()) as {
-                result: {
-                    data: Awaited<ReturnType<THandler>>
-                }
-            }
-
-            return result.data
-        } catch (error: any) {
-            let message = "An unknown error occurred in the Filenest client fetcher"
-            if ("message" in error) {
-                message = `An error occurred in the Filenest client fetcher: ${error.message}`
-            }
-            this.onError?.(message)
-            return new RouteReturnError(message, { error }) as ReturnType<THandler>
-        }
+      return result.data
+    } catch (error: any) {
+      let message = "An unknown error occurred in the Filenest client fetcher"
+      if ("message" in error) {
+        message = `An error occurred in the Filenest client fetcher: ${error.message}`
+      }
+      this.onError?.(message)
+      return new RouteReturnError(message, { error }) as ReturnType<THandler>
     }
+  }
 }

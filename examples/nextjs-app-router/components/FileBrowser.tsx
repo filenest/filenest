@@ -1,14 +1,14 @@
-"use client";
+"use client"
 
-import { createFilenestComponents } from "@filenest/react";
-import { client } from "@filenest/adapter-nextjs";
-import { Spinner } from "./Spinner";
+import { createFilenestComponents } from "@filenest/react"
+import { client } from "@filenest/adapter-nextjs"
+import { Spinner } from "./Spinner"
 
 export const FileBrowser = () => {
   const Filenest = createFilenestComponents({
     endpoint: "/api/filenest",
     client,
-  });
+  })
 
   return (
     <div>
@@ -16,7 +16,7 @@ export const FileBrowser = () => {
         <Filenest.FileList
           children={({ files, isLoading }) => {
             if (isLoading) {
-              return <div className="text-xl">Loading...</div>;
+              return <div className="text-xl">Loading...</div>
             }
 
             return (
@@ -47,7 +47,7 @@ export const FileBrowser = () => {
                   />
                 ))}
               </div>
-            );
+            )
           }}
         />
         <div className="text-center mt-8">
@@ -69,5 +69,5 @@ export const FileBrowser = () => {
         </div>
       </Filenest.Root>
     </div>
-  );
-};
+  )
+}
