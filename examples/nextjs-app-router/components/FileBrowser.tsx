@@ -13,6 +13,23 @@ export const FileBrowser = () => {
   return (
     <div>
       <Filenest.Root>
+        <Filenest.Selection
+          children={({ count, bulkDelete }) => (
+            <div className="bg-zinc-900 border border-zinc-800 rounded flex items-center gap-4 py-2 px-4 mb-8">
+              <div>{count} files selected:</div>
+              <button
+                className={`
+                  py-1 px-2 bg-gradient-to-b from-zinc-800 to-zinc-900
+                  border border-zinc-700 rounded-lg cursor-pointer
+                  disabled:opacity-50 disabled:cursor-not-allowed
+                `}
+                onClick={bulkDelete}
+              >
+                Delete
+              </button>
+            </div>
+          )}
+        />
         <Filenest.FileList
           children={({ files, isLoading }) => {
             if (isLoading) {
@@ -21,14 +38,17 @@ export const FileBrowser = () => {
 
             return (
               <div className="grid grid-cols-2 gap-2">
+                {files.length === 0 && <div className="text-xl">No files found.</div>}
                 {files.map((File, index) => (
                   <File.Root
                     key={index}
                     children={({ file, rootProps, state }) => (
                       <div
                         className={`
-                        bg-zinc-900 border border-zinc-800 rounded flex justify-between items-center
-                        ${state.isSelected && "outline-2 outline-cyan-600"}`}
+                          bg-zinc-900 border border-zinc-800 rounded flex justify-between items-center
+                          ${state.isSelected && "outline-2 outline-cyan-600"}
+                          ${state.isLoading && "opacity-50"}
+                        `}
                       >
                         <div {...rootProps} className="p-3 w-full">
                           {file.name}

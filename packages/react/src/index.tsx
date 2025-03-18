@@ -3,6 +3,7 @@ import { MakeAdapterClient } from "@filenest/core/adapter"
 import { FilenestRoot } from "./components/Root"
 import { FileList } from "./components/FileList"
 import { LoadMore } from "./components/LoadMore"
+import { Selection } from "./components/Selection"
 
 export interface FilenestClientConfig {
   endpoint: string
@@ -17,5 +18,6 @@ export function createFilenestComponents(config: FilenestClientConfig) {
     ),
     FileList,
     LoadMore,
+    Selection,
   }
 }
