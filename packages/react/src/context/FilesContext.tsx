@@ -27,15 +27,16 @@ export function useFilesContext() {
 }
 
 export const FilesProvider = ({ children }: { children: React.ReactNode }) => {
-  const { client } = useGlobalContext()
+  const { client, search } = useGlobalContext()
 
   const [filesInList, setFilesInList] = React.useState<FilenestFile[]>([])
 
   const { data, isLoading, isFetching, error, isError, hasNextPage, fetchNextPage } =
     useInfiniteQuery({
-      queryKey: ["filenest-files"],
+      queryKey: ["filenest-files", search.value],
       queryFn: async ({ pageParam }) => {
         return await client.fetchers.files.getFiles({
+          query: search.value,
           cursor: pageParam.cursor,
           skip: pageParam.skip,
         })
@@ -45,7 +46,6 @@ export const FilesProvider = ({ children }: { children: React.ReactNode }) => {
         skip: undefined as number | null | undefined,
       },
       getNextPageParam: (lastPage) => {
-        console.log(lastPage)
         if ("data" in lastPage) {
           if (!lastPage.data.nextCursor && !lastPage.data.nextSkip) return
           return {

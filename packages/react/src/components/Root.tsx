@@ -6,12 +6,14 @@ import { FilenestFile } from "@filenest/core"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { FilesProvider } from "../context/FilesContext"
 import { SetterGetter } from "../utils/types"
+import { useDebouncedState } from "../utils/hooks"
 
 const queryClient = new QueryClient()
 
 interface GlobalContext {
   client: ReturnType<FilenestClientConfig["client"]>
   selectedFiles: SetterGetter<FilenestFile[]>
+  search: SetterGetter<string>
 }
 
 const GlobalContext = React.createContext<GlobalContext | null>(null)
@@ -36,12 +38,14 @@ export const FilenestRoot = ({
   const { endpoint, client } = config
 
   const [selectedFiles, setSelectedFiles] = useState<FilenestFile[]>([])
+  const [search, setSearch] = useDebouncedState("", 500)
 
   const filenestClient = client({ endpoint })
 
   const contextValue = {
     client: filenestClient,
     selectedFiles: { value: selectedFiles, set: setSelectedFiles },
+    search: { value: search, set: setSearch },
   }
 
   return (

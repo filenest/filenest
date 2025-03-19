@@ -13,6 +13,19 @@ export const FileBrowser = () => {
   return (
     <div>
       <Filenest.Root>
+        <Filenest.Search
+          children={({ search, setSearch }) => (
+            <input
+              type="text"
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search files..."
+              className={`
+                py-2 px-4 bg-zinc-900 border border-zinc-800 rounded
+                focus:outline-none focus:ring focus:ring-cyan-600 mb-8
+              `}
+            />
+          )}
+        />
         <Filenest.Selection
           children={({ count, bulkDelete }) => (
             <div className="bg-zinc-900 border border-zinc-800 rounded flex items-center gap-4 py-2 px-4 mb-8">

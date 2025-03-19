@@ -4,6 +4,7 @@ import { FilenestRoot } from "./components/Root"
 import { FileList } from "./components/FileList"
 import { LoadMore } from "./components/LoadMore"
 import { Selection } from "./components/Selection"
+import { Search } from "./components/Search"
 
 export interface FilenestClientConfig {
   endpoint: string
@@ -19,5 +20,6 @@ export function createFilenestComponents(config: FilenestClientConfig) {
     FileList,
     LoadMore,
     Selection,
+    Search,
   }
 }

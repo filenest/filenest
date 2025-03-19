@@ -52,7 +52,7 @@ export class UploadThing implements Provider {
         // So let's fetch many files and filter them in memory.
         // Might be bad practice, but I want filtering. Can change later.
         if (input.query) {
-          body.limit = this.LIMIT
+          body.limit = this.LIMIT * 10
           let hasMore = false
 
           // Fetch many files and try to return 50 search results
@@ -79,7 +79,11 @@ export class UploadThing implements Provider {
               hasMore = true
               // Increase offset to fetch more files after we've
               // searched through the current batch
-              body.offset += this.LIMIT
+              if (body.offset) {
+                body.offset += this.LIMIT
+              } else {
+                body.offset = this.LIMIT
+              }
             } else {
               hasMore = false
             }

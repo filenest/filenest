@@ -26,9 +26,7 @@ export function useFileContext() {
 
 interface RenderProps {
   file: FilenestFile
-  rootProps: {
-    onClick: React.MouseEventHandler<HTMLDivElement>
-  }
+  rootProps: React.ComponentPropsWithoutRef<"div">
   state: {
     isLoading: boolean
     isSelected: boolean
@@ -75,7 +73,7 @@ export const File = ({ file, children }: FileProps) => {
     })
   }
 
-  const rootProps = {
+  const rootProps: React.ComponentPropsWithoutRef<"div"> = {
     onClick: ((e) => {
       // Handle selection of multiple files
       if (e.ctrlKey || e.metaKey) {
@@ -102,7 +100,7 @@ export const File = ({ file, children }: FileProps) => {
         selectedFiles.set((current) => [...current, ...filesToSelect])
         return
       }
-    }) satisfies React.MouseEventHandler<HTMLDivElement>,
+    }),
   }
 
   const contextValue = {
