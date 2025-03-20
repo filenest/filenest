@@ -79,11 +79,8 @@ export class UploadThing implements Provider {
               hasMore = true
               // Increase offset to fetch more files after we've
               // searched through the current batch
-              if (body.offset) {
-                body.offset += this.LIMIT
-              } else {
-                body.offset = this.LIMIT
-              }
+              body.offset ||= 0
+              body.offset += this.LIMIT
             } else {
               hasMore = false
             }
