@@ -4,7 +4,7 @@ import React from "react"
 import { useGlobalContext } from "./Root"
 
 interface RenderProps {
-  search: string
+  //search: string
   setSearch: (value: string) => void
 }
 
@@ -17,7 +17,7 @@ export const Search = ({ children }: SearchProps) => {
 
   if (typeof children === "function") {
     return children({
-      search: search.value,
+      //search: search.value,
       setSearch: search.set,
     })
   } else {

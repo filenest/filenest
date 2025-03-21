@@ -14,7 +14,7 @@ export const FileBrowser = () => {
     <div>
       <Filenest.Root>
         <Filenest.Search
-          children={({ search, setSearch }) => (
+          children={({ setSearch }) => (
             <input
               type="text"
               onChange={(e) => setSearch(e.target.value)}
