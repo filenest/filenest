@@ -1,12 +1,13 @@
 "use client"
 
 import React, { useState } from "react"
-import { type FilenestClientConfig } from ".."
 import { FilenestFile } from "@filenest/core"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { type FilenestClientConfig } from ".."
 import { FilesProvider } from "../context/FilesContext"
+import { UploadProvider } from "../context/UploadContext"
 import { SetterGetter } from "../utils/types"
 import { useDebouncedState } from "../utils/hooks"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 const queryClient = new QueryClient()
 
@@ -51,7 +52,9 @@ export const FilenestRoot = ({
   return (
     <QueryClientProvider client={queryClient}>
       <GlobalContext.Provider value={contextValue}>
-        <FilesProvider>{children}</FilesProvider>
+        <FilesProvider>
+          <UploadProvider>{children}</UploadProvider>
+        </FilesProvider>
       </GlobalContext.Provider>
     </QueryClientProvider>
   )

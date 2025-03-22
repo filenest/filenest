@@ -19,11 +19,50 @@ export const FileBrowser = () => {
               type="text"
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search files..."
-              className={`
-                py-2 px-4 bg-zinc-900 border border-zinc-800 rounded
-                focus:outline-none focus:ring focus:ring-cyan-600 mb-8
-              `}
+              className={`py-2 px-4 bg-zinc-900 border border-zinc-800 rounded
+                focus:outline-none focus:ring focus:ring-cyan-600 mb-8`}
             />
+          )}
+        />
+        <Filenest.Uploader
+          children={({ rootProps, inputProps, isDragActive }) => (
+            <div
+              {...rootProps}
+              className={`
+                w-full p-8 bg-zinc-900
+                border-2 border-dashed ${
+                  isDragActive ? "border-cyan-600" : "border-zinc-800"
+                }
+                rounded flex items-center justify-center mb-8
+              `}
+            >
+              <input {...inputProps} />
+              Drop files here or click to upload
+            </div>
+          )}
+        />
+        <Filenest.Queue
+          children={({ uploads }) => (
+            <div className="fixed bottom-8 right-8 z-20 p-6 rounded bg-zinc-900 border border-zinc-800 shadow-xl max-w-96">
+              <div className="text-xl mb-2">Queued files:</div>
+              {uploads.map((Upload, index) => (
+                <Upload.Root
+                  key={index}
+                  children={({ upload, removeFromQueue }) => (
+                    <div className="flex items-center justify-between mt-2 py-2 px-3 rounded-sm border border-zinc-800">
+                      <div className="truncate">{upload.raw.name}</div>
+                      <button
+                        onClick={removeFromQueue}
+                        className={`py-1 px-2 ml-2 bg-gradient-to-b from-zinc-800 to-zinc-900 cursor-pointer
+                          border border-zinc-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed`}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  )}
+                />
+              ))}
+            </div>
           )}
         />
         <Filenest.Selection
@@ -31,11 +70,8 @@ export const FileBrowser = () => {
             <div className="bg-zinc-900 border border-zinc-800 rounded flex items-center gap-4 py-2 px-4 mb-8">
               <div>{count} files selected:</div>
               <button
-                className={`
-                  py-1 px-2 bg-gradient-to-b from-zinc-800 to-zinc-900
-                  border border-zinc-700 rounded-lg cursor-pointer
-                  disabled:opacity-50 disabled:cursor-not-allowed
-                `}
+                className={`py-1 px-2 bg-gradient-to-b from-zinc-800 to-zinc-900 cursor-pointer
+                  border border-zinc-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed`}
                 onClick={bulkDelete}
               >
                 Delete
@@ -69,11 +105,8 @@ export const FileBrowser = () => {
                         <File.Delete
                           children={({ trigger, isDeleting }) => (
                             <button
-                              className={`
-                                m-2 py-1 px-2 bg-gradient-to-b from-zinc-800 to-zinc-900
-                                border border-zinc-700 rounded-lg cursor-pointer
-                                disabled:opacity-50 disabled:cursor-not-allowed
-                              `}
+                              className={`m-2 py-1 px-2 bg-gradient-to-b from-zinc-800 to-zinc-900 cursor-pointer
+                                border border-zinc-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed`}
                               onClick={trigger}
                               disabled={isDeleting}
                             >
@@ -94,11 +127,8 @@ export const FileBrowser = () => {
             children={({ loadMore, isLoading }) => (
               <button
                 disabled={isLoading}
-                className={`
-                  py-3 px-4 bg-gradient-to-b from-zinc-800 to-zinc-900
-                  border border-zinc-700 rounded-lg cursor-pointer
-                  disabled:opacity-50 disabled:cursor-not-allowed
-                `}
+                className={`py-3 px-4 bg-gradient-to-b from-zinc-800 to-zinc-900 border border-zinc-700
+                  rounded-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
                 onClick={loadMore}
               >
                 {isLoading ? <Spinner /> : "Load more"}

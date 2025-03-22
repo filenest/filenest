@@ -5,6 +5,8 @@ import { FileList } from "./components/FileList"
 import { LoadMore } from "./components/LoadMore"
 import { Selection } from "./components/Selection"
 import { Search } from "./components/Search"
+import { Uploader } from "./components/Uploader"
+import { Queue } from "./components/Queue"
 
 export interface FilenestClientConfig {
   endpoint: string
@@ -21,5 +23,7 @@ export function createFilenestComponents(config: FilenestClientConfig) {
     LoadMore,
     Selection,
     Search,
+    Uploader,
+    Queue,
   }
 }
