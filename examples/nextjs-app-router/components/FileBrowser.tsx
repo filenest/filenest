@@ -43,7 +43,7 @@ export const FileBrowser = () => {
         />
         <Filenest.Queue
           children={({ uploads }) => (
-            <div className="fixed bottom-8 right-8 z-20 p-6 rounded bg-zinc-900 border border-zinc-800 shadow-xl max-w-96">
+            <div className="fixed bottom-8 right-8 z-20 p-6 rounded-lg bg-zinc-900 border border-zinc-800 shadow-xl max-w-96">
               <div className="text-xl mb-2">Queued files:</div>
               {uploads.map((Upload, index) => (
                 <Upload.Root
@@ -67,7 +67,8 @@ export const FileBrowser = () => {
         />
         <Filenest.Selection
           children={({ count, bulkDelete }) => (
-            <div className="bg-zinc-900 border border-zinc-800 rounded flex items-center gap-4 py-2 px-4 mb-8">
+            <div className={`bg-zinc-950 border border-zinc-800 rounded flex items-center gap-4
+              py-2 px-4 mb-8 fixed bottom-4 left-1/2 -translate-x-1/2 z-20`}>
               <div>{count} files selected:</div>
               <button
                 className={`py-1 px-2 bg-gradient-to-b from-zinc-800 to-zinc-900 cursor-pointer
