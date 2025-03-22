@@ -5,6 +5,7 @@ export function uploadObjectFromFile(file: File): Upload {
     raw: file,
     progress: 0,
     isUploading: false,
-    done: false,
+    isDone: false,
+    isError: false,
   }
 }

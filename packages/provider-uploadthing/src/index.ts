@@ -142,15 +142,47 @@ export class UploadThing implements Provider {
         return new RouteReturnError("Failed to fetch files", { error })
       }
     },
-    getRequiredParams: async () => {
-      return new RouteReturnError("Not supported", {
-        code: ErrorCode.FEATURE_NOT_SUPPORTED,
-      })
-    },
     getUploadUrl: async (input) => {
-      return new RouteReturnError("Not supported", {
-        code: ErrorCode.FEATURE_NOT_SUPPORTED,
-      })
+      const { file, folder } = input
+      if (!file || (!file && !folder)) {
+        return new RouteReturnError("No file or folder provided")
+      }
+
+      const signingParams = {
+        fileName: file.name,
+        fileSize: file.size,
+      }
+
+      try {
+        const preparation = await this.defaultFetch(`${this.apiUrlV7}/prepareUpload`, {
+          body: JSON.stringify(signingParams),
+        })
+
+        const preparationData = (await preparation.json()) as
+          | UploadThingPrepareUploadResponse
+          | UploadThingError
+
+        if ("error" in preparationData) {
+          throw new Error(preparationData.error)
+        }
+
+        return {
+          success: true,
+          data: {
+            ...preparationData,
+            params: {
+              fileParam: {
+                name: "files",
+                type: "objectArray",
+                data: [{ name: file.name, size: file.size }],
+              },
+              otherUploadParams: {},
+            },
+          },
+        }
+      } catch (error) {
+        return new RouteReturnError("Failed to get upload URL", { error })
+      }
     },
     deleteFiles: async (input) => {
       const body = {
@@ -225,4 +257,9 @@ interface UploadThingListItemsResponse {
 interface UploadThingDeleteItemsResponse {
   success: boolean
   deletedCount: number
+}
+
+interface UploadThingPrepareUploadResponse {
+  key: string
+  url: string
 }

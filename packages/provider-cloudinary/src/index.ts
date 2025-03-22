@@ -165,26 +165,11 @@ export class Cloudinary implements Provider {
         },
       }
     },
-    getRequiredParams: async () => {
-      return {
-        success: true,
-        data: {
-          requiredParams: {
-            fileParam: "file",
-            folderParam: "folder",
-          },
-          defaultParams: {
-            use_filename: "true",
-            unique_filename: "true",
-          },
-        },
-      }
-    },
     getUploadUrl: async (input) => {
-      const { signingParams } = input
-
-      if (!signingParams) {
-        return new RouteReturnError("signingParams is required")
+      const signingParams: Record<string, string> = {
+        use_filename: "true",
+        unique_filename: "true",
+        folder: input.folder || "",
       }
 
       const { settings } = await this._getConfig()
@@ -210,7 +195,26 @@ export class Cloudinary implements Provider {
 
       return {
         success: true,
-        data: url.toString(),
+        data: {
+          url: url.toString(),
+          params: {
+            fileParam: {
+              name: "file",
+              type: "stringOrBlob",
+            },
+            otherUploadParams: {
+              signature,
+              use_filename: "true",
+              unique_filename: "true",
+              ...(settings.folder_mode === "dynamic" && {
+                asset_folder: signingParams.asset_folder,
+              }),
+              ...(settings.folder_mode === "fixed" && {
+                folder: signingParams.folder,
+              }),
+            },
+          },
+        },
       }
     },
     deleteFiles: async (input) => {

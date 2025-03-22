@@ -34,10 +34,9 @@ const prepareClient = (
             })
           },
           async getUploadUrl(input) {
-            return await caller.call(`${s}files${s}getUploadUrl`, input)
-          },
-          async getRequiredParams() {
-            return await caller.call(`${s}files${s}getRequiredParams`, undefined)
+            return await caller.call(`${s}files${s}getUploadUrl`, input, {
+              method: "POST",
+            })
           },
           async updateFile(input) {
             return await caller.call(`${s}files${s}updateFile`, input, {

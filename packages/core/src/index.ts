@@ -25,24 +25,28 @@ export interface Provider {
     >
 
     /**
-     * Get the parameter names required for uploading a file
-     */
-    getRequiredParams: () => Promise<
-      FilenestResponse<{
-        requiredParams: {
-          fileParam: string
-          folderParam: string
-        }
-        defaultParams: Record<string, any>
-      }>
-    >
-
-    /**
      * Get presigned upload URL
      */
-    getUploadUrl: (input: {
-      signingParams: Record<string, string>
-    }) => Promise<FilenestResponse<string>>
+    getUploadUrl: <TData>(input: {
+      file?: {
+        name: string
+        size: number
+      }
+      folder?: string
+    }) => Promise<
+      FilenestResponse<{
+        url: string
+        key?: string
+        params: {
+          fileParam: {
+            name: string
+            type: "stringOrBlob" | "object" | "objectArray"
+            data?: Record<string, any> | Array<Record<string, any>>
+          }
+          otherUploadParams: Record<string, any>
+        }
+      }>
+    >
 
     /**
      * Update details of a file
