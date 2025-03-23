@@ -162,8 +162,6 @@ export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
           }
         })
 
-        console.log(uploadResult)
-
         updateUploadByName(upload.raw.name, (u) => ({
           ...u,
           isUploading: false,
