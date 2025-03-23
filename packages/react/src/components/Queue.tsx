@@ -1,6 +1,6 @@
 "use client"
 
-import { useUploadContext } from "../context/UploadContext"
+import { UploadMeta, useUploadContext } from "../context/UploadContext"
 import { UploadItem, UploadProps } from "./Upload/UploadItem"
 
 interface RenderProps {
@@ -8,6 +8,7 @@ interface RenderProps {
     Root: React.FC<UploadProps>
   }>
   upload: () => void
+  meta: UploadMeta
 }
 
 export interface QueueProps {
@@ -15,7 +16,7 @@ export interface QueueProps {
 }
 
 export const Queue = ({ children }: QueueProps) => {
-  const { uploads, beginUpload } = useUploadContext()
+  const { uploads, beginUpload, meta } = useUploadContext()
 
   if (uploads.value.length === 0) return null
 
@@ -25,6 +26,7 @@ export const Queue = ({ children }: QueueProps) => {
         Root: (props: UploadProps) => <UploadItem {...props} upload={upload} />,
       })),
       upload: beginUpload,
+      meta: meta.value,
     })
   } else {
     return children

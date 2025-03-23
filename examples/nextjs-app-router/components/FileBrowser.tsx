@@ -42,32 +42,48 @@ export const FileBrowser = () => {
           )}
         />
         <Filenest.Queue
-          children={({ uploads, upload }) => (
+          children={({ uploads, upload, meta }) => (
             <div className="fixed bottom-8 right-8 z-20 p-6 rounded-lg bg-zinc-900 border border-zinc-800 shadow-xl max-w-96">
               <div className="text-xl mb-2">Queued files:</div>
               {uploads.map((Upload, index) => (
                 <Upload.Root
                   key={index}
                   children={({ upload, removeFromQueue }) => (
-                    <div className="flex items-center justify-between mt-2 py-2 px-3 rounded-sm border border-zinc-800">
-                      <div className="truncate">{upload.raw.name}</div>
-                      <button
-                        onClick={removeFromQueue}
-                        className={`py-1 px-2 ml-2 bg-gradient-to-b from-zinc-800 to-zinc-900 cursor-pointer
-                          border border-zinc-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed`}
-                      >
-                        Remove
-                      </button>
+                    <div className="mt-2 border border-zinc-800 rounded-sm overflow-hidden">
+                      <div className="flex items-center justify-between py-2 px-3 pb-1">
+                        <div className="truncate">{upload.raw.name}</div>
+                        {!meta.isLoading && !upload.isDone && (
+                          <button
+                            onClick={removeFromQueue}
+                            disabled={upload.isUploading}
+                            className={`py-1 px-2 ml-2 bg-gradient-to-b from-zinc-800 to-zinc-900 cursor-pointer
+                              border border-zinc-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed`}
+                          >
+                            Remove
+                          </button>
+                        )}
+                      </div>
+                      <div
+                        className="h-1 bg-green-600"
+                        style={{ width: `${upload.progress}%` }}
+                      />
                     </div>
                   )}
                 />
               ))}
               <button
                 onClick={upload}
+                disabled={meta.isLoading}
                 className={`py-1 px-2 w-full mt-4 bg-gradient-to-b from-green-800 to-green-900 cursor-pointer
-                  border border-green-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed`}
+                  border border-green-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed relative`}
               >
-                Upload {uploads.length} files
+                <span className="relative z-1">Upload {uploads.length} files</span>
+                {meta.isLoading && (
+                  <div
+                    className="absolute top-0 right-0 h-full bg-zinc-900 rounded-md"
+                    style={{ width: `${100 - meta.totalProgress}%` }}
+                  />
+                )}
               </button>
             </div>
           )}
@@ -109,21 +125,30 @@ export const FileBrowser = () => {
                           ${state.isLoading && "opacity-50"}
                         `}
                       >
-                        <div {...rootProps} className="p-3 w-full">
+                        <div {...rootProps} className="p-3 w-full truncate">
                           {file.name}
                         </div>
-                        <File.Delete
-                          children={({ trigger, isDeleting }) => (
-                            <button
-                              className={`m-2 py-1 px-2 bg-gradient-to-b from-zinc-800 to-zinc-900 cursor-pointer
-                                border border-zinc-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed`}
-                              onClick={trigger}
-                              disabled={isDeleting}
-                            >
-                              {isDeleting ? <Spinner /> : "Delete"}
-                            </button>
-                          )}
-                        />
+                        <div className="flex ml-4">
+                          <button
+                            className={`m-2 ml-0 py-1 px-2 bg-gradient-to-b from-zinc-800 to-zinc-900 cursor-pointer
+                              border border-zinc-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed`}
+                            onClick={() => alert(file.url)}
+                          >
+                            URL
+                          </button>
+                          <File.Delete
+                            children={({ trigger, isDeleting }) => (
+                              <button
+                                className={`m-2 ml-0 py-1 px-2 bg-gradient-to-b from-zinc-800 to-zinc-900 cursor-pointer
+                                  border border-zinc-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed`}
+                                onClick={trigger}
+                                disabled={isDeleting}
+                              >
+                                {isDeleting ? <Spinner /> : "Delete"}
+                              </button>
+                            )}
+                          />
+                        </div>
                       </div>
                     )}
                   />

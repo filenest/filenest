@@ -3,10 +3,11 @@
 import React from "react"
 import { SetState, SetterGetter } from "../utils/types"
 import { useGlobalContext } from "../components/Root"
+import { useQueryClient } from "@tanstack/react-query"
 
 interface UploadContext {
   uploads: SetterGetter<Upload[]>
-  meta: SetterGetter<Meta>
+  meta: SetterGetter<UploadMeta>
   beginUpload: () => void
 }
 
@@ -30,21 +31,22 @@ export interface Upload {
   isDone: boolean
 }
 
-interface Meta {
+export interface UploadMeta {
   totalProgress: number
-  isBusy: boolean
+  isLoading: boolean
 }
 
-const defaultMeta: Meta = {
+const defaultMeta: UploadMeta = {
   totalProgress: 0,
-  isBusy: false,
+  isLoading: false,
 }
 
 export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
+  const queryClient = useQueryClient()
   const { client } = useGlobalContext()
 
   const [uploads, setUploads] = React.useState<Upload[]>([])
-  const [meta, setMeta] = React.useState<Meta>(defaultMeta)
+  const [meta, setMeta] = React.useState<UploadMeta>(defaultMeta)
 
   function updateUploadByName(name: string, setUpload: (data: Upload) => Upload) {
     setUploads((current) =>
@@ -58,6 +60,11 @@ export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   async function beginUpload() {
+    setMeta((m) => ({
+      ...m,
+      isLoading: true,
+    }))
+
     for (const upload of uploads) {
       updateUploadByName(upload.raw.name, (u) => ({
         ...u,
@@ -86,19 +93,39 @@ export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       const uploadUrl = new URL(urlResult.data.url)
-      console.log(uploadUrl)
 
       try {
         const uploadResult = await new Promise((resolve, reject) => {
           const xhr = new XMLHttpRequest()
-          xhr.open("POST", uploadUrl, true)
+
+          const method = urlResult.data.method || "POST"
+          xhr.open(method, uploadUrl, true)
 
           xhr.upload.addEventListener("progress", (e) => {
+            // Advance file upload progress
             const percentage = (e.loaded / e.total) * 100
             updateUploadByName(upload.raw.name, (u) => ({
               ...u,
               progress: Number(percentage.toFixed(2)),
             }))
+
+            // Also calculate new total progress.
+            // Must be calced here because we need to know the most
+            // recent state of `uploads`. Due to how state updates work,
+            // calcing it outside of `setUploads` won't work.
+            setUploads((uploads) => {
+              if (percentage) {
+                const accumulated = uploads.reduce((acc, curr) => {
+                  return acc + curr.progress
+                }, 0)
+                const queueProgress = Number((accumulated / uploads.length).toFixed(2))
+                setMeta((m) => ({
+                  ...m,
+                  totalProgress: queueProgress,
+                }))
+              }
+              return uploads
+            })
           })
 
           xhr.addEventListener("readystatechange", () => {
@@ -135,6 +162,8 @@ export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
           }
         })
 
+        console.log(uploadResult)
+
         updateUploadByName(upload.raw.name, (u) => ({
           ...u,
           isUploading: false,
@@ -146,7 +175,6 @@ export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
           ...u,
           isUploading: false,
           isError: true,
-          isDone: true,
         }))
 
         let message = `An error occurred while uploading the file ${upload.raw.name}`
@@ -156,6 +184,15 @@ export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
         console.error(message)
       }
     }
+
+    setMeta((m) => ({
+      ...m,
+      isLoading: false,
+    }))
+
+    setUploads([])
+
+    queryClient.invalidateQueries({ queryKey: ["filenest-files"] })
   }
 
   const contextValue = {

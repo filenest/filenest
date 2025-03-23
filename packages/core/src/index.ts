@@ -27,7 +27,7 @@ export interface Provider {
     /**
      * Get presigned upload URL
      */
-    getUploadUrl: <TData>(input: {
+    getUploadUrl: (input: {
       file?: {
         name: string
         size: number
@@ -45,6 +45,7 @@ export interface Provider {
           }
           otherUploadParams: Record<string, any>
         }
+        method?: "POST" | "PUT"
       }>
     >
 

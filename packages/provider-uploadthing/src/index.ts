@@ -172,12 +172,12 @@ export class UploadThing implements Provider {
             ...preparationData,
             params: {
               fileParam: {
-                name: "files",
-                type: "objectArray",
-                data: [{ name: file.name, size: file.size }],
+                name: "file",
+                type: "stringOrBlob",
               },
               otherUploadParams: {},
             },
+            method: "PUT",
           },
         }
       } catch (error) {
