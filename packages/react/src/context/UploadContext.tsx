@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { SetState, SetterGetter } from "../utils/types"
+import { SetterGetter } from "../utils/types"
 import { useGlobalContext } from "../components/Root"
 import { useQueryClient } from "@tanstack/react-query"
 
@@ -59,6 +59,7 @@ export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
     )
   }
 
+  // This is where the client-side upload happens
   async function beginUpload() {
     setMeta((m) => ({
       ...m,
@@ -87,7 +88,6 @@ export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
           ...u,
           isUploading: false,
           isError: true,
-          isDone: true,
         }))
         continue
       }
@@ -179,7 +179,7 @@ export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
         if (error instanceof Error) {
           message = error.message
         }
-        console.error(message)
+        console.error("[Filenest]: " + message)
       }
     }
 

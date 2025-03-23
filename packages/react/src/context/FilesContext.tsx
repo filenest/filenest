@@ -1,9 +1,9 @@
 "use client"
 
-import { useInfiniteQuery } from "@tanstack/react-query"
-import { useGlobalContext } from "../components/Root"
 import React from "react"
 import { FilenestFile } from "@filenest/core"
+import { useInfiniteQuery } from "@tanstack/react-query"
+import { useGlobalContext } from "../components/Root"
 import { SetterGetter } from "../utils/types"
 
 interface FilesContext {
