@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+kbd {
+  padding: 0.15rem 0.25rem;
+  margin-inline: 0.25rem;
+  color: var(--color-zinc-950);
+  background-color: var(--color-zinc-300);
+  border-bottom: 2px solid var(--color-zinc-500);
+  border-radius: 0.25rem;
+}
+
+ul {
+  padding-left: 1rem;
+}
+
+ul li {
+  list-style-type: disc;
+  margin-top: 0.25rem;
+}

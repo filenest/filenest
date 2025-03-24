@@ -1,7 +1,7 @@
 "use client"
 
 import { createFilenestComponents } from "@filenest/react"
-import { client } from "@filenest/adapter-nextjs"
+import { client } from "@filenest/adapter-nextjs/client"
 import { Spinner } from "./Spinner"
 
 export const FileBrowser = () => {

@@ -212,6 +212,11 @@ export class UploadThing implements Provider {
         return new RouteReturnError("Failed to delete files", { error })
       }
     },
+    updateFile: async () => {
+      return new RouteReturnError("Not supported", {
+        code: ErrorCode.FEATURE_NOT_SUPPORTED,
+      })
+    },
   } satisfies Provider["files"]
 
   folders = {

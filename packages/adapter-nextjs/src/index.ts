@@ -123,5 +123,3 @@ class FilenestNextjsHandler {
 export function initNextjsAdapter(provider: Provider) {
   return new FilenestNextjsHandler(provider)
 }
-
-export { RESTClient as client } from "@filenest/core/adapter"

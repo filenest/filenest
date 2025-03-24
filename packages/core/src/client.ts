@@ -96,6 +96,9 @@ export class ClientAPICallerTRPC {
       const response = await fetch(getFetchUrl(), {
         body: bodyInput,
         credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
         ...options,
       })
 

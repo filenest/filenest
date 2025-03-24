@@ -52,7 +52,7 @@ export interface Provider {
     /**
      * Update details of a file
      */
-    updateFile?: (input: any) => Promise<FilenestResponse<AnyRouteReturn>>
+    updateFile: (input: any) => Promise<FilenestResponse<AnyRouteReturn>>
 
     /**
      * Delete files
