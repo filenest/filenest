@@ -86,9 +86,9 @@ importers:
       '@filenest/adapter-trpc':
         specifier: 0.10.0-next.0
         version: link:../../packages/adapter-trpc
-      '@filenest/provider-uploadthing':
+      '@filenest/provider-cloudinary':
         specifier: 0.10.0-next.0
-        version: link:../../packages/provider-uploadthing
+        version: link:../../packages/provider-cloudinary
       '@filenest/react':
         specifier: 0.10.0-next.0
         version: link:../../packages/react
@@ -169,7 +169,7 @@ importers:
         specifier: workspace:*
         version: link:../core
       '@trpc/server':
-        specifier: ^10 || ^11
+        specifier: ^11
         version: 11.0.0(typescript@5.8.2)
       zod:
         specifier: '>= 3.20.0'

@@ -1,5 +1,5 @@
-import { Provider } from "@filenest/core"
-import { initTRPC } from "@trpc/server"
+import { AnyRouteReturn, FilenestResponse, Provider } from "@filenest/core"
+import { initTRPC, TRPCError } from "@trpc/server"
 import {
   MiddlewareBuilder,
   ProcedureBuilder,
@@ -58,7 +58,8 @@ class FilenestTRPCRouter {
               .optional()
           )
           .query(async ({ input }) => {
-            return await this.provider.files.getFiles(input)
+            const result = await this.provider.files.getFiles(input)
+            return returnOrThrow(result)
           }),
         getUploadUrl: this.proc
           .use(this.middleware)
@@ -74,13 +75,15 @@ class FilenestTRPCRouter {
             })
           )
           .mutation(async ({ input }) => {
-            return await this.provider.files.getUploadUrl(input)
+            const result = await this.provider.files.getUploadUrl(input)
+            return returnOrThrow(result)
           }),
         updateFile: this.proc
           .use(this.middleware)
           .input(z.any())
           .mutation(async ({ input }) => {
-            return await this.provider.files.updateFile(input)
+            const result = await this.provider.files.updateFile(input)
+            return returnOrThrow(result)
           }),
         deleteFiles: this.proc
           .use(this.middleware)
@@ -91,7 +94,8 @@ class FilenestTRPCRouter {
             })
           )
           .mutation(async ({ input }) => {
-            return await this.provider.files.deleteFiles(input)
+            const result = await this.provider.files.deleteFiles(input)
+            return returnOrThrow(result)
           }),
       }),
       folders: t.router({
@@ -103,7 +107,8 @@ class FilenestTRPCRouter {
             })
           )
           .query(async ({ input }) => {
-            return await this.provider.folders.getFolders(input)
+            const result = await this.provider.folders.getFolders(input)
+            return returnOrThrow(result)
           }),
         createFolder: this.proc
           .use(this.middleware)
@@ -115,7 +120,8 @@ class FilenestTRPCRouter {
             })
           )
           .mutation(async ({ input }) => {
-            return await this.provider.folders.createFolder(input)
+            const result = await this.provider.folders.createFolder(input)
+            return returnOrThrow(result)
           }),
         updateFolder: this.proc
           .use(this.middleware)
@@ -127,7 +133,8 @@ class FilenestTRPCRouter {
             })
           )
           .mutation(async ({ input }) => {
-            return await this.provider.folders.updateFolder(input)
+            const result = await this.provider.folders.updateFolder(input)
+            return returnOrThrow(result)
           }),
         deleteFolder: this.proc
           .use(this.middleware)
@@ -138,11 +145,38 @@ class FilenestTRPCRouter {
             })
           )
           .mutation(async ({ input }) => {
-            return await this.provider.folders.deleteFolder(input)
+            const result = await this.provider.folders.deleteFolder(input)
+            return returnOrThrow(result)
           }),
       }),
     })
   }
+}
+
+function returnOrThrow(result: FilenestResponse<AnyRouteReturn>) {
+  if ("error" in result) {
+    switch (result.code) {
+      case "FILENEST_ERR_BAD_REQUEST":
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: result.message,
+          cause: result.error,
+        })
+      case "FILENEST_ERR_FETCH":
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: result.message,
+          cause: result.error,
+        })
+      default:
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: result.message,
+          cause: result.error,
+        })
+    }
+  }
+  return result
 }
 
 /**

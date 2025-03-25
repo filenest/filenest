@@ -355,7 +355,7 @@ export class Cloudinary implements Provider {
 
       if (hasFiles && !ignoreNotEmpty) {
         return new RouteReturnError("This folder is not empty", {
-          code: ErrorCode.FOLDER_NOT_EMPTY,
+          code: ErrorCode.FILENEST_ERR_FOLDER_NOT_EMPTY,
         })
       }
 

@@ -214,7 +214,7 @@ export class UploadThing implements Provider {
     },
     updateFile: async () => {
       return new RouteReturnError("Not supported", {
-        code: ErrorCode.FEATURE_NOT_SUPPORTED,
+        code: ErrorCode.FILENEST_ERR_FEATURE_NOT_SUPPORTED,
       })
     },
   } satisfies Provider["files"]
@@ -222,22 +222,22 @@ export class UploadThing implements Provider {
   folders = {
     getFolders: async () => {
       return new RouteReturnError("Not supported", {
-        code: ErrorCode.FEATURE_NOT_SUPPORTED,
+        code: ErrorCode.FILENEST_ERR_FEATURE_NOT_SUPPORTED,
       })
     },
     createFolder: async () => {
       return new RouteReturnError("Not supported", {
-        code: ErrorCode.FEATURE_NOT_SUPPORTED,
+        code: ErrorCode.FILENEST_ERR_FEATURE_NOT_SUPPORTED,
       })
     },
     deleteFolder: async () => {
       return new RouteReturnError("Not supported", {
-        code: ErrorCode.FEATURE_NOT_SUPPORTED,
+        code: ErrorCode.FILENEST_ERR_FEATURE_NOT_SUPPORTED,
       })
     },
     updateFolder: async () => {
       return new RouteReturnError("Not supported", {
-        code: ErrorCode.FEATURE_NOT_SUPPORTED,
+        code: ErrorCode.FILENEST_ERR_FEATURE_NOT_SUPPORTED,
       })
     },
   } satisfies Provider["folders"]

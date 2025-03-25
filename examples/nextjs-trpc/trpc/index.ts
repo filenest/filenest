@@ -1,7 +1,7 @@
 import { initTRPC } from "@trpc/server"
 import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch"
 import { initTRPCAdapter } from "@filenest/adapter-trpc"
-import { UploadThing } from "@filenest/provider-uploadthing"
+import { Cloudinary } from "@filenest/provider-cloudinary"
 
 // Your usual TRPC setup
 export const createContext = ({ req, resHeaders }: FetchCreateContextFnOptions) => {
@@ -16,8 +16,10 @@ export type Context = Awaited<ReturnType<typeof createContext>>
 export const t = initTRPC.context<Context>().create()
 
 // Add Filenest router
-const provider = new UploadThing({
-  UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN!,
+const provider = new Cloudinary({
+  CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME!,
+  API_KEY: process.env.CLOUDINARY_API_KEY!,
+  API_SECRET: process.env.CLOUDINARY_API_SECRET!,
 })
 
 const filenestRouter = initTRPCAdapter(provider).create()

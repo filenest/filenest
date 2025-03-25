@@ -1,4 +1,4 @@
-import { FilenestResponse, type Provider } from "@filenest/core"
+import { AnyRouteReturn, FilenestResponse, type Provider } from "@filenest/core"
 import { getHandlersFromProvider } from "@filenest/core/utils"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -79,7 +79,19 @@ class FilenestNextjsHandler {
       // Do the requested action
       const result = (await (handler as any)[handlerAction](
         body
-      )) as FilenestResponse<any>
+      )) as FilenestResponse<AnyRouteReturn>
+
+      if ("error" in result) {
+        switch (result.code) {
+          case "FILENEST_ERR_BAD_REQUEST":
+            return NextResponse.json(result.error, { status: 400 })
+          case "FILENEST_ERR_FETCH":
+            return NextResponse.json(result.error, { status: 500 })
+          default:
+            return NextResponse.json(result.error, { status: 500 })
+        }
+      }
+
       return NextResponse.json(result)
     } catch (error) {
       const message = error instanceof Error ? error.message : "An unknown error occurred"
