@@ -18,13 +18,13 @@ export class Cloudinary implements Provider {
   name = "Cloudinary" as const
 
   private _URL: string
-  private _MAX_RESULTS = 500
+  private _MAX_RESULTS = 30
   private _API_SECRET: string
   private _API_KEY: string
   private _HEADERS: Headers
   private resourceTypes = ["image", "raw", "video"]
 
-  private async _doFetch(url: string | URL, init?: RequestInit) {
+  private async defaultFetch(url: string | URL, init?: RequestInit) {
     return fetch(url, { headers: this._HEADERS, ...init }).then((res) => res.json())
   }
 
@@ -74,7 +74,7 @@ export class Cloudinary implements Provider {
   private async _getConfig() {
     const url = new URL(this._URL.toString() + "/config")
     url.searchParams.append("settings", "true")
-    return (await this._doFetch(url)) as CloudinaryEnvironment
+    return (await this.defaultFetch(url)) as CloudinaryEnvironment
   }
 
   private _mapResourceToSchema(resource: CloudinaryResource): FilenestFile {
@@ -107,36 +107,47 @@ export class Cloudinary implements Provider {
 
   private async _getRawAssetByAssetId(id: string) {
     const url = new URL(this._URL.toString() + "/resources/" + id)
-    const asset: CloudinaryResource = await this._doFetch(url)
+    const asset: CloudinaryResource = await this.defaultFetch(url)
     return asset
   }
 
   files = {
     getFiles: async (input) => {
-      let url: URL = new URL(this._URL.toString() + "/resources")
-
-      if (!input?.prefix && !input?.query) {
-        return new RouteReturnError("Specify either prefix or query")
-      }
-
-      if (input?.prefix && input.query) {
-        return new RouteReturnError("Specify either prefix or query, but not both")
-      }
-
-      if (input?.query) {
-        url = new URL(this._URL.toString() + "/resources/search")
+      if (!input?.prefix || (input?.prefix && input?.query)) {
+        const url = new URL(this._URL.toString() + "/resources/search")
 
         const folder = input?.prefix ? `folder:\"${input.prefix}\"` : 'folder=""'
 
-        const searchQuery = `(public_id:${input.query}* OR display_name:${input.query}* OR filename:${input.query}*)`
+        const expressions = [folder]
 
-        const expression = [folder, searchQuery].filter((i) => !!i).join(" AND ")
+        if (input?.query) {
+          const searchQuery = `(public_id:${input.query}* OR display_name:${input.query}* OR filename:${input.query}*)`
+          expressions.push(searchQuery)
+        }
 
-        url.searchParams.append("expression", expression)
+        const finalExpression = expressions.filter((i) => !!i).join(" AND ")
+
+        if (input?.cursor) {
+          url.searchParams.append("next_cursor", input.cursor.toString())
+        }
+        url.searchParams.append("expression", finalExpression)
         url.searchParams.append("max_results", this._MAX_RESULTS.toString())
+
+        const files = (await this.defaultFetch(url)) as CloudinaryResourcesResponse
+
+        return {
+          success: true,
+          data: {
+            files: this._mapResourcesToSchema(files.resources),
+            count: files.total_count,
+            nextCursor: files.next_cursor,
+          },
+        }
       }
 
-      if (input?.prefix) {
+      if (input?.prefix && !input?.query) {
+        let url = new URL(this._URL.toString() + "/resources")
+
         const { settings } = await this._getConfig()
 
         if (settings.folder_mode === "fixed") {
@@ -146,24 +157,26 @@ export class Cloudinary implements Provider {
         if (settings.folder_mode === "dynamic") {
           url = new URL(this._URL.toString() + "/resources/by_asset_folder")
           url.searchParams.append("asset_folder", input.prefix)
-          url.searchParams.append("max_results", this._MAX_RESULTS.toString())
+        }
+
+        if (input?.cursor) {
+          url.searchParams.append("next_cursor", input.cursor.toString())
+        }
+        url.searchParams.append("max_results", this._MAX_RESULTS.toString())
+
+        const files = (await this.defaultFetch(url)) as CloudinaryResourcesResponse
+
+        return {
+          success: true,
+          data: {
+            files: this._mapResourcesToSchema(files.resources),
+            count: files.total_count,
+            nextCursor: files.next_cursor,
+          },
         }
       }
 
-      if (input?.cursor) {
-        url.searchParams.append("next_cursor", input.cursor.toString())
-      }
-
-      const files: CloudinarySearchResponse = await this._doFetch(url)
-
-      return {
-        success: true,
-        data: {
-          files: this._mapResourcesToSchema(files.resources),
-          count: files.total_count,
-          nextCursor: files.next_cursor,
-        },
-      }
+      return new RouteReturnError("Specify either query or prefix")
     },
     getUploadUrl: async (input) => {
       const signingParams: Record<string, string> = {
@@ -242,7 +255,7 @@ export class Cloudinary implements Provider {
         for (const chunk of chunks) {
           url.searchParams.set("asset_ids", chunk.join(","))
 
-          const response = (await this._doFetch(url, {
+          const response = (await this.defaultFetch(url, {
             method: "DELETE",
           }).then((res) => res.json())) as CloudinaryFilesDeleteResponse
 
@@ -264,7 +277,7 @@ export class Cloudinary implements Provider {
           url.searchParams.append("prefix", prefix)
 
           while (!isAllDeleted) {
-            const response = (await this._doFetch(url, {
+            const response = (await this.defaultFetch(url, {
               method: "DELETE",
             }).then((res) => res.json())) as CloudinaryFilesDeleteResponse
 
@@ -295,7 +308,7 @@ export class Cloudinary implements Provider {
     getFolders: async (input) => {
       const url = new URL([this._URL.toString(), "/folders/", input.path].join(""))
 
-      const folders: CloudinaryFolderResponse = await this._doFetch(url)
+      const folders: CloudinaryFolderResponse = await this.defaultFetch(url)
 
       return {
         success: true,
@@ -308,7 +321,7 @@ export class Cloudinary implements Provider {
     },
     createFolder: async (input) => {
       const url = new URL(this._URL.toString() + "/folders/" + input.path)
-      const folder: CloudinaryFolder = await this._doFetch(url, { method: "POST" })
+      const folder: CloudinaryFolder = await this.defaultFetch(url, { method: "POST" })
       return {
         success: true,
         data: this._mapFolderToSchema(folder),
@@ -333,7 +346,7 @@ export class Cloudinary implements Provider {
       }
 
       const folder: { from: CloudinaryFolder; to: CloudinaryFolder } =
-        await this._doFetch(url, { method: "PUT" })
+        await this.defaultFetch(url, { method: "PUT" })
 
       return {
         success: true,
@@ -415,7 +428,7 @@ export class Cloudinary implements Provider {
 
       // ...Finally delete folder
       const url = new URL(this._URL.toString() + "/folders/" + input.path)
-      await this._doFetch(url, { method: "DELETE" })
+      await this.defaultFetch(url, { method: "DELETE" })
 
       return {
         success: true,
@@ -464,7 +477,7 @@ type CloudinaryResource = {
   tags: string[]
 }
 
-type CloudinarySearchResponse = {
+type CloudinaryResourcesResponse = {
   resources: CloudinaryResource[]
   total_count: number
   next_cursor?: string | null

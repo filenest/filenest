@@ -2,9 +2,9 @@ import { FilenestResponse, RouteReturnError } from "."
 
 export class ClientAPICallerREST {
   private endpoint: string
-  private onError?: (message: string) => void
+  private onError?: (error: RouteReturnError) => void
 
-  constructor(endpoint: string, onError?: (message: string) => void) {
+  constructor(endpoint: string, onError?: (error: RouteReturnError) => void) {
     this.endpoint = endpoint
     this.onError = onError
   }
@@ -53,17 +53,18 @@ export class ClientAPICallerREST {
       if ("message" in error) {
         message = `An error occurred in the Filenest client fetcher: ${error.message}`
       }
-      this.onError?.(message)
-      return new RouteReturnError(message, { error }) as ReturnType<THandler>
+      const filenestError = new RouteReturnError(message, { error })
+      this.onError?.(filenestError)
+      return filenestError as ReturnType<THandler>
     }
   }
 }
 
 export class ClientAPICallerTRPC {
   private endpoint: string
-  private onError?: (message: string) => void
+  private onError?: (error: RouteReturnError) => void
 
-  constructor(endpoint: string, onError?: (message: string) => void) {
+  constructor(endpoint: string, onError?: (error: RouteReturnError) => void) {
     this.endpoint = endpoint
     this.onError = onError
   }
@@ -114,8 +115,9 @@ export class ClientAPICallerTRPC {
       if ("message" in error) {
         message = `An error occurred in the Filenest client fetcher: ${error.message}`
       }
-      this.onError?.(message)
-      return new RouteReturnError(message, { error }) as ReturnType<THandler>
+      const filenestError = new RouteReturnError(message, { error })
+      this.onError?.(filenestError)
+      return filenestError as ReturnType<THandler>
     }
   }
 }

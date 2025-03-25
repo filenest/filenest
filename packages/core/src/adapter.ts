@@ -1,4 +1,4 @@
-import { Provider } from "."
+import { Provider, RouteReturnError } from "."
 import { getHandlersFromProvider } from "./utils"
 import { ClientAPICallerREST, ClientAPICallerTRPC } from "./client"
 
@@ -8,7 +8,7 @@ export interface AdapterClient {
 
 interface AdapterClientOptions {
   endpoint: string
-  onError?: (message: string) => void
+  onError?: (error: RouteReturnError) => void
 }
 
 export type MakeAdapterClient = (options: AdapterClientOptions) => AdapterClient
