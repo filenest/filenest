@@ -6,7 +6,6 @@ import {
   RouteReturnError,
   type Provider,
 } from "@filenest/core"
-import { getFileExtension } from "@filenest/core/utils"
 
 type CloudinaryConfig = {
   API_KEY: string
@@ -83,7 +82,7 @@ export class Cloudinary implements Provider {
       key: resource.public_id,
       url: resource.secure_url,
       name: resource.display_name || resource.filename,
-      extension: getFileExtension(resource.filename),
+      extension: resource.format,
       size: resource.bytes,
       updatedAt: resource.version.toString(),
     }
@@ -307,6 +306,10 @@ export class Cloudinary implements Provider {
   folders = {
     getFolders: async (input) => {
       const url = new URL([this._URL.toString(), "/folders/", input.path].join(""))
+      url.searchParams.append("max_results", this._MAX_RESULTS.toString())
+      if (input?.cursor) {
+        url.searchParams.append("next_cursor", input.cursor.toString())
+      }
 
       const folders: CloudinaryFolderResponse = await this.defaultFetch(url)
 

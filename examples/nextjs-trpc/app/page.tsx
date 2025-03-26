@@ -6,11 +6,7 @@ export default function Page() {
       <div className="grid grid-cols-2 gap-12 mb-12">
         <div>
           <h1 className="text-5xl mb-4">File Browser</h1>
-          <p>
-            This is a complete example of Filenest. <br />
-            Filenest lets you view your external files and folders. You can also upload
-            new files or update existing ones.
-          </p>
+          <h3 className="text-xl">tRPC + Cloudinary</h3>
         </div>
         <div className="p-6 bg-zinc-950/25 rounded-lg">
           <h3 className="text-2xl mb-4">Tips:</h3>

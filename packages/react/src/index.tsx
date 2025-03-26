@@ -7,6 +7,7 @@ import { Selection } from "./components/Selection"
 import { Search } from "./components/Search"
 import { Uploader } from "./components/Uploader"
 import { Queue } from "./components/Queue"
+import { FolderList } from "./components/FolderList"
 
 export interface FilenestClientConfig {
   endpoint: string
@@ -19,6 +20,7 @@ export function createFilenestComponents(config: FilenestClientConfig) {
     Root: ({ children }: { children: React.ReactNode }) => (
       <FilenestRoot config={config} children={children} />
     ),
+    FolderList,
     FileList,
     LoadMore,
     Selection,

@@ -26,7 +26,7 @@ export default function RootLayout({
         `}
       >
         <TRPCQueryClientProvider>
-          <div className="py-32 max-w-7xl mx-auto">{children}</div>
+          <div className="pt-32 max-w-7xl mx-auto">{children}</div>
         </TRPCQueryClientProvider>
       </body>
     </html>

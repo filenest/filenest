@@ -1,43 +1,42 @@
 "use client"
 
 import React from "react"
-import { FilenestFile } from "@filenest/core"
+import { FilenestFolder } from "@filenest/core"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { useGlobalContext } from "../components/Root"
 import { SetterGetter } from "../utils/types"
 
-interface FilesContext {
-  files: SetterGetter<FilenestFile[]>
+interface FolderContext {
+  folders: SetterGetter<FilenestFolder[]>
   isLoading: boolean
   isFetching: boolean
   hasNextPage: boolean
   fetchNextPage: () => void
 }
 
-const FilesContext = React.createContext<FilesContext | null>(null)
+const FoldersContext = React.createContext<FolderContext | null>(null)
 
-export function useFilesContext() {
-  const context = React.useContext(FilesContext)
+export function useFoldersContext() {
+  const context = React.useContext(FoldersContext)
   if (!context) {
     throw new Error(
-      "This component uses useFilesContext, but was not used within Filenest.Root"
+      "This component uses useFoldersContext, but was not used within Filenest.Root"
     )
   }
   return context
 }
 
-export const FilesProvider = ({ children }: { children: React.ReactNode }) => {
-  const { client, search, currentPath } = useGlobalContext()
+export const FoldersProvider = ({ children }: { children: React.ReactNode }) => {
+  const { client, currentPath } = useGlobalContext()
 
-  const [filesInList, setFilesInList] = React.useState<FilenestFile[]>([])
+  const [foldersInList, setFoldersInList] = React.useState<FilenestFolder[]>([])
 
   const { data, isLoading, isFetching, error, isError, hasNextPage, fetchNextPage } =
     useInfiniteQuery({
-      queryKey: ["filenest-files", search.value, currentPath.value],
+      queryKey: ["filenest-folders", currentPath.value],
       queryFn: async ({ pageParam }) => {
-        return await client.fetchers.files.getFiles({
-          query: search.value,
-          prefix: currentPath.value,
+        return await client.fetchers.folders.getFolders({
+          path: currentPath.value,
           cursor: pageParam.cursor,
           skip: pageParam.skip,
         })
@@ -59,15 +58,15 @@ export const FilesProvider = ({ children }: { children: React.ReactNode }) => {
 
   React.useEffect(() => {
     if (!isError && data) {
-      const filesData = data.pages.flatMap((result) => {
+      const foldersData = data.pages.flatMap((result) => {
         if ("data" in result) {
-          return result.data.files
+          return result.data.folders
         } else {
           return []
         }
       })
 
-      setFilesInList(filesData)
+      setFoldersInList(foldersData)
     }
 
     if (isError) {
@@ -76,9 +75,9 @@ export const FilesProvider = ({ children }: { children: React.ReactNode }) => {
   }, [data, isError])
 
   const contextValue = {
-    files: {
-      value: filesInList,
-      set: setFilesInList,
+    folders: {
+      value: foldersInList,
+      set: setFoldersInList,
     },
     isLoading,
     isFetching,
@@ -86,5 +85,5 @@ export const FilesProvider = ({ children }: { children: React.ReactNode }) => {
     fetchNextPage,
   }
 
-  return <FilesContext.Provider value={contextValue}>{children}</FilesContext.Provider>
+  return <FoldersContext.Provider value={contextValue}>{children}</FoldersContext.Provider>
 }

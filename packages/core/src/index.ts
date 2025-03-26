@@ -67,10 +67,15 @@ export interface Provider {
     /**
      * Get all folders in a path
      */
-    getFolders: (input: { path: string }) => Promise<
+    getFolders: (input: {
+      path: string
+      skip?: number | null
+      cursor?: string | number | null
+    }) => Promise<
       FilenestResponse<{
         folders: FilenestFolder[]
         nextCursor?: string | null
+        nextSkip?: number | null
         count?: number
       }>
     >
