@@ -106,14 +106,14 @@ export const FileBrowser = () => {
         />
         <Filenest.FolderList
           children={({ folders }) => (
-            <div className="p-4 flex flex-wrap gap-4">
+            <div className="p-4 flex flex-wrap gap-4 border-b border-zinc-800">
               {folders.map((Folder, index) => (
                 <Folder.Root
                   key={index}
                   children={({ folder, rootProps }) => (
                     <div
                       {...rootProps}
-                      className="bg-zinc-900 border border-zinc-800 rounded p-3 mb-2 cursor-pointer"
+                      className="bg-zinc-900 border border-zinc-800 rounded p-3 cursor-pointer"
                     >
                       {folder.displayName || folder.key}
                     </div>

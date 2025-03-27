@@ -24,7 +24,7 @@ export default function RootLayout({
           bg-zinc-950 text-zinc-50 font-(family-name:--font-geist-sans)
         `}
       >
-        <div className="py-32 max-w-7xl mx-auto">{children}</div>
+        <div className="pt-32 max-w-7xl mx-auto">{children}</div>
       </body>
     </html>
   )

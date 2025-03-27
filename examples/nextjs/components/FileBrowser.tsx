@@ -11,36 +11,35 @@ export const FileBrowser = () => {
   })
 
   return (
-    <div>
+    <div className="bg-zinc-950 min-h-[calc(100vh_-_4rem)] pb-12 rounded-t-2xl border border-zinc-800 border-b-0 overflow-hidden">
       <Filenest.Root>
-        <Filenest.Search
-          children={({ setSearch }) => (
-            <input
-              type="text"
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search files..."
-              className={`py-2 px-4 bg-zinc-900 border border-zinc-800 rounded
-                focus:outline-none focus:ring focus:ring-cyan-600 mb-8`}
-            />
-          )}
-        />
-        <Filenest.Uploader
-          children={({ rootProps, inputProps, isDragActive }) => (
-            <div
-              {...rootProps}
-              className={`
-                w-full p-8 bg-zinc-900
-                border-2 border-dashed ${
-                  isDragActive ? "border-cyan-600" : "border-zinc-800"
-                }
-                rounded flex items-center justify-center mb-8
-              `}
-            >
-              <input {...inputProps} />
-              Drop files here or click to upload
-            </div>
-          )}
-        />
+        <div className="p-4 bg-zinc-900 border-b border-zinc-800 flex gap-4">
+          <Filenest.Search
+            children={({ setSearch }) => (
+              <input
+                type="text"
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search files..."
+                className={`py-2 px-4 bg-zinc-800 border border-zinc-700 rounded
+                  focus:outline-none focus:ring focus:ring-cyan-600`}
+              />
+            )}
+          />
+          <Filenest.Uploader
+            children={({ rootProps, inputProps, isDragActive }) => (
+              <div
+                {...rootProps}
+                className={`w-full p-4 bg-zinc-900 border-2 border-dashed
+                  ${isDragActive ? "border-cyan-600" : "border-zinc-800"}
+                  rounded flex items-center justify-center
+                `}
+              >
+                <input {...inputProps} />
+                Drop files here or click to upload
+              </div>
+            )}
+          />
+        </div>
         <Filenest.Queue
           children={({ uploads, upload, meta }) => (
             <div className="fixed bottom-8 right-8 z-20 p-6 rounded-lg bg-zinc-900 border border-zinc-800 shadow-xl max-w-96">
@@ -108,11 +107,11 @@ export const FileBrowser = () => {
         <Filenest.FileList
           children={({ files, isLoading }) => {
             if (isLoading) {
-              return <div className="text-xl">Loading...</div>
+              return <div className="p-4 text-xl">Loading...</div>
             }
 
             return (
-              <div className="grid grid-cols-2 gap-2">
+              <div className="p-4 grid grid-cols-2 gap-2">
                 {files.length === 0 && <div className="text-xl">No files found.</div>}
                 {files.map((File, index) => (
                   <File.Root
