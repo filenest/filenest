@@ -8,6 +8,7 @@ import { Search } from "./components/Search"
 import { Uploader } from "./components/Uploader"
 import { Queue } from "./components/Queue"
 import { FolderList } from "./components/FolderList"
+import { Breadcrumbs } from "./components/Breadcrumbs/Breadcrumbs"
 
 export interface FilenestClientConfig {
   endpoint: string
@@ -20,6 +21,7 @@ export function createFilenestComponents(config: FilenestClientConfig) {
     Root: ({ children }: { children: React.ReactNode }) => (
       <FilenestRoot config={config} children={children} />
     ),
+    Breadcrumbs,
     FolderList,
     FileList,
     LoadMore,

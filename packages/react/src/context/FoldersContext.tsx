@@ -12,6 +12,8 @@ interface FolderContext {
   isFetching: boolean
   hasNextPage: boolean
   fetchNextPage: () => void
+  navigation: SetterGetter<FilenestFolder[]>
+  navigateTo: (folder: FilenestFolder) => void
 }
 
 const FoldersContext = React.createContext<FolderContext | null>(null)
@@ -74,6 +76,23 @@ export const FoldersProvider = ({ children }: { children: React.ReactNode }) => 
     }
   }, [data, isError])
 
+  const defaultFolder: FilenestFolder = {
+    displayName: "Home",
+    id: "",
+    key: "",
+  }
+
+  const [navigation, setNavigation] = React.useState<FilenestFolder[]>([defaultFolder])
+
+  function navigateTo(folder: FilenestFolder) {
+    if (folder.key === currentPath.value) return
+    currentPath.set(folder.key)
+    setNavigation((curr) => {
+      const index = curr.findIndex((f) => f.key === folder.key)
+      return index === -1 ? [...curr, folder] : curr.slice(0, index + 1)
+    })
+  }
+
   const contextValue = {
     folders: {
       value: foldersInList,
@@ -83,7 +102,14 @@ export const FoldersProvider = ({ children }: { children: React.ReactNode }) => 
     isFetching,
     hasNextPage,
     fetchNextPage,
+    navigation: {
+      value: navigation,
+      set: setNavigation,
+    },
+    navigateTo,
   }
 
-  return <FoldersContext.Provider value={contextValue}>{children}</FoldersContext.Provider>
+  return (
+    <FoldersContext.Provider value={contextValue}>{children}</FoldersContext.Provider>
+  )
 }

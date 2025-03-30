@@ -39,8 +39,7 @@ export interface FolderProps {
 
 export const Folder = ({ folder, children }: FolderProps) => {
   const { currentPath } = useGlobalContext()
-  const { folders } = useFoldersContext()
-
+  const { navigation } = useFoldersContext()
   const [isLoading, setIsLoading] = React.useState(false)
   const [isDeleting, setIsDeleting] = React.useState(false)
 
@@ -62,6 +61,7 @@ export const Folder = ({ folder, children }: FolderProps) => {
       e.preventDefault()
       e.stopPropagation()
       currentPath.set(folder.key)
+      navigation.set((curr) => [...curr, folder])
     },
   }
 

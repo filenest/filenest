@@ -104,6 +104,28 @@ export const FileBrowser = () => {
             </div>
           )}
         />
+        <Filenest.Breadcrumbs
+          children={({ breadcrumbs }) => (
+            <div className="p-4 pb-0">
+              {breadcrumbs.map((Breadcrumb, index) => (
+                <Breadcrumb.Root
+                  key={index}
+                  children={({ folder, rootProps, isCurrent }) => (
+                    <div
+                      {...rootProps}
+                      className={`inline-block mr-1 cursor-pointer ${
+                        !isCurrent && "text-zinc-600"
+                      }`}
+                    >
+                      {folder.displayName || folder.key}
+                      {index !== breadcrumbs.length - 1 && " /"}
+                    </div>
+                  )}
+                />
+              ))}
+            </div>
+          )}
+        />
         <Filenest.FolderList
           children={({ folders }) => (
             <div className="p-4 flex flex-wrap gap-4 border-b border-zinc-800">
