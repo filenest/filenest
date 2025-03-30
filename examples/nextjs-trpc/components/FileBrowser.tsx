@@ -126,25 +126,63 @@ export const FileBrowser = () => {
             </div>
           )}
         />
-        <Filenest.FolderList
-          children={({ folders }) => (
-            <div className="p-4 flex flex-wrap gap-4 border-b border-zinc-800">
-              {folders.map((Folder, index) => (
+        <div className="p-4 flex flex-wrap gap-4 border-b border-zinc-800">
+          <Filenest.FolderList
+            children={({ folders }) =>
+              folders.map((Folder, index) => (
                 <Folder.Root
                   key={index}
                   children={({ folder, rootProps }) => (
                     <div
                       {...rootProps}
-                      className="bg-zinc-900 border border-zinc-800 rounded p-3 cursor-pointer"
+                      className="relative bg-zinc-900 border border-zinc-800 rounded p-3 cursor-pointer"
                     >
-                      {folder.displayName || folder.key}
+                      <div>{folder.displayName || folder.key}</div>
+                      <Folder.Delete
+                        children={({ trigger, isDeleting }) => (
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              trigger()
+                            }}
+                            disabled={isDeleting}
+                            className={`absolute right-2 top-0 text-xs cursor-pointer
+                          text-red-200 hover:text-red-400 -translate-y-1/2 bg-zinc-900 px-1 rounded`}
+                          >
+                            Delete
+                          </button>
+                        )}
+                      />
                     </div>
                   )}
                 />
-              ))}
-            </div>
-          )}
-        />
+              ))
+            }
+          />
+          <Filenest.FolderCreateAction
+            children={({ trigger, setName, isCreating }) => (
+              <div className="relative bg-zinc-800 border border-zinc-700 rounded">
+                <input
+                  type="text"
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="New folder name"
+                  className={`p-3 rounded focus:outline-none focus:ring focus:ring-cyan-600`}
+                  disabled={isCreating}
+                />
+                <button
+                  className={`absolute py-1 px-2 bg-gradient-to-b from-zinc-800 to-zinc-900 cursor-pointer
+                    border border-zinc-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed
+                    right-2 top-1/2 -translate-y-1/2`}
+                  onClick={trigger}
+                  disabled={isCreating}
+                >
+                  {isCreating ? <Spinner /> : "Create"}
+                </button>
+              </div>
+            )}
+          />
+        </div>
         <Filenest.FileList
           children={({ files, isLoading }) => {
             if (isLoading) {

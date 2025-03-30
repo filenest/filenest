@@ -32,7 +32,8 @@
   "dependencies": {
     "@filenest/core": "0.10.0-next.0",
     "@tanstack/react-query": "^5.68.0",
-    "react-dropzone": "^14.3.8"
+    "react-dropzone": "^14.3.8",
+    "slugify": "1.6.6"
   },
   "peerDependencies": {
     "react": ">=18",

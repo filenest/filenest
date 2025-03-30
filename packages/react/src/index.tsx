@@ -9,6 +9,7 @@ import { Uploader } from "./components/Uploader"
 import { Queue } from "./components/Queue"
 import { FolderList } from "./components/FolderList"
 import { Breadcrumbs } from "./components/Breadcrumbs/Breadcrumbs"
+import { FolderCreateAction } from "./components/FolderCreateAction"
 
 export interface FilenestClientConfig {
   endpoint: string
@@ -23,6 +24,7 @@ export function createFilenestComponents(config: FilenestClientConfig) {
     ),
     Breadcrumbs,
     FolderList,
+    FolderCreateAction,
     FileList,
     LoadMore,
     Selection,

@@ -265,6 +265,9 @@ importers:
       react-dropzone:
         specifier: ^14.3.8
         version: 14.3.8(react@19.0.0)
+      slugify:
+        specifier: 1.6.6
+        version: 1.6.6
     devDependencies:
       '@internal/eslint':
         specifier: workspace:*
