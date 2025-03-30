@@ -252,11 +252,13 @@ export class Cloudinary implements Provider {
         const url = new URL(this._URL.toString() + "/resources")
 
         for (const chunk of chunks) {
-          url.searchParams.set("asset_ids", chunk.join(","))
+          for (const id of chunk) {
+            url.searchParams.append("asset_ids[]", id)
+          }
 
           const response = (await this.defaultFetch(url, {
             method: "DELETE",
-          }).then((res) => res.json())) as CloudinaryFilesDeleteResponse
+          })) as CloudinaryFilesDeleteResponse
 
           deletedCount += Object.keys(response.deleted).length
         }
@@ -278,7 +280,7 @@ export class Cloudinary implements Provider {
           while (!isAllDeleted) {
             const response = (await this.defaultFetch(url, {
               method: "DELETE",
-            }).then((res) => res.json())) as CloudinaryFilesDeleteResponse
+            })) as CloudinaryFilesDeleteResponse
 
             deletedCount += Object.keys(response.deleted).length
 
