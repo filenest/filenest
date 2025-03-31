@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import { FilenestFile } from "@filenest/core"
-import { type FilenestClientConfig } from ".."
+import { OnUserInteractionRequired, FilenestClientConfig } from ".."
 import { FilesProvider } from "../context/FilesContext"
 import { UploadProvider } from "../context/UploadContext"
 import { SetterGetter } from "../utils/types"
@@ -17,6 +17,7 @@ interface GlobalContext {
   selectedFiles: SetterGetter<FilenestFile[]>
   search: SetterGetter<string>
   currentPath: SetterGetter<string>
+  onUserInteractionRequired?: OnUserInteractionRequired
 }
 
 const GlobalContext = React.createContext<GlobalContext | null>(null)
@@ -34,9 +35,11 @@ export function useGlobalContext() {
 export const FilenestRoot = ({
   children,
   config,
+  onUserInteractionRequired,
 }: {
   children: React.ReactNode
   config: FilenestClientConfig
+  onUserInteractionRequired?: OnUserInteractionRequired
 }) => {
   const { endpoint, client } = config
 
@@ -51,6 +54,7 @@ export const FilenestRoot = ({
     selectedFiles: { value: selectedFiles, set: setSelectedFiles },
     search: { value: search, set: setSearch },
     currentPath: { value: currentPath, set: setCurrentPath },
+    onUserInteractionRequired,
   }
 
   return (

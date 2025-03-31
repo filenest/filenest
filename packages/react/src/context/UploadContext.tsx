@@ -43,7 +43,7 @@ const defaultMeta: UploadMeta = {
 
 export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient()
-  const { client } = useGlobalContext()
+  const { client, currentPath } = useGlobalContext()
 
   const [uploads, setUploads] = React.useState<Upload[]>([])
   const [meta, setMeta] = React.useState<UploadMeta>(defaultMeta)
@@ -80,7 +80,7 @@ export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
           name: upload.raw.name,
           size: upload.raw.size,
         },
-        folder: "",
+        folder: currentPath.value,
       })
 
       if ("error" in urlResult) {

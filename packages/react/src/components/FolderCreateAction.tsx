@@ -9,6 +9,7 @@ import { SetState } from "../utils/types"
 
 interface RenderProps {
   trigger: () => void
+  name: string
   setName: SetState<string>
   isCreating: boolean
 }
@@ -55,7 +56,7 @@ export const FolderCreateAction = ({ children }: FolderCreateActionProps) => {
   }
 
   if (typeof children === "function") {
-    return children({ trigger, isCreating, setName })
+    return children({ trigger, isCreating, name, setName })
   } else {
     return children
   }

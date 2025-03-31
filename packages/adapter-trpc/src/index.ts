@@ -168,6 +168,12 @@ function returnOrThrow(result: FilenestResponse<AnyRouteReturn>) {
           message: result.message,
           cause: result.error,
         })
+      case "FILENEST_ERR_FOLDER_NOT_EMPTY":
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: result.code || result.message,
+          cause: result.error,
+        })
       default:
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

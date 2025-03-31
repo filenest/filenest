@@ -197,4 +197,4 @@ export const ErrorCode = {
   FILENEST_ERR_FEATURE_NOT_SUPPORTED: "FILENEST_ERR_FEATURE_NOT_SUPPORTED",
 } as const
 
-type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode]
+export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode]

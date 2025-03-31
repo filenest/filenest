@@ -11,16 +11,26 @@ import { FolderList } from "./components/FolderList"
 import { Breadcrumbs } from "./components/Breadcrumbs/Breadcrumbs"
 import { FolderCreateAction } from "./components/FolderCreateAction"
 
+export type OnUserInteractionRequired = (info: {
+  message: string
+  confirmAction: () => void
+}) => void
+
 export interface FilenestClientConfig {
-  endpoint: string
   client: MakeAdapterClient
+  endpoint: string
+  onUserInteractionRequired?: OnUserInteractionRequired
   //providerConfig: MakeProviderClientConfig
 }
 
 export function createFilenestComponents(config: FilenestClientConfig) {
   return {
     Root: ({ children }: { children: React.ReactNode }) => (
-      <FilenestRoot config={config} children={children} />
+      <FilenestRoot
+        config={config}
+        children={children}
+        onUserInteractionRequired={config.onUserInteractionRequired}
+      />
     ),
     Breadcrumbs,
     FolderList,

@@ -1,4 +1,4 @@
-import { FilenestResponse, RouteReturnError } from "."
+import { ErrorCode, FilenestResponse, RouteReturnError } from "."
 
 export class ClientAPICallerREST {
   private endpoint: string
@@ -103,13 +103,27 @@ export class ClientAPICallerTRPC {
         ...options,
       })
 
-      const { result } = (await response.json()) as {
-        result: {
-          data: Awaited<ReturnType<THandler>>
-        }
+      const result = (await response.json()) as
+        | {
+            result: {
+              data: Awaited<ReturnType<THandler>>
+            }
+          }
+        | {
+            error: {
+              message: string
+            }
+          }
+
+      // The TRPCError can only hold a custom message.
+      // Message will be an ErrorCode and we return a "real" Filenest error.
+      if ("error" in result) {
+        return new RouteReturnError(result.error.message, {
+          code: result.error.message as ErrorCode,
+        }) as ReturnType<THandler>
       }
 
-      return result.data
+      return result.result.data
     } catch (error: any) {
       let message = "An unknown error occurred in the Filenest client fetcher"
       if ("message" in error) {

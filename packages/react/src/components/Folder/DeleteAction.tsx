@@ -21,15 +21,16 @@ export const DeleteAction = ({ folder: propsFolder, children }: DeleteActionProp
 
   const { isDeleting, isLoading, folder: ctxFolder } = useFolderContext()
   const { folders } = useFoldersContext()
-  const { client } = useGlobalContext()
+  const { client, onUserInteractionRequired } = useGlobalContext()
 
   const folder = propsFolder || ctxFolder
 
   const mutation = useMutation({
     mutationKey: ["filenest-deleteFolder", folder.id],
-    mutationFn: async () => {
+    mutationFn: async (opts?: { ignoreNotEmpty?: boolean }) => {
       return await client.fetchers.folders.deleteFolder({
         path: folder.key,
+        ignoreNotEmpty: opts?.ignoreNotEmpty,
       })
     },
     onMutate: () => {
@@ -44,12 +45,24 @@ export const DeleteAction = ({ folder: propsFolder, children }: DeleteActionProp
       if (data.success) {
         folders.set((prev) => [...prev.filter((f) => f.id !== folder.id)])
         queryClient.invalidateQueries({ queryKey: ["filenest-folders"] })
+        return
+      } else {
+        if (data.code === "FILENEST_ERR_FOLDER_NOT_EMPTY") {
+          onUserInteractionRequired?.({
+            message: `The folder ${
+              folder.displayName || folder.key
+            } contains files. Deleting this folder will delete all files inside. Are you sure?`,
+            confirmAction: () => {
+              mutation.mutate({ ignoreNotEmpty: true })
+            },
+          })
+        }
       }
     },
   })
 
   async function trigger() {
-    mutation.mutate()
+    mutation.mutate({})
   }
 
   if (typeof children === "function") {

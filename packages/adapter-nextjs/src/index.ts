@@ -87,6 +87,8 @@ class FilenestNextjsHandler {
             return NextResponse.json(result.error, { status: 400 })
           case "FILENEST_ERR_FETCH":
             return NextResponse.json(result.error, { status: 500 })
+          case "FILENEST_ERR_FOLDER_NOT_EMPTY":
+            return NextResponse.json(result.error, { status: 409 })
           default:
             return NextResponse.json(result.error, { status: 500 })
         }

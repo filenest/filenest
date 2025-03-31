@@ -6,8 +6,14 @@ import { Spinner } from "./Spinner"
 
 export const FileBrowser = () => {
   const Filenest = createFilenestComponents({
-    endpoint: "/api/trpc/filenest",
     client,
+    endpoint: "/api/trpc/filenest",
+    onUserInteractionRequired: ({ message, confirmAction }) => {
+      const confirmed = confirm(message)
+      if (confirmed) {
+        confirmAction()
+      }
+    },
   })
 
   return (
@@ -135,7 +141,7 @@ export const FileBrowser = () => {
                   children={({ folder, rootProps }) => (
                     <div
                       {...rootProps}
-                      className="relative bg-zinc-900 border border-zinc-800 rounded p-3 cursor-pointer"
+                      className="relative bg-zinc-900 border border-zinc-800 rounded p-3 cursor-pointer hover:[&_.delete]:block"
                     >
                       <div>{folder.displayName || folder.key}</div>
                       <Folder.Delete
@@ -147,7 +153,7 @@ export const FileBrowser = () => {
                               trigger()
                             }}
                             disabled={isDeleting}
-                            className={`absolute right-2 top-0 text-xs cursor-pointer
+                            className={`delete hidden absolute right-2 top-0 text-xs cursor-pointer
                           text-red-200 hover:text-red-400 -translate-y-1/2 bg-zinc-900 px-1 rounded`}
                           >
                             Delete
@@ -161,10 +167,11 @@ export const FileBrowser = () => {
             }
           />
           <Filenest.FolderCreateAction
-            children={({ trigger, setName, isCreating }) => (
+            children={({ trigger, name, setName, isCreating }) => (
               <div className="relative bg-zinc-800 border border-zinc-700 rounded">
                 <input
                   type="text"
+                  value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="New folder name"
                   className={`p-3 rounded focus:outline-none focus:ring focus:ring-cyan-600`}

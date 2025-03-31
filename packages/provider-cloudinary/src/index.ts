@@ -240,12 +240,18 @@ export class Cloudinary implements Provider {
         return new RouteReturnError("Specify either ids or prefix, but not both")
       }
 
+      function makeChunks<T>(array: T[]) {
+        const chunkSize = 100
+        const chunks = Array.from(
+          { length: Math.ceil(array.length / chunkSize) },
+          (_, i) => array.slice(i * chunkSize, i * chunkSize + chunkSize)
+        )
+        return chunks
+      }
+
       if (ids) {
         // Cloudinary allows 100 ids at a time
-        const chunkSize = 100
-        const chunks = Array.from({ length: Math.ceil(ids.length / chunkSize) }, (_, i) =>
-          ids.slice(i * chunkSize, i * chunkSize + chunkSize)
-        )
+        const chunks = makeChunks(ids)
 
         let deletedCount = 0
 
@@ -270,26 +276,74 @@ export class Cloudinary implements Provider {
       }
 
       if (prefix) {
+        const { settings } = await this._getConfig()
+
         let isAllDeleted = false
         let deletedCount = 0
 
-        for (const type of this.resourceTypes) {
-          const url = new URL(this._URL.toString() + `/resources/${type}`)
+        if (settings.folder_mode === "fixed") {
+          const url = new URL(this._URL.toString() + `/resources`)
           url.searchParams.append("prefix", prefix)
+          url.searchParams.append("max_results", "500")
 
-          while (!isAllDeleted) {
-            const response = (await this.defaultFetch(url, {
-              method: "DELETE",
-            })) as CloudinaryFilesDeleteResponse
+          // Get assetIds of assets in folder (batches of 500).
+          // Then delete the assets and do the next batch.
+          do {
+            const response: CloudinaryResourcesResponse = await this.defaultFetch(url)
 
-            deletedCount += Object.keys(response.deleted).length
+            const chunks = makeChunks(response.resources.map((asset) => asset.asset_id))
 
-            if (response.next_cursor && response.partial) {
+            for (const chunk of chunks) {
+              for (const id of chunk) {
+                url.searchParams.append("asset_ids[]", id)
+              }
+
+              const deleteResponse = (await this.defaultFetch(url, {
+                method: "DELETE",
+              })) as CloudinaryFilesDeleteResponse
+
+              deletedCount += Object.keys(deleteResponse.deleted).length
+            }
+
+            if (response.next_cursor && !isAllDeleted) {
               url.searchParams.set("next_cursor", response.next_cursor)
             } else {
               isAllDeleted = true
             }
-          }
+          } while (!isAllDeleted)
+        }
+
+        if (settings.folder_mode === "dynamic") {
+          const url = new URL(this._URL.toString() + "/resources/by_asset_folder")
+          const deleteUrl = new URL(this._URL.toString() + "/resources")
+          url.searchParams.set("asset_folder", prefix)
+          url.searchParams.set("max_results", "500")
+
+          // Get assetIds of assets in folder (batches of 500).
+          // Then delete the assets and do the next batch.
+          do {
+            const response: CloudinaryResourcesResponse = await this.defaultFetch(url)
+
+            const chunks = makeChunks(response.resources.map((asset) => asset.asset_id))
+
+            for (const chunk of chunks) {
+              for (const id of chunk) {
+                deleteUrl.searchParams.append("asset_ids[]", id)
+              }
+
+              const deleteResponse = (await this.defaultFetch(deleteUrl, {
+                method: "DELETE",
+              })) as CloudinaryFilesDeleteResponse
+
+              deletedCount += Object.keys(deleteResponse.deleted).length
+            }
+
+            if (response.next_cursor && !isAllDeleted) {
+              url.searchParams.set("next_cursor", response.next_cursor)
+            } else {
+              isAllDeleted = true
+            }
+          } while (!isAllDeleted)
         }
 
         return {
@@ -384,12 +438,6 @@ export class Cloudinary implements Provider {
         }
 
         if (config.settings.folder_mode === "dynamic") {
-          // In dynamic folders mode, we need to go to
-          // manually delete all assets in nested folders
-          let url = new URL(this._URL.toString() + "/resources/by_asset_folder")
-          url.searchParams.set("asset_folder", path)
-          url.searchParams.set("max_results", this._MAX_RESULTS.toString())
-
           const allFolders: FilenestFolder[] = []
 
           const getAllSubfolders = async (path: string) => {
@@ -407,27 +455,12 @@ export class Cloudinary implements Provider {
           await getAllSubfolders(path)
 
           // Then delete all assets in those folders
-          await Promise.all(
-            allFolders.map(async (folder) => {
-              // We need to get their ids and then delete them by id
-              let allDone = false
+          for (const folder of allFolders) {
+            await this.files.deleteFiles({ prefix: folder.key })
+          }
 
-              while (!allDone) {
-                const result = await this.files.getFiles({
-                  prefix: folder.key,
-                })
-
-                if ("error" in result) return
-
-                const ids = result.data.files.map((file) => file.id)
-                await this.files.deleteFiles({ ids })
-
-                if (!result.data.nextCursor) {
-                  allDone = true
-                }
-              }
-            })
-          )
+          // Also delete all files in current folder
+          await this.files.deleteFiles({ prefix: path })
         }
       }
 
