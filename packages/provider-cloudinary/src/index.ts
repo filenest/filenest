@@ -415,24 +415,28 @@ export class Cloudinary implements Provider {
     deleteFolder: async (input) => {
       const { path, ignoreNotEmpty } = input
 
-      const result = await this.files.getFiles({ prefix: path })
+      const filesResult = await this.files.getFiles({ prefix: path })
+      const folders = (await this.defaultFetch(
+        new URL(this._URL.toString() + "/folders/" + path)
+      )) as CloudinaryFolderResponse
 
-      if ("error" in result) {
-        return result
+      if ("error" in filesResult) {
+        return filesResult
       }
 
-      const hasFiles = (result.data.count ?? 0) > 0
+      const hasFolders = folders.total_count > 0
+      const hasFiles = (filesResult.data.count ?? 0) > 0
 
       const config = await this._getConfig()
 
-      if (hasFiles && !ignoreNotEmpty) {
+      if ((hasFiles || hasFolders) && !ignoreNotEmpty) {
         return new RouteReturnError("This folder is not empty", {
           code: ErrorCode.FILENEST_ERR_FOLDER_NOT_EMPTY,
         })
       }
 
       // Delete all assets in the folder when force deleting
-      if (hasFiles) {
+      if (hasFiles || hasFolders) {
         if (config.settings.folder_mode === "fixed") {
           await this.files.deleteFiles({ prefix: path })
         }

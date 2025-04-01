@@ -51,7 +51,7 @@ export const DeleteAction = ({ folder: propsFolder, children }: DeleteActionProp
           onUserInteractionRequired?.({
             message: `The folder ${
               folder.displayName || folder.key
-            } contains files. Deleting this folder will delete all files inside. Are you sure?`,
+            } is not empty. Deleting this folder will delete all files and folders inside. Are you sure?`,
             confirmAction: () => {
               mutation.mutate({ ignoreNotEmpty: true })
             },
