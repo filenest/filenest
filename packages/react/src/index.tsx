@@ -29,7 +29,6 @@ export function createFilenestComponents(config: FilenestClientConfig) {
       <FilenestRoot
         config={config}
         children={children}
-        onUserInteractionRequired={config.onUserInteractionRequired}
       />
     ),
     Breadcrumbs,

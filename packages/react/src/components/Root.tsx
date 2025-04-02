@@ -35,13 +35,11 @@ export function useGlobalContext() {
 export const FilenestRoot = ({
   children,
   config,
-  onUserInteractionRequired,
 }: {
   children: React.ReactNode
   config: FilenestClientConfig
-  onUserInteractionRequired?: OnUserInteractionRequired
 }) => {
-  const { endpoint, client } = config
+  const { endpoint, client, onUserInteractionRequired } = config
 
   const [selectedFiles, setSelectedFiles] = useState<FilenestFile[]>([])
   const [search, setSearch] = useDebouncedState("", 500)
