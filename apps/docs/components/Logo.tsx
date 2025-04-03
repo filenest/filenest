@@ -1,14 +1,6 @@
 export const Logo = (props: React.ComponentPropsWithoutRef<"svg">) => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4964.49 1799.43" {...props}>
-      <defs>
-        <style>
-          {`.cls-1 {
-          fill: #fff;
-          stroke-width: 0px;
-        }`}
-        </style>
-      </defs>
       <g id="Ebene_1-2" data-name="Ebene 1">
         <g>
           <path

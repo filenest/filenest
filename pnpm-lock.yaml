@@ -36,6 +36,9 @@ importers:
       fumadocs-ui:
         specifier: 15.2.2
         version: 15.2.2(@types/react-dom@19.1.1(@types/react@19.1.0))(@types/react@19.1.0)(next@15.2.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(tailwindcss@4.1.1)
+      lucide-react:
+        specifier: ^0.487.0
+        version: 0.487.0(react@19.1.0)
       next:
         specifier: 15.2.4
         version: 15.2.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -79,6 +82,9 @@ importers:
       cva:
         specifier: 1.0.0-beta.3
         version: 1.0.0-beta.3(typescript@5.8.2)
+      lucide-react:
+        specifier: ^0.487.0
+        version: 0.487.0(react@18.3.1)
       rspress:
         specifier: ^1.26.0
         version: 1.43.4(webpack@5.98.0)
@@ -3092,6 +3098,11 @@ packages:
 
   lucide-react@0.486.0:
     resolution: {integrity: sha512-xWop/wMsC1ikiEVLZrxXjPKw4vU/eAip33G2mZHgbWnr4Nr5Rt4Vx4s/q1D3B/rQVbxjOuqASkEZcUxDEKzecw==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  lucide-react@0.487.0:
+    resolution: {integrity: sha512-aKqhOQ+YmFnwq8dWgGjOuLc8V1R9/c/yOd+zDY4+ohsR2Jo05lSGc3WsstYPIzcTpeosN7LoCkLReUUITvaIvw==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -7507,6 +7518,14 @@ snapshots:
   lru-cache@10.4.3: {}
 
   lucide-react@0.486.0(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+
+  lucide-react@0.487.0(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+
+  lucide-react@0.487.0(react@19.1.0):
     dependencies:
       react: 19.1.0
 
