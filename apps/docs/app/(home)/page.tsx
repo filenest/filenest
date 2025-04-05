@@ -9,6 +9,7 @@ import {
   UploadThingIcon,
 } from "@/components/Icon"
 import { Logo } from "@/components/Logo"
+import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock"
 
 export default function HomePage() {
   return (
@@ -17,6 +18,7 @@ export default function HomePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         <Cards />
         <Integrations />
+        <CodeExample />
       </div>
       <div className="flex justify-center pt-32 mask-b-from-50% mask-b-to-98%">
         <Logo className="h-92 fill-fn-300" />
@@ -41,7 +43,7 @@ const Opener = () => {
               own custom UI. Perfect for custom admin dashboards that need advanced file
               management.
             </p>
-            <div className="flex gap-2 mt-6 font-mono">
+            <div className="flex gap-2 mt-6">
               <Link href="/docs/getting-started">
                 <Button>Get Started</Button>
               </Link>
@@ -83,7 +85,7 @@ const Cards = () => {
         <h3 className="text-2xl mb-2">Build your own UI</h3>
         <p className="text-fn-100">
           Custom admin UI using unstyled React components. Filenest ships just the logic,
-          giving you full control of your markup and styling.
+          giving you full control over your markup and styling.
         </p>
       </div>
     </div>
@@ -121,7 +123,52 @@ const Integrations = () => {
             <div className="font-mono text-fn-300">uploadthing</div>
           </div>
         </div>
-        <div className="mt-8 text-center text-fn-500">And more coming soon<span className="align-super ml-1">™</span></div>
+        <div className="mt-8 text-center text-fn-500">
+          And more coming soon<span className="align-super ml-1">™</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const CodeExample = () => {
+  const code = `<Filenest.FileList
+  children={({ files }) =>
+    files.map((File, index) => (
+      <File.Root
+        key={index}
+        children={({ file }) => (
+          <div>
+            <span>{file.name}</span>
+            <File.Delete
+              children={({ trigger }) => (
+                <button onClick={trigger}>Delete</button>
+              )}
+            />
+          </div>
+        )}
+      />
+    ))
+  }
+/>`
+
+  return (
+    <div className="grid grid-cols-2 border-b border-fn-800">
+      <div className="py-16 px-8 border-x border-fn-800">
+      <SquareFunction className="size-8 mb-4 text-fn-300" />
+        <h3 className="text-3xl mb-2">Simple API. Powerful UI.</h3>
+        <p className="text-fn-100 mb-4">
+          Filenest leverages render props to enable to you build your UI the way you
+          desire. Want to add dialogs or custom state on top? No problem!
+        </p>
+        <Link href="/docs/getting-started">
+          <Button>Get Started</Button>
+        </Link>
+      </div>
+      <div className="pt-16 pl-8 border-r border-fn-800">
+        <div className="max-h-76 overflow-hidden">
+          <DynamicCodeBlock lang="tsx" code={code} />
+        </div>
       </div>
     </div>
   )

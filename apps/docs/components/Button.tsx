@@ -6,7 +6,7 @@ interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
 
 export const Button = ({ variant = "primary", className, ...props }: ButtonProps) => {
   const buttonStyles = cva({
-    base: ["px-4 py-2 rounded cursor-pointer", className],
+    base: ["px-4 py-2 rounded cursor-pointer font-mono", className],
     variants: {
       variant: {
         primary: "bg-fn-50 border border-fn-50 text-fn-950 hover:bg-fn-100",
