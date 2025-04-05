@@ -43,6 +43,8 @@
   --color-fd-accent: var(--color-fn-800);
   --color-fd-accent-foreground: var(--color-fn-50);
   --color-fd-ring: var(--color-fn-300);
+
+  --fd-nav-height: 4rem;
 }
 
 @layer base {

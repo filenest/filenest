@@ -16,7 +16,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <body className="flex flex-col min-h-screen">
         <RootProvider theme={{ enableSystem: true, defaultTheme: "dark" }}>
           <Navigation />
-          <main className="pt-16">{children}</main>
+          {children}
         </RootProvider>
       </body>
     </html>

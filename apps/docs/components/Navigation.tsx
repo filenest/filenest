@@ -1,12 +1,13 @@
 "use client"
 
-import Link, { LinkProps } from "next/link"
+import Link from "next/link"
 import { Logo } from "./Logo"
 import { GithubIcon } from "./Icon"
+import { Menu } from "lucide-react"
 
 export const Navigation = () => {
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 border-b border-fn-800 flex justify-between gap-8 h-16 bg-fn-950">
+    <div className="sticky top-0 left-0 right-0 z-50 border-b border-fn-800 flex justify-between gap-8 h-16 bg-fn-950">
       <div className="flex">
         <Link
           href="/"
@@ -16,7 +17,12 @@ export const Navigation = () => {
         </Link>
         <div className="px-3 py-1 bg-fn-900 font-mono  text-xs border-t border-r border-fn-800 mt-auto">Beta</div>
       </div>
-      <div className="flex items-center">
+      <div className="h-full sm:hidden flex items-center border-l border-fn-800"> 
+        <div className="h-full flex items-center px-4">
+          <Menu />
+        </div>
+      </div>
+      <div className="hidden sm:flex items-center">
         <div className="h-full">
           {navLinks.map((link) => (
             <Link
