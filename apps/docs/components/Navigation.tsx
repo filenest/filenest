@@ -1,15 +1,15 @@
 "use client"
 
-import Link from "next/link"
+import Link, { LinkProps } from "next/link"
 import { Logo } from "./Logo"
 import { GithubIcon } from "./Icon"
 
 export const Navigation = () => {
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 border-b border-fn-900 flex justify-between gap-8">
+    <div className="fixed top-0 left-0 right-0 z-50 border-b border-fn-800 flex justify-between gap-8 h-16 bg-fn-950">
       <Link
         href="/"
-        className="py-4 px-6 border-r border-fn-900 fill-fn-400 hover:fill-fn-50"
+        className="h-full flex items-center px-6 border-r border-fn-800 fill-fn-50 hover:border-b-4 duration-100"
       >
         <Logo className="h-10" />
       </Link>
@@ -19,16 +19,16 @@ export const Navigation = () => {
             <Link
               key={link.path}
               href={link.path}
-              className="h-full flex items-center py-4 px-6 border-l border-fn-900 font-mono hover:border-b-4 duration-100"
+              className="h-full flex items-center py-4 px-6 border-l border-fn-800 font-mono hover:border-b-4 duration-100"
             >
               {link.title}
             </Link>
           ))}
         </div>
-        <div className="h-full border-l border-fn-900 flex gap-4">
+        <div className="h-full border-l border-fn-800 flex gap-4">
           <Link
             href="https://github.com/filenest/filenest"
-            className="p-4 px-6 flex items-center fill-fn-400 hover:fill-fn-50 border-fn-900 hover:border-b-4 duration-100"
+            className="p-4 px-6 flex items-center fill-fn-300 hover:fill-fn-50 border-fn-800 hover:border-b-4 duration-100"
           >
             <GithubIcon className="h-6" />
           </Link>
