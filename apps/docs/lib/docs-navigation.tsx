@@ -35,8 +35,8 @@ export const navigation: DocsNavigation = [
         type: "item",
       },
       {
-        title: "Get Started",
-        path: "/docs/get-started",
+        title: "Getting Started",
+        path: "/docs/getting-started",
         type: "item",
       },
     ],
