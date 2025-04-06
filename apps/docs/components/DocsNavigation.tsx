@@ -17,7 +17,7 @@ export const DocsNavigation = () => {
             <Accordion.Trigger
               className={cx(
                 "accordion-trigger flex items-center justify-between gap-2 w-full",
-                "px-6 py-4 border-b border-fn-800"
+                "px-6 py-4 border-b border-fn-800 hover:bg-fn-900 duration-100"
               )}
             >
               <div className="flex items-center gap-2">
@@ -30,10 +30,12 @@ export const DocsNavigation = () => {
               </div>
             </Accordion.Trigger>
           </Accordion.Header>
-          <Accordion.Content className="accordion-content overflow-hidden border-l border-fn-800 ml-4">
+          <Accordion.Content className="accordion-content overflow-hidden border-b border-fn-800 pl-4">
+            <div className="h-2 border-l border-fn-800" />
             {group.children.map((itemOrGroup, index) => (
               <NavigationItemChildren key={index} child={itemOrGroup} />
             ))}
+            <div className="h-2 border-l border-fn-800" />
           </Accordion.Content>
         </Accordion.Item>
       ))}
@@ -46,8 +48,11 @@ const NavigationItemChildren = ({ child }: { child: DocsMenuChild }) => {
 
   if (child.type === "group")
     return (
-      <div>
-        <h5 className="font-mono">{child.title}</h5>
+      <div className="pt-2">
+        <h5 className="font-mono text-fn-300 border-l border-fn-800">
+          <span className="inline-block w-4 mb-1 h-[1px] bg-fn-800"/>
+          {child.title}
+        </h5>
         {child.children.map((item) => (
           <NavigationItemChildren key={item.title} child={item} />
         ))}
@@ -58,7 +63,7 @@ const NavigationItemChildren = ({ child }: { child: DocsMenuChild }) => {
     <Link
       href={child.path}
       className={cx(
-        "block py-1 px-4 text-fn-200 hover:text-fn-50",
+        "block py-1 px-4 text-fn-100 hover:text-fn-50 border-l border-fn-800",
         pathname === child.path && "text-fn-50"
       )}
     >

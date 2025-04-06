@@ -1,4 +1,4 @@
-import { CirclePlay } from "lucide-react"
+import { Blocks, CirclePlay, SquareFunction } from "lucide-react"
 
 export type DocsMenuGroup = {
   title: string
@@ -42,6 +42,51 @@ export const navigation: DocsNavigation = [
     ],
     defaultOpen: true,
     type: "group",
+  },
+  {
+    title: "Backend",
+    icon: <SquareFunction />,
+    children: [
+      {
+        title: "Adapters",
+        type: "group",
+        children: [
+          {
+            title: "Next.js",
+            path: "/docs/adapters/nextjs",
+            type: "item",
+          },
+          {
+            title: "tRPC",
+            path: "/docs/adapters/trpc",
+            type: "item",
+          },
+        ]
+      },
+      {
+        title: "Providers",
+        type: "group",
+        children: [
+          {
+            title: "Cloudinary",
+            path: "/docs/providers/cloudinary",
+            type: "item",
+          },
+          {
+            title: "uploadthing",
+            path: "/docs/providers/uploadthing",
+            type: "item",
+          },
+        ]
+      },
+    ],
+    type: "group"
+  },
+  {
+    title: "Frontend",
+    icon: <Blocks />,
+    children: [],
+    type: "group"
   },
 ]
 

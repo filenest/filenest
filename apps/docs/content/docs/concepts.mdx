@@ -1,0 +1,17 @@
+---
+title: Concepts
+description: Some important terminology you should know before starting with Filenest
+---
+
+## Providers
+
+Filenest has multiple _provider_ packages. A provider handles requests
+to the API of a file hoster / object storage provider. **Providers are used server-side.**
+
+## Adapters
+
+Filenest has multiple _adapter_ packages. An adapter wraps any provider and
+creates backend API routes for your preferred framework. **Adapters are used server-side.**
+The Filenest React components call these API routes to handle your data.
+
+![How Filenest works](/assets/filenest-concepts-graphic.png)

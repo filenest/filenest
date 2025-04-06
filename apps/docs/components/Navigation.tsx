@@ -119,5 +119,5 @@ export type NavLink = {
 }
 
 export const navLinks: NavLink[] = [
-  { title: "Documentation", path: "/docs", icon: <BookOpenText /> },
+  { title: "Documentation", path: "/docs/introduction", icon: <BookOpenText /> },
 ]
