@@ -2,3 +2,136 @@
 title: Getting Started
 description: Setting up Filenest only takes a few minutes
 ---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps'
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+## Backend API Setup
+First, use an adapter and a provider to set up Filenest in your API.
+This example uses the Next.js adapter and the uploadthing provider,
+but you can mix and match however you like.
+
+<Steps>
+<Step>
+ 
+### Install dependencies
+
+<Tabs groupId="packageManager" persist items={["npm", "pnpm"]}>
+
+```sh tab="npm"
+npm i @filenest/adapter-nextjs @filenest/provider-uploadthing
+```
+
+```sh tab="pnpm"
+pnpm i @filenest/adapter-nextjs @filenest/provider-uploadthing
+```
+
+</Tabs>
+
+Feel free to choose any other adapter or provider of your choice
+by replacing `adapter-nextjs` or `provider-uploadthing` with the
+corresponding package names.
+ 
+</Step>
+ 
+<Step>
+ 
+### Instantiate a provider
+
+Instantiate your provider of choice anywhere in your server code. This example is using uploadthing.
+
+```sh
+import { UploadThing } from "@filenest/provider-uploadthing"
+
+const provider = new UploadThing({
+  UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN!,
+})
+```
+
+See the docs of your provider to know what config you need to pass it.
+ 
+</Step>
+ 
+<Step>
+ 
+### Initialize an adapter
+
+<Callout>This step is slightly different for each adapter.
+Please go to your adapters docs section to find out how to configure it.
+You can come back here after.</Callout>
+
+- [Next.js App Router](/docs/adapters/nextjs)
+- [tRPC](/docs/adapters/trpc)
+ 
+</Step>
+</Steps>
+
+## Frontend Setup
+
+<Steps>
+<Step>
+
+### Install dependencies
+
+<Callout>Besides the React package, you must also install your chosen
+provider package in your frontend application, as you will need to import
+a simple HTTP client that will make requests to your API.</Callout>
+
+<Tabs groupId="packageManager" persist items={["npm", "pnpm"]}>
+
+```sh tab="npm"
+npm i @filenest/adapter-nextjs @filenest/react
+```
+
+```sh tab="pnpm"
+pnpm i @filenest/adapter-nextjs @filenest/react
+```
+
+</Tabs>
+
+</Step>
+
+<Step>
+
+### Create Filenest Components
+
+Create your component anywhere in your app using `createFilenestComponents`
+and pass it the client imported from your adapter package.
+
+That import follows the convention:
+`import { client } from "@filenest/adapter-<name>/client"`
+
+You also need to tell Filenest the base endpoint for all Filenest API routes.
+
+```js title="path/to/your/Component.tsx"
+import { createFilenestComponents } from "@filenest/react"
+import { client } from "@filenest/adapter-nextjs/client"
+
+export const FileBrowser = () => {
+  const Filenest = createFilenestComponents({
+    endpoint: "/api/filenest", // or something like https://api.example.com/filenest
+    client,
+  })
+
+  return (
+    <Filenest.Root>
+      {/* The rest of your component */}
+    </Filenest.Root>
+  )
+}
+
+```
+
+</Step>
+
+<Step>
+
+### Build your UI
+
+Now all that's left to do is build your UI.<br/>
+You can take a look at a [minimal setup guide](/docs/frontend)
+or check out a [complete demo](https://github.com/filenest/filenest/tree/main/examples).<br/>
+There is also documentation about individual components [here](/docs/frontend).
+
+</Step>
+</Steps>

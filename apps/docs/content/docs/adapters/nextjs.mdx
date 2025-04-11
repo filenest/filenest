@@ -1,0 +1,77 @@
+---
+title: Next.js Adapter
+description: Use Filenest with the Next.js app router
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps'
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs'
+
+## Add Filenest to your Next.js API
+
+<Callout>This guide assumes you have already instantiated a provider.
+If not, [check out this section](/docs/getting-started#instantiate-a-provider).</Callout>
+
+<Steps>
+<Step>
+ 
+### Install dependencies
+If you have already installed `@filenest/adapter-nextjs`,
+you can skip this step.
+
+<Tabs groupId="packageManager" persist items={["npm", "pnpm"]}>
+
+```sh tab="npm"
+npm i @filenest/adapter-nextjs
+```
+
+```sh tab="pnpm"
+pnpm i @filenest/adapter-nextjs
+```
+
+</Tabs>
+ 
+</Step>
+
+<Step>
+
+### Initialize the adapter
+
+Create the file `route.ts` at `/app/api/filenest/[...handler]/route.ts`.
+
+<Callout>If you like, you can choose a different directory.<br/>
+Just make sure that you place the `route.ts` file in a folder called `[...handler]`.</Callout>
+
+This example is using the uploadthing provider as a data source.
+
+```ts title="/app/api/filenest/[...handler]/route.ts"
+import { initNextjsAdapter } from "@filenest/adapter-nextjs"
+import { UploadThing } from "@filenest/provider-uploadthing"
+
+const provider = new UploadThing({
+  UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN!,
+})
+
+export const { GET, POST } = initNextjsAdapter(provider).create()
+```
+
+</Step>
+</Steps>
+
+## Middleware
+
+The use of middleware is strongly recommended to prevent unauthorized
+access to your provider.
+
+```ts
+export const { GET, POST } = initNextjsAdapter(provider)
+  .use(async (req) => {
+    const isAuthed = req.cookies.get("authed")
+    if (!isAuthed?.value) {
+      return NextResponse.json("Unauthorized", { status: 401 })
+    }
+  })
+  .create()
+```
+
+- Return any HTTP error to prevent further code execution
+- Execution will continue if you either return nothing or a NextResponse with a status of 200-299
