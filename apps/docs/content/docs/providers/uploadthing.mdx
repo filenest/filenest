@@ -1,0 +1,47 @@
+---
+title: uploadthing Provider
+description: Use Filenest with uploadthing
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps'
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs'
+
+## Use uploadthing as your data source
+
+<Steps>
+<Step>
+ 
+### Install dependencies
+Install the package in your server.
+
+If you have already installed `@filenest/provider-uploadthing`,
+you can skip this step.
+
+<Tabs groupId="packageManager" persist items={["npm", "pnpm"]}>
+
+```sh tab="npm"
+npm i @filenest/provider-uploadthing
+```
+
+```sh tab="pnpm"
+pnpm i @filenest/provider-uploadthing
+```
+
+</Tabs>
+ 
+</Step>
+
+<Step>
+
+### Instantiate the provider
+
+```ts
+import { UploadThing } from "@filenest/provider-uploadthing"
+
+const provider = new UploadThing({
+  UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN!,
+})
+```
+
+</Step>
+</Steps>
