@@ -1,0 +1,74 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      npm_tag:
+        type: choice
+        description: 'Specify npm tag'
+        required: true
+        default: 'next'
+        options:
+          - next
+          - latest
+      type:
+        type: choice
+        description: 'Semver bump type'
+        required: true
+        default: 'patch'
+        options:
+          - major
+          - minor
+          - patch
+      branch:
+        description: 'Branch to release'
+        required: true
+        default: 'main'
+
+permissions:
+  # Provenance generation in GitHub Actions requires "write" access to the "id-token"
+  id-token: write
+
+jobs:
+  release:
+    name: Release
+    if: github.repository == 'filenest/filenest' && github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 1
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Install Pnpm
+        run: |
+          npm install -g corepack@latest --force
+          corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.3.0
+        with:
+          node-version: 22.x
+          cache: 'pnpm'
+
+      - name: Install npm v10
+        run: npm install -g npm@10
+
+      - name: Install Dependencies & Build
+        run: pnpm install && pnpm build
+
+      - name: Version Packages
+        run: pnpm version --type ${{ github.event.inputs.type }} --tag ${{ github.event.inputs.npm_tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF: ${{ github.ref }}
+          GITHUB_SHA: ${{ github.sha }}
+
+      - name: Publish to npm
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm config set "//registry.npmjs.org/:_authToken" "${NPM_TOKEN}"
+          pnpm -r publish --tag ${{ github.event.inputs.npm_tag }} --publish-branch ${{ github.event.inputs.branch }}
