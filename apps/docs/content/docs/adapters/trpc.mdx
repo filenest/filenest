@@ -1,0 +1,107 @@
+---
+title: tRPC Adapter
+description: Use Filenest with tRPC
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps'
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs'
+
+## Add Filenest to your tRPC router
+
+<Callout>This guide assumes you have already instantiated a provider.
+If not, [check out this section](/docs/getting-started#instantiate-a-provider).</Callout>
+
+<Steps>
+<Step>
+ 
+### Install dependencies
+If you have already installed `@filenest/adapter-trpc`,
+you can skip this step.
+
+<Tabs groupId="packageManager" persist items={["npm", "pnpm"]}>
+
+```sh tab="npm"
+npm i @filenest/adapter-trpc
+```
+
+```sh tab="pnpm"
+pnpm i @filenest/adapter-trpc
+```
+
+</Tabs>
+ 
+</Step>
+
+<Step>
+
+### Initialize the adapter
+
+This example is using the uploadthing provider as the data source.
+
+```ts title="/path/to/your/trpc/router.ts"
+import { initTRPC } from "@trpc/server"
+import { initTRPCAdapter } from "@filenest/adapter-trpc"
+import { UploadThing } from "@filenest/provider-uploadthing"
+
+const provider = new UploadThing({
+  UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN!,
+})
+
+// Your usual tRPC initialization
+export const t = initTRPC.create()
+
+const filenestRouter = initTRPCAdapter(provider).create()
+
+// Add Filenest router to your existing appRouter
+export const appRouter = t.router({
+  filenest: filenestRouter,
+})
+```
+
+</Step>
+</Steps>
+
+## Middleware
+
+The use of middleware is strongly recommended to prevent unauthorized
+access to your provider.
+
+```ts
+const authMiddleware = t.middleware(({ ctx, next }) => {
+  if (!ctx.isAuthed) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Not authenticated"
+    })
+  }
+
+  next()
+})
+
+const filenestRouter = initTRPCAdapter(provider)
+  .use(authMiddleware)
+  .create()
+```
+
+## Custom Procedure
+
+By default, the adapter uses a `t.procedure` as the procedure for all routes.
+You can pass the adapter a different procedure. This may be a more
+elegant solution for adding a bunch of middleware.
+
+```ts
+const adminProcedure = t.procedure.use(authMiddleware).use(anotherMiddleware)
+
+const filenestRouter = initTRPCAdapter(provider)
+  .procedure(adminProcedure)
+  .create()
+```
+
+You can use middleware and a custom procedure at the same time.
+
+```ts
+const filenestRouter = initTRPCAdapter(provider)
+  .procedure(adminProcedure)
+  .use(loggerMiddleware)
+  .create()
+```

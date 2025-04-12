@@ -80,12 +80,14 @@ export const navigation: DocsNavigation = [
         ]
       },
     ],
+    defaultOpen: true,
     type: "group"
   },
   {
     title: "Frontend",
     icon: <Blocks />,
     children: [],
+    defaultOpen: true,
     type: "group"
   },
 ]
