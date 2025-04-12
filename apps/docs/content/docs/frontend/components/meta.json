@@ -1,0 +1,15 @@
+{
+  "title": "Components",
+  "pages": [
+    "breadcrumbs",
+    "file-list",
+    "folder-list",
+    "folder-create-action",
+    "load-more",
+    "queue",
+    "root",
+    "search",
+    "selection",
+    "uploader"
+  ]
+}

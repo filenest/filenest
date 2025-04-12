@@ -1,0 +1,36 @@
+---
+title: Search
+---
+
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+The `Filenest.Search` is used to filter all files by a query string.
+
+<Callout>The component must be used as a child of `<Filenest.Root>`</Callout>
+
+## Example Usage
+
+```jsx
+<Filenest.Search
+  children={({ setSearch }) => (
+    <input
+      type="text"
+      onChange={(e) => setSearch(e.target.value)}
+      placeholder="Search files..."
+    />
+  )}
+/>
+```
+
+<Callout>`setSearch` is debounced. For internal simplicity this is an uncontrolled input for now.</Callout>
+
+## Render Props
+
+<TypeTable
+  type={{
+    setSearch: {
+      type: "SetState<string>",
+      required: true
+    },
+  }}
+/>

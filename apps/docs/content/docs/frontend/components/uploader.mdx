@@ -1,0 +1,112 @@
+---
+title: Uploader
+---
+
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+The `Filenest.Uploader` is used to select files for upload.
+It is using [`react-dropzone`](https://www.npmjs.com/package/react-dropzone) under the hood.
+
+<Callout>The component must be used as a child of `<Filenest.Root>`</Callout>
+
+## Example Usage
+
+```jsx
+<Filenest.Uploader
+  children={({ rootProps, inputProps, isDragActive }) => (
+    <div {...rootProps}>
+      <input {...inputProps} />
+      Drop files here or click to upload
+    </div>
+  )}
+/>
+```
+
+<Callout>While you could use this component to track upload progress,
+you should use the `<Filenest.Queue>` component instead, because it
+offers more flexibility.</Callout>
+
+## Props
+
+<TypeTable
+  type={{
+    allowDrop: {
+      type: 'boolean | undefined',
+      required: true,
+      default: "true"
+    },
+    allowClick: {
+      type: 'boolean | undefined',
+      required: true,
+      default: "true"
+    },
+    autoUpload: {
+      description: "Automatically uploads a file on drop",
+      type: "boolean",
+      required: true,
+      default: "false"
+    },
+    multiple: {
+      type: "boolean",
+      required: true,
+      default: "true"
+    }
+  }}
+/>
+
+## Render Props
+
+<TypeTable
+  type={{
+    rootProps: {
+      type: 'DropzoneRootProps',
+      required: true
+    },
+    inputProps: {
+      type: "DropzoneInputProps",
+      required: true
+    },
+    isDragActive: {
+      type: "boolean",
+      required: true
+    },
+    uploads: {
+      type: "Upload[]",
+      required: true
+    },
+    upload: {
+      type: "() => void",
+      description: "Trigger upload of files",
+      required: true
+    },
+  }}
+/>
+
+## Type References
+
+### Upload
+
+<TypeTable
+  type={{
+    raw: {
+      type: "File",
+      required: true
+    },
+    progress: {
+      type: "number",
+      required: true
+    },
+    isUploading: {
+      type: "boolean",
+      required: true
+    },
+    isError: {
+      type: "boolean",
+      required: true
+    },
+    isDone: {
+      type: "boolean",
+      required: true
+    },
+  }}
+/>

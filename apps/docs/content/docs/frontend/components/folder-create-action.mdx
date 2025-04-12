@@ -1,0 +1,59 @@
+---
+title: FolderCreateAction
+---
+
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+The `Filenest.FolderCreateAction` is used to create a new folder in your provider.
+
+<Callout>Not every provider supports folders. However, using this component won't cause any problems.</Callout>
+
+<Callout>The component must be used as a child of `<Filenest.Root>`</Callout>
+
+## Example Usage
+
+```jsx
+<Filenest.FolderCreateAction
+  children={({ trigger, name, setName, isCreating }) => (
+    <div>
+      <input
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="New folder name"
+        disabled={isCreating}
+      />
+      <button
+        onClick={trigger}
+        disabled={isCreating}
+      >
+        Create
+      </button>
+    </div>
+  )}
+/>
+```
+
+## Render Props
+
+<TypeTable
+  type={{
+    trigger: {
+      description: "Triggers creation of new folder",
+      type: '() => void',
+      required: true
+    },
+    isCreating: {
+      type: "boolean",
+      required: true
+    },
+    name: {
+      type: "string",
+      required: true
+    },
+    setName: {
+      type: "SetState<string>",
+      required: true
+    },
+  }}
+/>

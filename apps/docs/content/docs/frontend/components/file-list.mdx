@@ -1,0 +1,173 @@
+---
+title: FileList
+---
+
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+The `Filenest.FileList` is used to retrieve and display your files.
+
+<Callout>The component must be used as a child of `<Filenest.Root>`</Callout>
+
+## Example Usage
+
+```jsx
+<Filenest.FileList
+  children={({ files, isLoading }) => {
+    if (isLoading) {
+      return <div>Loading...</div>
+    }
+
+    return (
+      <div>
+        {files.length === 0 && <div>No files found.</div>}
+        {files.map((File, index) => (
+          <File.Root
+            key={index}
+            children={({ file, rootProps, state }) => (
+              <div>
+                <div {...rootProps}>{file.name}</div>
+                <File.Delete
+                  children={({ trigger, isDeleting }) => (
+                    <button
+                      onClick={trigger}
+                      disabled={isDeleting}
+                    >
+                      Delete
+                    </button>
+                  )}
+                />
+              </div>
+            )}
+          />
+        ))}
+      </div>
+    )
+  }}
+/>
+```
+
+## Render Props
+
+<TypeTable
+  type={{
+    files: {
+      description: 'An array of your files',
+      type: 'Array<FileObject>',
+      required: true
+    },
+    isLoading: {
+      type: "boolean",
+      required: true
+    }
+  }}
+/>
+
+## Type References
+
+### FileObject
+
+<TypeTable
+  type={{
+    Root: {
+      type: "(props: FileProps) => JSX.Element",
+      required: true
+    },
+    Delete: {
+      type: "(props: DeleteActionProps) => JSX.Element",
+      required: true
+    }
+  }}
+/>
+
+### FileProps
+
+<TypeTable
+  type={{
+    children: {
+      type: "React.ReactNode | ((props: RenderProps) => React.ReactNode)",
+      required: true
+    },
+  }}
+/>
+
+#### RenderProps
+
+<TypeTable
+  type={{
+    file: {
+      type: "FilenestFile",
+      required: true
+    },
+    rootProps: {
+      type: "React.ComponentPropsWithoutRef<'div'>",
+      description: "Spreading the rootProps onto a child enables selection of the file by CTRL clicking or shift clicking.",
+      required: true
+    },
+    state: {
+      type: "{ isLoading: boolean, isSelected: boolean }",
+      required: true
+    },
+  }}
+/>
+
+### DeleteActionProps
+
+<TypeTable
+  type={{
+    children: {
+      type: "React.ReactNode | ((props: RenderProps) => React.ReactNode)",
+      required: true
+    },
+  }}
+/>
+
+#### RenderProps
+
+<TypeTable
+  type={{
+    trigger: {
+      type: "() => void",
+      description: "Triggers file deletion without confirmation.",
+      required: true
+    },
+    isDeleting: {
+      type: "boolean",
+      required: true
+    },
+  }}
+/>
+
+### FilenestFile
+
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true
+    },
+    key: {
+      type: "string",
+      required: true
+    },
+    name: {
+      type: "string | undefined",
+      required: true
+    },
+    size: {
+      type: "number",
+      required: true
+    },
+    extension: {
+      type: "string",
+      required: true
+    },
+    updatedAt: {
+      type: "string",
+      required: true
+    },
+    url: {
+      type: "string",
+      required: true
+    },
+  }}
+/>

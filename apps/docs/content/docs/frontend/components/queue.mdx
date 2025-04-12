@@ -1,0 +1,133 @@
+---
+title: Queue
+---
+
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+The `Filenest.Queue` is used to list all files (in your uploader) ready to be uploaded.
+
+<Callout>The component must be used as a child of `<Filenest.Root>`</Callout>
+
+## Example Usage
+
+```jsx
+<Filenest.Queue
+  children={({ uploads, upload, meta }) => (
+    <div>
+      <div>Queued files:</div>
+      {uploads.map((Upload, index) => (
+        <Upload.Root
+          key={index}
+          children={({ upload, removeFromQueue }) => (
+            <div>
+              <div>{upload.raw.name}</div>
+              {!meta.isLoading && !upload.isDone && (
+                <button
+                  onClick={removeFromQueue}
+                  disabled={upload.isUploading}
+                >
+                  Remove
+                </button>
+              )}
+              <div>Progress: {upload.progress}%</div>
+            </div>
+          )}
+        />
+      ))}
+      <button onClick={upload} disabled={meta.isLoading}>
+        <span>Upload {uploads.length} files</span>
+        {meta.isLoading && (
+          <div>Total progress: {meta.totalProgress}%</div>
+        )}
+      </button>
+    </div>
+  )}
+/>
+```
+
+## Render Props
+
+<TypeTable
+  type={{
+    uploads: {
+      description: 'An array of your queued files',
+      type: 'Array<UploadObject>',
+      required: true
+    },
+    upload: {
+      description: "Sequentially uploads all files.",
+      type: "() => void",
+      required: true
+    },
+    meta: {
+      type: "{ totalProgress: number, isLoading: boolean }",
+      required: true
+    }
+  }}
+/>
+
+## Type References
+
+### UploadObject
+
+<TypeTable
+  type={{
+    Root: {
+      type: "(props: UploadProps) => JSX.Element",
+      required: true
+    },
+  }}
+/>
+
+### UploadProps
+
+<TypeTable
+  type={{
+    children: {
+      type: "React.ReactNode | ((props: RenderProps) => React.ReactNode)",
+      required: true
+    },
+  }}
+/>
+
+#### RenderProps
+
+<TypeTable
+  type={{
+    upload: {
+      type: "Upload",
+      required: true
+    },
+    removeFromQueue: {
+      type: "() => void",
+      required: true
+    },
+  }}
+/>
+
+### Upload
+
+<TypeTable
+  type={{
+    raw: {
+      type: "File",
+      required: true
+    },
+    progress: {
+      type: "number",
+      required: true
+    },
+    isUploading: {
+      type: "boolean",
+      required: true
+    },
+    isError: {
+      type: "boolean",
+      required: true
+    },
+    isDone: {
+      type: "boolean",
+      required: true
+    },
+  }}
+/>

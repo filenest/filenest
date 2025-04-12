@@ -104,7 +104,7 @@ const MobileMenu = () => {
           </Link>
         ))}
       </div>
-      <div className="mt-4">
+      <div className="mt-4 pb-16">
         <DocsNavigation />
       </div>
     </div>

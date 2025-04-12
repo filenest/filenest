@@ -1,0 +1,154 @@
+---
+title: FolderList
+---
+
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+The `Filenest.FolderList` is used to retrieve and display your folders.
+
+<Callout>Not every provider supports folders. However, using this component won't cause any problems.</Callout>
+
+<Callout>The component must be used as a child of `<Filenest.Root>`</Callout>
+
+## Example Usage
+
+```jsx
+<Filenest.FolderList
+  children={({ folders, isLoading }) =>
+    folders.map((Folder, index) => (
+      <Folder.Root
+        key={index}
+        children={({ folder, rootProps }) => (
+          <div {...rootProps}>
+            <div>{folder.displayName || folder.key}</div>
+            <Folder.Delete
+              children={({ trigger, isDeleting }) => (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    trigger()
+                  }}
+                  disabled={isDeleting}
+                >
+                  Delete
+                </button>
+              )}
+            />
+          </div>
+        )}
+      />
+    ))
+  }
+/>
+```
+
+## Render Props
+
+<TypeTable
+  type={{
+    folders: {
+      description: 'An array of your folders',
+      type: 'Array<FolderObject>',
+      required: true
+    },
+    isLoading: {
+      type: "boolean",
+      required: true
+    }
+  }}
+/>
+
+## Type References
+
+### FolderObject
+
+<TypeTable
+  type={{
+    Root: {
+      type: "(props: FolderProps) => JSX.Element",
+      required: true
+    },
+    Delete: {
+      type: "(props: DeleteActionProps) => JSX.Element",
+      required: true
+    }
+  }}
+/>
+
+### FolderProps
+
+<TypeTable
+  type={{
+    children: {
+      type: "React.ReactNode | ((props: RenderProps) => React.ReactNode)",
+      required: true
+    },
+  }}
+/>
+
+#### RenderProps
+
+<TypeTable
+  type={{
+    folder: {
+      type: "FilenestFolder",
+      required: true
+    },
+    rootProps: {
+      type: "React.ComponentPropsWithoutRef<'div'>",
+      description: "Spreading the rootProps onto a child is mandatory for navigating between folders on click.",
+      required: true
+    },
+    state: {
+      type: "{ isLoading: boolean }",
+      required: true
+    },
+  }}
+/>
+
+### DeleteActionProps
+
+<TypeTable
+  type={{
+    children: {
+      type: "React.ReactNode | ((props: RenderProps) => React.ReactNode)",
+      required: true
+    },
+  }}
+/>
+
+#### RenderProps
+
+<TypeTable
+  type={{
+    trigger: {
+      type: "() => void",
+      description: "Triggers file deletion without confirmation, if a folder is empty. Otherwise `onUserInteractionRequired` is called.",
+      required: true
+    },
+    isDeleting: {
+      type: "boolean",
+      required: true
+    },
+  }}
+/>
+
+### FilenestFolder
+
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true
+    },
+    key: {
+      type: "string",
+      required: true
+    },
+    displayName: {
+      type: "string | undefined",
+      required: true
+    },
+  }}
+/>

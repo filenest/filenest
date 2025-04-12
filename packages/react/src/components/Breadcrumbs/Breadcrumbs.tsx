@@ -2,7 +2,6 @@
 
 import React from "react"
 import { useFoldersContext } from "../../context/FoldersContext"
-import { useGlobalContext } from "../Root"
 import { BreadcrumbItem, BreadcrumbItemProps } from "./BreadcrumbItem"
 
 interface RenderProps {

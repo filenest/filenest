@@ -86,7 +86,69 @@ export const navigation: DocsNavigation = [
   {
     title: "Frontend",
     icon: <Blocks />,
-    children: [],
+    children: [
+      {
+        title: "Minimal Setup",
+        path: "/docs/frontend/minimal-setup",
+        type: "item",
+      },
+      {
+        title: "Components",
+        type: "group",
+        children: [
+          {
+            title: "Breadcrumbs",
+            path: "/docs/frontend/components/breadcrumbs",
+            type: "item",
+          },
+          {
+            title: "FileList",
+            path: "/docs/frontend/components/file-list",
+            type: "item",
+          },
+          {
+            title: "FolderList",
+            path: "/docs/frontend/components/folder-list",
+            type: "item",
+          },
+          {
+            title: "FolderCreateAction",
+            path: "/docs/frontend/components/folder-create-action",
+            type: "item",
+          },
+          {
+            title: "LoadMore",
+            path: "/docs/frontend/components/load-more",
+            type: "item",
+          },
+          {
+            title: "Queue",
+            path: "/docs/frontend/components/queue",
+            type: "item",
+          },
+          {
+            title: "Root",
+            path: "/docs/frontend/components/root",
+            type: "item",
+          },
+          {
+            title: "Search",
+            path: "/docs/frontend/components/search",
+            type: "item",
+          },
+          {
+            title: "Selection",
+            path: "/docs/frontend/components/selection",
+            type: "item",
+          },
+          {
+            title: "Uploader",
+            path: "/docs/frontend/components/uploader",
+            type: "item",
+          },
+        ],
+      }
+    ],
     defaultOpen: true,
     type: "group"
   },

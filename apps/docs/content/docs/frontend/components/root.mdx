@@ -1,0 +1,19 @@
+---
+title: Root
+---
+
+The `Filenest.Root` component must wrap all other Filenest components.
+
+## Usage
+
+```jsx
+export const FileBrowser = () => {
+  const Filenest = createFilenestComponents({ ... })
+
+  return (
+    <Filenest.Root>
+      {/* The rest of your components */}
+    </Filenest.Root>
+  )
+}
+```

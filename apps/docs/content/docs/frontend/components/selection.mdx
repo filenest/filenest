@@ -1,0 +1,46 @@
+---
+title: Selection
+---
+
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+The `Filenest.Selection` is used to select multiple files to enable bulk actions.
+
+- Select files one by one using <kbd>CTRL/CMD</kbd> + <kbd>LMB</kbd>
+- Select multiple files at once using <kbd>Shift</kbd> + <kbd>LMB</kbd>
+
+<Callout>In your `FileList` you must spread a files `rootProps` onto a child
+for a file to be selectable and for this component to render.</Callout>
+
+<Callout>The component must be used as a child of `<Filenest.Root>`</Callout>
+
+## Example Usage
+
+```jsx
+<Filenest.Selection
+  children={({ count, bulkDelete }) => (
+    <div>
+      <div>{count} files selected:</div>
+      <button onClick={bulkDelete}>
+        Delete
+      </button>
+    </div>
+  )}
+/>
+```
+
+## Render Props
+
+<TypeTable
+  type={{
+    count: {
+      type: "number",
+      required: true
+    },
+    bulkDelete: {
+      type: "() => void",
+      description: "Delete multiple files without confirmation.",
+      required: true
+    },
+  }}
+/>

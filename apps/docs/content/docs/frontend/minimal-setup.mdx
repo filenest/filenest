@@ -1,0 +1,134 @@
+---
+title: Minimal Frontend Setup
+description: Display lists of files and folders, and add an uploader
+---
+
+## Component Setup
+
+Below you can find a relatively simple `FileBrowser` component
+that displays your files and folders aswell as an upload dropzone.
+
+While this code can get your component set up quickly, it's highly recommended
+that you check out the other components Filenest has to offer. You should check out the docs
+for each individual component to learn which render props, state and other info
+you can access in your JSX.
+
+This code does not include things like loading states or delete buttons.
+
+```jsx
+export const FileBrowser = () => {
+  const Filenest = createFilenestComponents({
+    endpoint: "/api/filenest",
+    client,
+    onUserInteractionRequired: ({ message, confirmAction }) => {
+      const confirmed = confirm(message)
+      if (confirmed) {
+        confirmAction()
+      }
+    },
+  })
+
+  return (
+    <Filenest.Root>
+      <Filenest.Uploader
+        children={({ rootProps, inputProps }) => (
+          <div {...rootProps}>
+            <input {...inputProps} />
+            Drop files here or click to upload
+          </div>
+        )}
+      />
+
+      <Filenest.Queue
+        children={({ uploads, upload }) => (
+          <div>
+            <div>Queued files:</div>
+
+            {uploads.map((Upload, index) => (
+              <Upload.Root
+                key={index}
+                children={({ upload }) => (
+                  <div>{upload.raw.name}</div>
+                )}
+              />
+            ))}
+
+            <button onClick={upload}>
+              Upload {uploads.length} files
+            </button>
+          </div>
+        )}
+      />
+
+      <Filenest.FolderList
+        children={({ folders }) =>
+          folders.map((Folder, index) => (
+            <Folder.Root
+              key={index}
+              children={({ folder, rootProps }) => (
+                <div {...rootProps}>
+                  {folder.displayName || folder.key}
+                </div>
+              )}
+            />
+          ))
+        }
+      />
+
+      <Filenest.FileList
+        children={({ files }) => files.map((File, index) => (
+          <File.Root
+            key={index}
+            children={({ file, rootProps }) => (
+              <div {...rootProps}>{file.name}</div>
+            )}
+          />
+        ))}
+      />
+
+      <Filenest.LoadMore
+        children={({ loadMore }) => (
+          <button onClick={loadMore}>
+            Load More
+          </button>
+        )}
+      />
+    </Filenest.Root>
+  )
+}
+```
+
+<Callout>
+If you are looking for a complete component with loading states et cetera,
+you can check out [these examples](https://github.com/filenest/filenest/tree/main/examples).
+</Callout>
+
+## `createFilenestComponents`
+
+### `endpoint`
+
+This property defines the parent endpoint for all Filenest API routes. Below are some examples:
+
+- `/api/filenest`
+- `/api/media`
+- `http://localhost:3000/api/filenest`
+- `https://api.example.com/files`
+
+### `onUserInteractionRequired`
+
+This function will be called whenever
+the user needs to confirm a potentially dangerous action,
+for example the deletion of a folder with content inside.
+
+At the very least you should show the default browser confirm dialog:
+
+```ts
+onUserInteractionRequired: ({ message, confirmAction }) => {
+  const confirmed = confirm(message)
+  if (confirmed) {
+    confirmAction()
+  }
+},
+```
+
+But you could also handle your own state and display a custom dialog or something else.

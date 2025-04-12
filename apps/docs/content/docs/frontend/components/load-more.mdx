@@ -1,0 +1,42 @@
+---
+title: LoadMore
+---
+
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+The `Filenest.LoadMore` is used to load more files using infinite loading.
+
+The component will render `null` if there are no more files to load.
+
+<Callout>The component must be used as a child of `<Filenest.Root>`</Callout>
+
+## Example Usage
+
+```jsx
+<Filenest.LoadMore
+  children={({ loadMore, isLoading }) => (
+    <button
+      disabled={isLoading}
+      onClick={loadMore}
+    >
+      Load More
+    </button>
+  )}
+/>
+```
+
+## Render Props
+
+<TypeTable
+  type={{
+    loadMore: {
+      description: "Loads more files, if available.",
+      type: '() => void',
+      required: true
+    },
+    isLoading: {
+      type: "boolean",
+      required: true
+    },
+  }}
+/>

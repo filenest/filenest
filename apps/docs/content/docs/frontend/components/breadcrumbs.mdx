@@ -1,0 +1,104 @@
+---
+title: Breadcrumbs
+---
+
+import { TypeTable } from 'fumadocs-ui/components/type-table';
+
+The `Filenest.Breadcrumbs` is used to display the current folder navigation levels.
+
+<Callout>Not every provider supports folders. However, using this component won't cause any problems.</Callout>
+
+<Callout>The component must be used as a child of `<Filenest.Root>`</Callout>
+
+## Example Usage
+
+```jsx
+<Filenest.Breadcrumbs
+  children={({ breadcrumbs }) => breadcrumbs.map((Breadcrumb, index) => (
+    <Breadcrumb.Root
+      key={index}
+      children={({ folder, rootProps, isCurrent }) => (
+        <div {...rootProps}>
+          {folder.displayName || folder.key}
+          {index !== breadcrumbs.length - 1 && " /"}
+        </div>
+      )}
+    />
+  ))}
+/>
+```
+
+## Render Props
+
+<TypeTable
+  type={{
+    breadcrumbs: {
+      description: 'An array of the current navigation levels',
+      type: 'Array<BreadcrumbObject>',
+      required: true
+    },
+  }}
+/>
+
+## Type References
+
+### BreadcrumbObject
+
+<TypeTable
+  type={{
+    Root: {
+      type: "(props: BreadcrumbItemProps) => JSX.Element",
+      required: true
+    },
+  }}
+/>
+
+### BreadcrumbItemProps
+
+<TypeTable
+  type={{
+    children: {
+      type: "React.ReactNode | ((props: RenderProps) => React.ReactNode)",
+      required: true
+    },
+  }}
+/>
+
+#### RenderProps
+
+<TypeTable
+  type={{
+    folder: {
+      type: "FilenestFolder",
+      required: true
+    },
+    rootProps: {
+      type: "React.ComponentPropsWithoutRef<'div'>",
+      description: "Spreading the rootProps onto a child is mandatory for navigating between folders on click.",
+      required: true
+    },
+    isCurrent: {
+      type: "boolean",
+      required: true
+    },
+  }}
+/>
+
+### FilenestFolder
+
+<TypeTable
+  type={{
+    id: {
+      type: "string",
+      required: true
+    },
+    key: {
+      type: "string",
+      required: true
+    },
+    displayName: {
+      type: "string | undefined",
+      required: true
+    },
+  }}
+/>
