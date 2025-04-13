@@ -1,19 +1,12 @@
-> [!NOTE]  
-> Filenest is currently getting a big overhaul.  
-> I suggest waiting for the next update to start using it.  
-> Star the repo to not miss the release ⭐️
-
 ![Filenest Banner](.github/media/banner.png)
 
-https://github.com/user-attachments/assets/bc5e5510-fe11-44e2-b141-72a3abd4714f
-
 # Filenest  
-[![npm](https://img.shields.io/npm/v/@filenest/core.svg)](https://www.npmjs.com/search?q=%40filenest)
 
-**Build your own File Manager Component**  
-Filenest provides everything you need to connect a third party file storage to your JS/TS app.
+## More than just file uploads
+Connect your S3, Uploadthing, Cloudinary, and manage your files within your own custom UI.
+Perfect for custom admin dashboards that need advanced file management.
 
-🦉📖 [Check out the documentation](https://filenest.github.io/filenest/)
+🦉📖 [Check out the documentation](https://filenest-docs.vercel.app/)
 
 ## What it does
 
@@ -34,4 +27,4 @@ and build your custom UI using unstyled components.
 
 ## Contributing
 
-[Contributing Guide](https://github.com/filenest/filenest/blob/next/docs/_root/docs/contributing.md)
+todo
