@@ -51,6 +51,11 @@ offers more flexibility.</Callout>
       required: true,
       default: "true"
     },
+    onUpload: {
+      type: "((result: unknown) => void) | undefined",
+      description: "Optional callback to run after a file was uploaded successfully. `result` is the provider API response.",
+      required: true,
+    },
     uploadPath: {
       type: "string | undefined",
       description: "Set to use a fixed upload path/folder instead of the current folder.",

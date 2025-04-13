@@ -18,6 +18,7 @@ export interface UploaderProps {
   autoUpload?: boolean
   children: React.ReactNode | ((props: RenderProps) => React.ReactNode)
   multiple?: boolean
+  onUpload?: (result: unknown) => void
   uploadPath?: string
 }
 
@@ -27,13 +28,18 @@ export const Uploader = ({ children, ...props }: UploaderProps) => {
     allowDrop = true,
     autoUpload = false,
     multiple = true,
+    onUpload,
     uploadPath,
   } = props
 
-  const { uploads, beginUpload, defaultPath } = useUploadContext()
+  const { uploads, beginUpload, defaultPath, onUpload: eventOnUpload } = useUploadContext()
 
   if (uploadPath) {
     defaultPath.current = uploadPath
+  }
+
+  if (onUpload) {
+    eventOnUpload.current = onUpload
   }
 
   const { acceptedFiles, getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -68,7 +74,7 @@ export const Uploader = ({ children, ...props }: UploaderProps) => {
       inputProps: getInputProps(),
       isDragActive,
       uploads: uploads.value,
-      upload: () => beginUpload(),
+      upload: beginUpload,
     })
   } else {
     return children
