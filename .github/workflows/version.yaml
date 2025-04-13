@@ -1,28 +1,20 @@
 name: Release
 
 on:
-  workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to release'
-        required: true
-        default: 'main'
+  push:
+    branches:
+      - main
 
-permissions:
-  # Provenance generation in GitHub Actions requires "write" access to the "id-token"
-  id-token: write
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
     name: Release
-    if: github.repository == 'filenest/filenest' && github.event_name == 'workflow_dispatch'
+    if: github.repository == 'filenest/filenest'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
-        with:
-          fetch-depth: 1
-          ref: ${{ github.event.inputs.branch }}
 
       - name: Install Pnpm
         run: |
@@ -38,12 +30,12 @@ jobs:
       - name: Install npm v10
         run: npm install -g npm@10
 
-      - name: Create Release Pull Request or Publish to npm
+      - name: Version Packages
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm install && pnpm build && pnpm changeset publish
           commit: 'chore: version packages'
+          title: 'chore: version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

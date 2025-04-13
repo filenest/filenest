@@ -9,6 +9,7 @@ interface UploadContext {
   uploads: SetterGetter<Upload[]>
   meta: SetterGetter<UploadMeta>
   beginUpload: () => void
+  defaultPath: React.RefObject<string>
 }
 
 const UploadContext = React.createContext<UploadContext | null>(null)
@@ -44,6 +45,7 @@ const defaultMeta: UploadMeta = {
 export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient()
   const { client, currentPath } = useGlobalContext()
+  const defaultPath = React.useRef<string>("")
 
   const [uploads, setUploads] = React.useState<Upload[]>([])
   const [meta, setMeta] = React.useState<UploadMeta>(defaultMeta)
@@ -80,7 +82,7 @@ export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
           name: upload.raw.name,
           size: upload.raw.size,
         },
-        folder: currentPath.value,
+        folder: defaultPath.current || currentPath.value,
       })
 
       if ("error" in urlResult) {
@@ -197,6 +199,7 @@ export const UploadProvider = ({ children }: { children: React.ReactNode }) => {
     uploads: { value: uploads, set: setUploads },
     meta: { value: meta, set: setMeta },
     beginUpload,
+    defaultPath,
   }
 
   return <UploadContext.Provider value={contextValue}>{children}</UploadContext.Provider>
