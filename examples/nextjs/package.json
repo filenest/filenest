@@ -9,9 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@filenest/adapter-nextjs": "0.10.0",
-    "@filenest/provider-uploadthing": "0.10.0",
-    "@filenest/react": "0.10.0",
+    "@filenest/adapter-nextjs": "0.6.0",
+    "@filenest/provider-uploadthing": "0.6.0",
+    "@filenest/react": "0.6.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "next": "15.2.3"

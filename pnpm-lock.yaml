@@ -108,13 +108,13 @@ importers:
   examples/nextjs:
     dependencies:
       '@filenest/adapter-nextjs':
-        specifier: 0.10.0
+        specifier: 0.6.0
         version: link:../../packages/adapter-nextjs
       '@filenest/provider-uploadthing':
-        specifier: 0.10.0
+        specifier: 0.6.0
         version: link:../../packages/provider-uploadthing
       '@filenest/react':
-        specifier: 0.10.0
+        specifier: 0.6.0
         version: link:../../packages/react
       next:
         specifier: 15.2.3
@@ -148,13 +148,13 @@ importers:
   examples/nextjs-trpc:
     dependencies:
       '@filenest/adapter-trpc':
-        specifier: 0.10.0
+        specifier: 0.6.0
         version: link:../../packages/adapter-trpc
       '@filenest/provider-cloudinary':
-        specifier: 0.10.0
+        specifier: 0.6.0
         version: link:../../packages/provider-cloudinary
       '@filenest/react':
-        specifier: 0.10.0
+        specifier: 0.6.0
         version: link:../../packages/react
       '@tanstack/react-query':
         specifier: 5.69.0
@@ -321,7 +321,7 @@ importers:
   packages/react:
     dependencies:
       '@filenest/core':
-        specifier: 0.10.0
+        specifier: 0.6.0
         version: link:../core
       '@tanstack/react-query':
         specifier: ^5.68.0
