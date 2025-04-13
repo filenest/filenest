@@ -29,6 +29,9 @@ jobs:
       - name: Install npm v10
         run: npm install -g npm@10
 
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Version Packages
         id: changesets
         uses: changesets/action@v1
