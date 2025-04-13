@@ -208,7 +208,7 @@ importers:
   packages/adapter-nextjs:
     dependencies:
       '@filenest/core':
-        specifier: workspace:*
+        specifier: 0.6.0
         version: link:../core
       next:
         specifier: ^15
@@ -230,7 +230,7 @@ importers:
   packages/adapter-trpc:
     dependencies:
       '@filenest/core':
-        specifier: workspace:*
+        specifier: 0.6.0
         version: link:../core
       '@trpc/server':
         specifier: ^11
@@ -274,7 +274,7 @@ importers:
   packages/provider-cloudinary:
     dependencies:
       '@filenest/core':
-        specifier: workspace:*
+        specifier: 0.6.0
         version: link:../core
     devDependencies:
       '@internal/eslint':
@@ -296,7 +296,7 @@ importers:
   packages/provider-uploadthing:
     dependencies:
       '@filenest/core':
-        specifier: workspace:*
+        specifier: 0.6.0
         version: link:../core
       slugify:
         specifier: 1.6.6

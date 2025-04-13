@@ -45,7 +45,7 @@
     "next": "^15"
   },
   "dependencies": {
-    "@filenest/core": "workspace:*"
+    "@filenest/core": "0.6.0"
   },
   "engines": {
     "pnpm": ">=10.0.0"
