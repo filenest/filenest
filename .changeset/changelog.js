@@ -95,17 +95,27 @@ const changelogFunctions = {
       }
     })()
 
+    // The user returned from getInfo and getInfoFromPullRequest
+    // is in the format of `[@${user.login}](${user.url})`
+    // but we don't want a markdown link, so Github automatically
+    // creates a better link including the user avatar
+    function getSingleUserAt() {
+      const user = links.user
+      const regex = /\[([^\]]+)\]/
+      const match = user.match(regex)
+      if (match) {
+        return match[1]
+      } else {
+        return user.replace(/\[([^\]]+)\]\(.*\)/, "$1")
+      }
+    }
+
     const userAts = usersFromSummary.length
-      ? usersFromSummary
-          .map(
-            (userFromSummary) =>
-              `@${userFromSummary}`
-          )
-          .join(", ")
-      : links.user
+      ? usersFromSummary.map((userFromSummary) => `@${userFromSummary}`).join(", ")
+      : getSingleUserAt()
 
     const pr = links.pull === null ? "" : ` (${links.pull})`
-    const users = userAts === null ? "" : ` - Thanks ${userAts}!`
+    const users = userAts === null ? "" : ` - Thanks ${userAts}`
 
     return `\n\n- ${firstLine}${pr}${users}\n${futureLines
       .map((l) => `  ${l}`)
