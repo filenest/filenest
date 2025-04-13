@@ -42,7 +42,7 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm install && pnpm build && pnpm changeset publish
+          publish: pnpm install --no-frozen-lockfile && pnpm build && pnpm changeset publish
           commit: 'chore: release new version'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
