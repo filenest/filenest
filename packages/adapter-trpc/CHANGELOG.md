@@ -1,5 +1,14 @@
 # @filenest/adapter-trpc
 
+## 0.7.1
+
+### Patch Changes
+
+- Edit READMEs of packages - Thanks [@nordowl](https://github.com/nordowl)!
+
+- Updated dependencies [[`37c888b`](https://github.com/filenest/filenest/commit/37c888ba0b90d84e48eb995e92cc218094ed8593)]:
+  - @filenest/core@0.7.1
+
 ## 0.7.0
 
 ### Minor Changes
