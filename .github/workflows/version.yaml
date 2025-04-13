@@ -1,4 +1,4 @@
-name: Release
+name: Version
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  release:
-    name: Release
+  version:
+    name: Version
     if: github.repository == 'filenest/filenest'
     runs-on: ubuntu-latest
     steps:
@@ -25,7 +25,6 @@ jobs:
         uses: actions/setup-node@v4.3.0
         with:
           node-version: 22.x
-          cache: 'pnpm'
 
       - name: Install npm v10
         run: npm install -g npm@10
