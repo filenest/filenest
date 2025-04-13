@@ -10,6 +10,12 @@ import {
 } from "@/components/Icon"
 import { Logo } from "@/components/Logo"
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Filenest - More than just file uploads",
+  description: "TypeScript library for file uploads and file management in React.",
+}
 
 export default function HomePage() {
   return (
