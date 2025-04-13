@@ -1,5 +1,11 @@
 # @filenest/react
 
+## 0.7.2
+
+### Patch Changes
+
+- Add `onUpload` prop to `Uploader` component - Thanks @nordowl
+
 ## 0.7.1
 
 ### Patch Changes
