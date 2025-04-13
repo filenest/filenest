@@ -43,7 +43,7 @@ jobs:
         uses: changesets/action@v1
         with:
           publish: pnpm install && pnpm build && pnpm changeset publish
-          commit: 'chore: version packages'
+          commit: 'chore: release new version'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
