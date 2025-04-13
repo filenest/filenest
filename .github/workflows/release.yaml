@@ -9,7 +9,8 @@ on:
         default: 'main'
 
 permissions:
-  # Provenance generation in GitHub Actions requires "write" access to the "id-token"
+  contents: write
+  pull-requests: write
   id-token: write
 
 jobs:

@@ -1,3 +1,3 @@
 # @filenest/react
 
-Full documentation available at [https://filenest.github.io/filenest/](https://filenest.github.io/filenest/)
+Full documentation available at [https://filenest-docs.vercel.app/](https://filenest-docs.vercel.app/)
