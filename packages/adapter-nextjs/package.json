@@ -1,6 +1,6 @@
 {
   "name": "@filenest/adapter-nextjs",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "",
   "keywords": [],
   "author": "nordowl",
@@ -45,7 +45,7 @@
     "next": "^15"
   },
   "dependencies": {
-    "@filenest/core": "0.6.0"
+    "@filenest/core": "0.7.0"
   },
   "engines": {
     "pnpm": ">=10.0.0"
