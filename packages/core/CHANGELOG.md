@@ -1,5 +1,11 @@
 # @filenest/core
 
+## 0.7.1
+
+### Patch Changes
+
+- Edit READMEs of packages - Thanks [@nordowl](https://github.com/nordowl)!
+
 ## 0.7.0
 
 ### Minor Changes
