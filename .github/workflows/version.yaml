@@ -34,7 +34,7 @@ jobs:
         run: npm install -g npm@10
 
       - name: Install Dependencies
-        run: pnpm install --no-frozen-lockfile 
+        run: pnpm install --frozen-lockfile=false
 
       - name: Version Packages
         id: changesets

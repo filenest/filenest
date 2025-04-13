@@ -8,7 +8,7 @@
     "prebuild": "turbo build --filter=\"@filenest/core\"",
     "build": "turbo build --filter=\"@filenest/*\"",
     "lint": "pnpm --filter=\"@filenest/*\" run lint",
-    "publish-release": "pnpm install && pnpm build && pnpm changeset publish"
+    "publish-release": "pnpm install --frozen-lockfile=false && pnpm build && pnpm changeset publish"
   },
   "packageManager": "pnpm@10.4.0",
   "engines": {
