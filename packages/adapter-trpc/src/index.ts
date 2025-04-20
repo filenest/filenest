@@ -7,11 +7,11 @@ import {
 } from "@trpc/server/unstable-core-do-not-import"
 import z from "zod"
 
-type Middleware = MiddlewareBuilder<object, object, object, unknown>
+type Middleware = MiddlewareBuilder<any, object, any, unknown>
 type Procedure = ProcedureBuilder<
+  any,
   object,
-  object,
-  object,
+  any,
   typeof unsetMarker,
   typeof unsetMarker,
   typeof unsetMarker,
