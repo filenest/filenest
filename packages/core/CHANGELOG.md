@@ -1,5 +1,11 @@
 # @filenest/core
 
+## 0.7.2
+
+### Patch Changes
+
+- Fix exports in package.json - Thanks @nordowl
+
 ## 0.7.1
 
 ### Patch Changes
