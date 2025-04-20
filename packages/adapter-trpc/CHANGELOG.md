@@ -1,5 +1,11 @@
 # @filenest/adapter-trpc
 
+## 0.7.2
+
+### Patch Changes
+
+- Fix types issue - Thanks @nordowl
+
 ## 0.7.1
 
 ### Patch Changes

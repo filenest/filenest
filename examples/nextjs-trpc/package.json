@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@filenest/adapter-trpc": "0.7.1",
+    "@filenest/adapter-trpc": "0.7.2",
     "@filenest/provider-cloudinary": "0.7.1",
     "@filenest/react": "0.7.2",
     "@trpc/client": "11.0.0",
