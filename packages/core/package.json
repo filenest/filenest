@@ -19,27 +19,32 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts",
-      "module": "./dist/index.js"
+      "module": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./utils": {
       "import": "./dist/utils.js",
       "types": "./dist/utils.d.ts",
-      "module": "./dist/utils.js"
+      "module": "./dist/utils.js",
+      "default": "./dist/utils.js"
     },
     "./adapter": {
       "import": "./dist/adapter.js",
       "types": "./dist/adapter.d.ts",
-      "module": "./dist/adapter.js"
+      "module": "./dist/adapter.js",
+      "default": "./dist/adapter.js"
     },
     "./provider": {
       "import": "./dist/provider.js",
       "types": "./dist/provider.d.ts",
-      "module": "./dist/provider.js"
+      "module": "./dist/provider.js",
+      "default": "./dist/provider.js"
     },
     "./client": {
       "import": "./dist/client.js",
       "types": "./dist/client.d.ts",
-      "module": "./dist/client.js"
+      "module": "./dist/client.js",
+      "default": "./dist/client.js"
     }
   },
   "scripts": {

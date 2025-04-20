@@ -20,7 +20,7 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts",
       "module": "./dist/index.js",
-      "require": "./dist/index.js"
+      "default": "./dist/index.js"
     }
   },
   "scripts": {

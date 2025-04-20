@@ -20,13 +20,13 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts",
       "module": "./dist/index.js",
-      "require": "./dist/index.js"
+      "default": "./dist/index.js"
     },
     "./client": {
       "import": "./dist/client.js",
       "types": "./dist/client.d.ts",
       "module": "./dist/client.js",
-      "require": "./dist/client.js"
+      "default": "./dist/client.js"
     }
   },
   "scripts": {
