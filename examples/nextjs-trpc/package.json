@@ -9,9 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@filenest/adapter-trpc": "0.7.2",
-    "@filenest/provider-cloudinary": "0.7.1",
-    "@filenest/react": "0.7.2",
+    "@filenest/adapter-trpc": "0.7.3",
+    "@filenest/provider-cloudinary": "0.7.2",
+    "@filenest/react": "0.7.3",
     "@trpc/client": "11.0.0",
     "@trpc/server": "11.0.0",
     "@trpc/tanstack-react-query": "11.0.0",
