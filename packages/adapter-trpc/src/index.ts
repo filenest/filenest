@@ -3,19 +3,19 @@ import { initTRPC, TRPCError } from "@trpc/server"
 import {
   MiddlewareBuilder,
   ProcedureBuilder,
-  unsetMarker,
+  UnsetMarker,
 } from "@trpc/server/unstable-core-do-not-import"
 import z from "zod"
 
 type Middleware = MiddlewareBuilder<any, object, any, unknown>
 type Procedure = ProcedureBuilder<
   any,
-  object,
   any,
-  typeof unsetMarker,
-  typeof unsetMarker,
-  typeof unsetMarker,
-  typeof unsetMarker,
+  any,
+  UnsetMarker,
+  UnsetMarker,
+  UnsetMarker,
+  UnsetMarker,
   false
 >
 
