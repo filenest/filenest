@@ -1,5 +1,14 @@
 # @filenest/provider-uploadthing
 
+## 0.7.2
+
+### Patch Changes
+
+- Fix exports in package.json - Thanks @nordowl
+
+- Updated dependencies [[`7e6cdb3`](https://github.com/filenest/filenest/commit/7e6cdb3da2280345b297aa0d4909858a2db3ab48)]:
+  - @filenest/core@0.7.2
+
 ## 0.7.1
 
 ### Patch Changes
